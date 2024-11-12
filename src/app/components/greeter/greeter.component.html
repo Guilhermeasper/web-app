@@ -1,0 +1,15 @@
+<div
+  *ngIf="!greeting()"
+  class="mb-1 h-8 w-64 max-w-full animate-pulse rounded-xl bg-background-contrast/30 sm:mb-2 sm:h-9"
+></div>
+<h2 *ngIf="greeting()" class="pb-1 text-2xl sm:pb-2 sm:text-3xl">
+  <strong>{{ greeting() }}!</strong>
+</h2>
+
+<div
+  *ngIf="!servedMealsInfo()"
+  class="h-4 w-96 max-w-full animate-pulse rounded-xl bg-background-contrast/30 pb-1 sm:h-6 sm:pb-2"
+></div>
+<p *ngIf="servedMealsInfo()">
+  {{ servedMealsInfo() }}
+</p>

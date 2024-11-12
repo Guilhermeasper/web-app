@@ -1,0 +1,22 @@
+<button
+  class="flex h-8 w-8 flex-row items-center justify-center rounded-md transition-colors focus:outline-none focus:ring"
+  (click)="goBack()"
+  [ngClass]="{
+    'hover:bg-accent/10 focus:ring-accent active:bg-accent/30':
+      colorScheme() === BackButtonColorScheme.Page,
+    'hover:bg-farofa-tint/10 focus:ring-farofa-tint active:bg-farofa-tint/30':
+      colorScheme() === BackButtonColorScheme.ColoredBackground,
+  }"
+>
+  <span class="sr-only">Voltar</span>
+  <ng-icon
+    class="text-2xl sm:text-3xl"
+    [ngClass]="{
+      'text-accent': colorScheme() === BackButtonColorScheme.Page,
+      'text-farofa-tint':
+        colorScheme() === BackButtonColorScheme.ColoredBackground,
+    }"
+    name="lucideChevronLeft"
+    aria-hidden="true"
+  ></ng-icon>
+</button>

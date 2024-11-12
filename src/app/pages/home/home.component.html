@@ -1,0 +1,62 @@
+<div class="standard-page-container p-4">
+  <rusbe-header [type]="HEADER_TYPE"></rusbe-header>
+</div>
+
+<div class="standard-page-container p-4">
+  <main class="pb-2 sm:pt-4">
+    <rusbe-greeter></rusbe-greeter>
+
+    <div class="mt-4">
+      <rusbe-warning-card *ngIf="!isInRestaurantTimezone"
+        ><p>
+          <strong>Você está mesmo em Pernambuco?</strong> Parece que seu
+          dispositivo está configurado com outro fuso horário. Por favor,
+          confira se é isto mesmo - os horários mostrados no Rusbé são baseados
+          nesta configuração.
+        </p>
+      </rusbe-warning-card>
+    </div>
+
+    <div
+      class="mt-6 grid grid-cols-1 gap-4 xs:auto-rows-fr xs:grid-cols-2 sm:mt-8 lg:grid-cols-4"
+    >
+      <rusbe-status-card class="xs:col-span-2"></rusbe-status-card>
+      <rusbe-menu-card class="xs:col-span-2 xs:row-span-2"></rusbe-menu-card>
+      <rusbe-credits-card
+        class="xs:col-span-2"
+        *ngIf="false"
+      ></rusbe-credits-card>
+      <rusbe-sign-in-card
+        class="xs:col-span-2"
+        *ngIf="false"
+      ></rusbe-sign-in-card>
+      <rusbe-link-card
+        destination="/about"
+        iconName="lucideWallet"
+        *ngIf="false"
+        >Adicionar créditos</rusbe-link-card
+      >
+      <rusbe-link-card destination="/about" iconName="lucideInfo" *ngIf="false"
+        >Sua conta e preferências</rusbe-link-card
+      >
+      <rusbe-link-card destination="/menu" iconName="lucideFolderClock"
+        >Histórico de cardápios</rusbe-link-card
+      >
+      <rusbe-link-card
+        destination="/about"
+        iconName="lucideCalculator"
+        *ngIf="false"
+        >Calculadora de créditos</rusbe-link-card
+      >
+      <rusbe-link-card
+        destination="/about"
+        iconName="lucideMegaphone"
+        *ngIf="false"
+        >Reportar problema</rusbe-link-card
+      >
+      <rusbe-link-card destination="/about" iconName="lucideInfo"
+        >Sobre o Rusbé</rusbe-link-card
+      >
+    </div>
+  </main>
+</div>

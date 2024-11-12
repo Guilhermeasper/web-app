@@ -1,0 +1,29 @@
+<header class="flex flex-row items-center gap-2 pt-2 text-header sm:pt-4">
+  <ng-container *ngIf="type() === HeaderType.LogoOnly">
+    <h1 class="h-6 text-base sm:h-8">
+      <a href="/">
+        <rusbe-logo></rusbe-logo>
+      </a>
+    </h1>
+  </ng-container>
+
+  <ng-container
+    *ngIf="
+      type() === HeaderType.PageNameWithBackButton ||
+      type() === HeaderType.PageNameWithBackButtonOnColoredBackground
+    "
+  >
+    <rusbe-back-button
+      [colorScheme]="backButtonColorSchemeMap[type()]!"
+    ></rusbe-back-button>
+    <h1
+      class="geometric-title text-lg sm:text-xl"
+      [ngClass]="{
+        'text-farofa-tint':
+          type() === HeaderType.PageNameWithBackButtonOnColoredBackground,
+      }"
+    >
+      <ng-content></ng-content>
+    </h1>
+  </ng-container>
+</header>

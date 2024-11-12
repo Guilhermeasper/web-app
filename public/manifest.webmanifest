@@ -1,0 +1,51 @@
+{
+  "name": "Rusbé",
+  "short_name": "Rusbé",
+  "theme_color": "#ff7a00",
+  "background_color": "#fee7e5",
+  "display": "standalone",
+  "scope": "./",
+  "id": "./?utm_source=homescreen",
+  "start_url": "./?utm_source=homescreen",
+  "description": "Seu jeito de acompanhar o Restaurante Universitário da UFPE com mais tempero.",
+  "shortcuts": [
+    {
+      "name": "Cardápio",
+      "description": "Ver o cardápio completo do RU",
+      "url": "/menu?utm_source=homescreen",
+      "icons": [
+        {
+          "src": "/icons/shorcuts/menu.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "src": "./assets/icons/app-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/app-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/app-icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./assets/icons/app-icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

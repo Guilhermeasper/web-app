@@ -1,0 +1,18 @@
+<div class="flex w-full flex-row items-center justify-between gap-2 p-4">
+  <h2 class="text-xl sm:text-2xl">
+    <strong>{{ selectedWeekday() }}</strong
+    >, {{ selectedDayAndMonth() }}
+  </h2>
+
+  <button
+    class="flex flex-row items-center gap-2 rounded-full border-2 border-accent p-2 font-geometric font-semibold text-accent hover:bg-accent/10 hover:shadow-lg focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2 focus:ring-offset-background active:bg-accent/30 sm:px-4 sm:py-2"
+    (click)="openPickerDialog()"
+  >
+    <ng-icon name="lucideCalendarDays" aria-hidden="true"></ng-icon>
+    <span class="sr-only sm:not-sr-only">Selecionar data</span>
+  </button>
+</div>
+
+<ng-template #pickerDialog>
+  <div id="calendar-container"></div>
+</ng-template>

@@ -1,0 +1,79 @@
+<a
+  class="flex h-full flex-row justify-between gap-2 rounded-2xl border-overlay-contrast bg-overlay shadow-sm transition-all hover:bg-overlay-hover hover:shadow-lg focus:outline-none focus:ring focus:ring-offset-2 focus:ring-offset-background active:bg-overlay-hover sm:gap-4 sm:rounded-3xl"
+  [ngClass]="{
+    'focus:ring-accent': state() === StatusCardComponentState.Loading,
+    'focus:ring-overlay-positive':
+      operationStatus()?.currentStatus === OperationStatusType.Open,
+    'focus:ring-overlay-negative':
+      operationStatus()?.currentStatus === OperationStatusType.Closed,
+  }"
+  routerLink="/operation"
+>
+  <div
+    class="flex h-full flex-grow flex-col justify-between p-4 text-overlay-contrast sm:p-6"
+  >
+    <h2 class="geometric-title">Funcionamento</h2>
+
+    @if (state() === StatusCardComponentState.Loading) {
+      <div
+        class="my-1 h-8 w-56 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:my-2 sm:h-9 sm:w-72"
+      ></div>
+
+      <div
+        class="h-5 w-52 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-6 sm:w-64"
+      ></div>
+    }
+
+    @if (state() === StatusCardComponentState.ShowingStatus) {
+      <p class="py-1 text-2xl sm:py-2 sm:text-3xl">
+        @if (operationStatus()!.currentStatus === OperationStatusType.Open) {
+          <strong class="text-overlay-positive">Aberto</strong>
+        }
+        @if (operationStatus()!.currentStatus === OperationStatusType.Closed) {
+          <strong class="text-overlay-negative">Fechado</strong>
+        }
+      </p>
+
+      @if (operationStatus()!.nextMilestone) {
+        <p class="text-sm sm:text-base">
+          @if (
+            operationStatus()!.nextMilestone!.status ===
+            OperationStatusType.Open
+          ) {
+            abre em
+          }
+          @if (
+            operationStatus()!.nextMilestone!.status ===
+            OperationStatusType.Closed
+          ) {
+            fecha em
+          }
+          {{ nextMilestoneRelativeTime() }}
+        </p>
+      }
+    }
+  </div>
+  <div
+    class="flex w-32 flex-col items-center justify-center rounded-2xl rounded-bl-none px-2 py-4 text-center text-background sm:w-44 sm:rounded-3xl sm:rounded-bl-none sm:px-4 sm:py-8"
+    [ngClass]="{
+      'animate-pulse bg-overlay-contrast/30':
+        state() === StatusCardComponentState.Loading,
+      'bg-overlay-positive':
+        operationStatus()?.currentStatus === OperationStatusType.Open,
+      'bg-overlay-negative':
+        operationStatus()?.currentStatus === OperationStatusType.Closed,
+      'bg-transparent':
+        state() === StatusCardComponentState.ShowingStatus &&
+        !currentMealType(),
+    }"
+  >
+    @if (
+      state() === StatusCardComponentState.ShowingStatus && currentMealType()
+    ) {
+      <p class="text-base sm:text-lg">
+        <strong>{{ currentMealType() }}</strong>
+      </p>
+      <p class="text-sm sm:text-base">{{ currentMealTypeServingTime() }}</p>
+    }
+  </div>
+</a>

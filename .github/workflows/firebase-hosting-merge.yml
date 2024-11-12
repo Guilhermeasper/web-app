@@ -1,0 +1,38 @@
+name: firebase-hosting-merge
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies
+        run: |
+          npm ci
+        env:
+          CI: true
+
+      - name: Build web app
+        run: |
+          npm run build
+        env:
+          CI: true
+
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RUSBEPLATFORM }}
+          channelId: live
+          projectId: rusbeplatform

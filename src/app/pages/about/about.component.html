@@ -1,0 +1,74 @@
+<div class="w-full bg-acerola">
+  <div class="reduced-page-container p-4">
+    <rusbe-header [type]="HEADER_TYPE"> Sobre o Rusbé </rusbe-header>
+
+    <h2
+      class="mb-8 mt-12 text-3xl leading-snug text-farofa sm:mb-16 sm:mt-16 sm:text-4xl sm:leading-snug"
+    >
+      Seu jeito de acompanhar o RU
+      <strong class="md:text-nowrap">com mais tempero</strong>.
+    </h2>
+  </div>
+</div>
+
+<div class="reduced-page-container flex flex-col items-start sm:-mt-8">
+  <img alt="" class="max-h-72" src="assets/artworks/shapes-pumpkin.svg" />
+</div>
+
+<div class="reduced-page-container">
+  <div class="my-8 flex max-w-prose flex-col gap-8 p-4">
+    <p class="text-lg sm:text-xl">
+      Às vezes,
+      <strong>parece que o Restaurante Universitário é um favor</strong>. Como
+      se não pudéssemos ter comodidade, reivindicar melhorias e apontar
+      problemas porque é um serviço oferecido e subsidiado pela universidade.
+    </p>
+
+    <p class="text-lg sm:text-xl">
+      O Restaurante Universitário não é um favor:
+      <strong
+        >é um mecanismo de permanência na universidade, uma necessidade para
+        centenas de pessoas alunas da UFPE</strong
+      >. Se o Rusbé puder melhorar, nem que seja um tiquinho só, a experiência
+      das pessoas alunas, funcionárias, e toda a comunidade que usufrui do RU,
+      ficamos muito felizes.
+    </p>
+
+    <p>
+      O Rusbé é um projeto de código aberto mantido com muito carinho por
+      <a
+        class="body-link"
+        href="https://github.com/rusbeapp/web-app/contributors"
+        >Erick Riso e contribuidores</a
+      >.
+    </p>
+    <p *ngIf="false">
+      <!-- TODO: Show this when traffic data is implemented -->
+      Dados de tráfego e movimento fornecidos por cortesia de
+      <a class="body-link" href="https://besttime.app">BestTime</a>.
+    </p>
+  </div>
+
+  <div
+    class="mb-8 bg-overlay py-4 font-geometric text-base sm:mb-12 sm:text-lg md:mx-4 md:mt-4 md:rounded-xl md:px-2"
+  >
+    <h3 class="geometric-title my-2 px-4 text-accent">
+      Siga a gente nas redes sociais
+    </h3>
+
+    <ul class="my-4 flex flex-col justify-between gap-3 sm:gap-4">
+      <li *ngFor="let socialNetwork of socialNetworks">
+        <a
+          class="body-link flex flex-row items-center gap-2 px-4"
+          [href]="socialNetwork.url"
+          ><ng-icon aria-hidden="true" [name]="socialNetwork.icon"></ng-icon
+          >{{ socialNetwork.name }}</a
+        >
+      </li>
+    </ul>
+  </div>
+
+  <p class="geometric-title my-8 px-4 sm:my-10">
+    rusbé-web-app {{ APP_VERSION }}
+  </p>
+</div>

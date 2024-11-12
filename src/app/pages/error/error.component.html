@@ -1,0 +1,23 @@
+<div class="standard-page-container p-4">
+  <rusbe-header [type]="HEADER_TYPE"></rusbe-header>
+
+  <main
+    class="mt-16 flex flex-col items-start gap-2 sm:mt-24"
+    *ngIf="errorType === ErrorType.NotFound"
+  >
+    <img
+      alt=""
+      src="assets/artworks/shapes-broken-plate.svg"
+      class="mb-8 w-[50vw] max-w-72 sm:mb-16"
+    />
+
+    <p class="geometric-title pb-2 sm:pb-4">Erro 404</p>
+    <h2 class="text-2xl sm:text-3xl">
+      Parece que esta página caiu no chão e se quebrou em mil pedaços.
+    </h2>
+    <p class="line-height-normal">
+      Não foi possível encontrar esta página. Verifique se o link está correto,
+      ou acesse a <a class="body-link" routerLink="/home">página inicial</a>.
+    </p>
+  </main>
+</div>

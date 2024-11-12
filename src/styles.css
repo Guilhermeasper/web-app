@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base guideline colors */
+    --color-beterraba: 176 31 68;
+    --color-tamarindo: 92 10 10;
+    --color-acerola: 233 65 12;
+    --color-farofa: 254 231 229;
+    --color-farofa-tint: 254 246 246;
+    --color-mostarda: 250 177 37;
+    --color-laranja: 255 122 0;
+    --color-acelga: 9 119 59;
+    --color-acelga-shade: 15 59 19;
+    --color-acelga-tint: 70 226 85;
+    --color-bandeja: 3 33 110;
+
+    /* Semantic colors for light mode */
+    --color-background: var(--color-farofa);
+    --color-background-contrast: var(--color-tamarindo);
+
+    --color-header: var(--color-acerola);
+
+    --color-accent: var(--color-beterraba);
+    --color-accent-contrast: var(--color-farofa);
+    --color-accent-hover: 123 22 48;
+
+    --color-overlay: var(--color-farofa-tint);
+    --color-overlay-contrast: var(--color-tamarindo);
+    --color-overlay-positive: var(--color-acelga);
+    --color-overlay-negative: var(--color-beterraba);
+    --color-overlay-hover: 244 206 215;
+
+    --color-highlight-a: var(--color-acerola);
+    --color-highlight-a-contrast: var(--color-farofa-tint);
+    --color-highlight-a-accent: var(--color-tamarindo);
+    --color-highlight-a-hover: 163 46 8;
+
+    --color-highlight-b: var(--color-acelga-shade);
+    --color-highlight-b-contrast: var(--color-farofa-tint);
+    --color-highlight-b-accent: var(--color-acelga-tint);
+    --color-highlight-b-hover: 11 41 13;
+  }
+
+  body.dark {
+    /* Dark mode only colors */
+    --color-meianoite: 19 19 19;
+    --color-escuro: 45 32 32;
+    --color-quibebe: 255 186 204;
+
+    /* Semantic colors for dark mode overrides */
+    --color-background: var(--color-meianoite);
+    --color-background-contrast: var(--color-farofa);
+
+    --color-header: var(--color-laranja);
+
+    --color-accent: var(--color-quibebe);
+    --color-accent-contrast: var(--color-tamarindo);
+    --color-accent-hover: 255 135 67;
+
+    --color-overlay: var(--color-escuro);
+    --color-overlay-contrast: var(--color-farofa);
+    --color-overlay-positive: var(--color-acelga-tint);
+    --color-overlay-negative: var(--color-laranja);
+    --color-overlay-hover: 68 53 53;
+  }
+
+  .standard-page-container {
+    @apply mx-auto max-w-screen-xl;
+  }
+
+  .reduced-page-container {
+    @apply mx-auto max-w-screen-md;
+  }
+
+  .body-link {
+    @apply box-decoration-clone text-accent underline underline-offset-4 transition-colors hover:text-accent-hover focus:rounded-md focus:outline-none focus:ring focus:ring-accent-hover;
+  }
+
+  .geometric-title {
+    @apply font-geometric font-bold uppercase;
+  }
+
+  .bg-card-corner-over {
+    @apply bg-over-distant bg-no-repeat sm:bg-over;
+  }
+
+  .bg-card-corner-close {
+    @apply bg-close bg-no-repeat;
+  }
+}
+
+.themed-scrollbar {
+  --scrollbar-color-thumb: rgb(
+    var(--color-overlay-negative)
+  ); /* FIXME: Implement this as a Tailwind utility */
+  --scrollbar-color-track: rgb(var(--color-overlay-negative) / 10%);
+  --scrollbar-width: auto;
+  --scrollbar-width-legacy: 0.5rem;
+}
+
+@supports (scrollbar-width: auto) {
+  .themed-scrollbar {
+    scrollbar-color: var(--scrollbar-color-thumb) var(--scrollbar-color-track);
+    scrollbar-width: var(--scrollbar-width);
+  }
+}
+
+@supports selector(::-webkit-scrollbar) {
+  .themed-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-color-thumb);
+  }
+  .themed-scrollbar::-webkit-scrollbar-track {
+    background: var(--scrollbar-color-track);
+  }
+  .themed-scrollbar::-webkit-scrollbar {
+    max-width: var(--scrollbar-width-legacy);
+    max-height: var(--scrollbar-width-legacy);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    transform: translateX(30px);
+  }
+}
+
+@keyframes slide-to-left {
+  to {
+    transform: translateX(-30px);
+  }
+}
+
+::view-transition-old(root) {
+  animation:
+    90ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+}
+
+::view-transition-new(root) {
+  animation:
+    210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+}

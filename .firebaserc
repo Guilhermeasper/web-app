@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "rusbeplatform"
+  },
+  "targets": {
+    "rusbeplatform": {
+      "hosting": {
+        "app": [
+          "rusbeplatform"
+        ]
+      }
+    }
+  }
+}

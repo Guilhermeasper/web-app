@@ -1,0 +1,12 @@
+<div class="standard-page-container p-4">
+  <rusbe-header [type]="HEADER_TYPE"> Cardápio </rusbe-header>
+</div>
+
+<div class="standard-page-container">
+  <main class="flex flex-col gap-6 sm:gap-8">
+    <rusbe-date-picker [(selectedDate)]="selectedDate"></rusbe-date-picker>
+    <rusbe-restaurant-menu-viewer
+      [archiveEntry]="selectedArchiveEntry.value()"
+    ></rusbe-restaurant-menu-viewer>
+  </main>
+</div>

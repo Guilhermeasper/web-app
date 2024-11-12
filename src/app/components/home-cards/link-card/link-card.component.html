@@ -1,0 +1,13 @@
+<a
+  class="flex h-full flex-row items-center gap-2 rounded-2xl bg-overlay p-4 text-accent shadow-sm transition-all hover:bg-overlay-hover hover:shadow-lg focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2 focus:ring-offset-background active:bg-overlay-hover sm:gap-4 sm:rounded-3xl sm:p-6"
+  [routerLink]="destination()"
+>
+  <ng-icon
+    class="min-w-8 text-3xl sm:min-w-9 sm:text-4xl"
+    aria-hidden="true"
+    [name]="iconName()"
+  ></ng-icon>
+  <h2 class="text-base font-semibold leading-tight sm:text-lg sm:leading-tight">
+    <ng-content></ng-content>
+  </h2>
+</a>
