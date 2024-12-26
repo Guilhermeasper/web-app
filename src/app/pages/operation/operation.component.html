@@ -35,14 +35,14 @@
       </h2>
 
       <div
-        class="themed-scrollbar mt-4 flex snap-x snap-mandatory scroll-pl-4 flex-row gap-4 overflow-x-auto px-4 pb-4 sm:mt-6 sm:scroll-pl-6 sm:gap-6 sm:px-6 sm:pb-6"
+        class="themed-scrollbar mt-4 flex snap-x snap-mandatory scroll-pl-4 flex-row gap-4 overflow-x-auto px-4 pb-4 sm:mt-6 sm:scroll-pl-6 sm:gap-6 sm:px-6 sm:pb-6 md:grid md:grid-cols-2"
       >
         @for (
           pricingProfile of MEAL_PRICING_PROFILES;
           track pricingProfile.balanceType
         ) {
           <div
-            class="flex min-w-full snap-start flex-col rounded-xl border-2 border-accent bg-overlay py-4 shadow-sm sm:min-w-[480px] sm:py-6"
+            class="flex min-w-full snap-start flex-col rounded-xl border-2 border-accent bg-overlay py-4 shadow-sm sm:py-6"
           >
             <h3
               class="mb-2 px-4 text-lg font-bold text-accent sm:mb-4 sm:px-6 sm:text-xl"
