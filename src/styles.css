@@ -90,15 +90,29 @@
   .bg-card-corner-close {
     @apply bg-close bg-no-repeat;
   }
-}
 
-.themed-scrollbar {
-  --scrollbar-color-thumb: rgb(
-    var(--color-overlay-negative)
-  ); /* FIXME: Implement this as a Tailwind utility */
-  --scrollbar-color-track: rgb(var(--color-overlay-negative) / 10%);
-  --scrollbar-width: auto;
-  --scrollbar-width-legacy: 0.5rem;
+  .grouping-cards-container {
+    @apply flex flex-col gap-4 sm:gap-6;
+  }
+
+  .grouping-card {
+    @apply bg-overlay py-4 sm:mx-4 sm:rounded-xl;
+  }
+
+  .grouping-card-horizontal-padding {
+    @apply px-4 sm:px-6;
+  }
+
+  .grouping-card-title {
+    @apply geometric-title my-2 text-accent;
+  }
+
+  .themed-scrollbar {
+    --scrollbar-color-thumb: rgb(var(--color-overlay-negative));
+    --scrollbar-color-track: rgb(var(--color-overlay-negative) / 10%);
+    --scrollbar-width: auto;
+    --scrollbar-width-legacy: 0.5rem;
+  }
 }
 
 @supports (scrollbar-width: auto) {

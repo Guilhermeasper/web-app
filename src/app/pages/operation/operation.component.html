@@ -3,21 +3,19 @@
 </div>
 
 <div class="standard-page-container">
-  <main>
-    <div
-      class="mb-6 mt-2 bg-overlay py-4 text-sm sm:mx-4 sm:mb-8 sm:mt-4 sm:rounded-xl sm:px-2 sm:text-base"
-    >
-      <h2 class="geometric-title my-2 px-4 text-accent">Horários</h2>
+  <main class="grouping-cards-container my-2 sm:my-4">
+    <div class="grouping-card grouping-card-horizontal-padding">
+      <h2 class="grouping-card-title">Horários</h2>
 
-      <p class="my-4 px-4 sm:my-6">
+      <p class="my-4 sm:my-6">
         O RU funciona <strong>de segunda à sexta-feira</strong>, conforme o
         calendário acadêmico.
       </p>
 
-      <ol class="my-4 px-4 sm:my-6">
+      <ol class="my-2 sm:my-4">
         @for (period of RESTAURANT_WORKING_HOURS; track period.meal) {
-          <li class="my-4">
-            <strong class="text-base sm:text-lg">{{ period.meal }}</strong>
+          <li class="mt-4">
+            <strong class="text-sm sm:text-lg">{{ period.meal }}</strong>
             <span class="flex items-center gap-2 font-geometric">
               <ng-icon name="lucideClock" aria-hidden="true"></ng-icon>
               das {{ period.startTime }} às {{ period.endTime }}
@@ -27,15 +25,13 @@
       </ol>
     </div>
 
-    <div
-      class="mb-8 bg-overlay py-4 text-sm sm:mx-4 sm:mb-12 sm:mt-4 sm:rounded-xl sm:text-base"
-    >
-      <h2 class="geometric-title my-2 px-4 text-accent sm:px-6">
+    <div class="grouping-card">
+      <h2 class="grouping-card-title grouping-card-horizontal-padding">
         Valor das refeições
       </h2>
 
       <div
-        class="themed-scrollbar mt-4 flex snap-x snap-mandatory scroll-pl-4 flex-row gap-4 overflow-x-auto px-4 pb-4 sm:mt-6 sm:scroll-pl-6 sm:gap-6 sm:px-6 sm:pb-6 md:grid md:grid-cols-2"
+        class="themed-scrollbar mt-4 flex snap-x snap-mandatory scroll-pl-4 flex-row gap-2 overflow-x-auto px-4 pb-4 sm:mt-6 sm:scroll-pl-6 sm:px-6 sm:pb-6 md:grid md:grid-cols-2 md:gap-4"
       >
         @for (
           pricingProfile of MEAL_PRICING_PROFILES;
@@ -45,7 +41,7 @@
             class="flex min-w-full snap-start flex-col rounded-xl border-2 border-accent bg-overlay py-4 shadow-sm sm:py-6"
           >
             <h3
-              class="mb-2 px-4 text-lg font-bold text-accent sm:mb-4 sm:px-6 sm:text-xl"
+              class="mb-2 px-4 text-base font-bold text-accent sm:mb-4 sm:px-6 sm:text-xl"
             >
               {{ pricingProfile.title }}
             </h3>
@@ -59,7 +55,7 @@
                   <td class="px-4 py-2 font-bold sm:px-6">
                     {{ item.meal }}
                   </td>
-                  <td class="w-28 px-4 py-2 text-right sm:w-32 sm:px-6">
+                  <td class="w-24 px-4 py-2 text-right sm:w-32 sm:px-6">
                     @if (item.price.valueInCents === 0) {
                       <span class="text-accent">Sem custo</span>
                     } @else {
