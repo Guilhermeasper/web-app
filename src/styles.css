@@ -125,6 +125,7 @@
 @supports selector(::-webkit-scrollbar) {
   .themed-scrollbar::-webkit-scrollbar-thumb {
     background: var(--scrollbar-color-thumb);
+    @apply rounded-full;
   }
   .themed-scrollbar::-webkit-scrollbar-track {
     background: var(--scrollbar-color-track);
