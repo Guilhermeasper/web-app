@@ -5,14 +5,14 @@ import { RouterModule } from '@angular/router';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 
-import { ArchiveService } from '../../../services/archive/archive.service';
+import { ArchiveService } from '@rusbe/services/archive/archive.service';
 import {
   KnowledgeService,
   OperationClosedStatus,
   OperationOpenStatus,
   OperationStatus,
   OperationStatusType,
-} from '../../../services/knowledge/knowledge.service';
+} from '@rusbe/services/knowledge/knowledge.service';
 
 @Component({
   selector: 'rusbe-status-card',

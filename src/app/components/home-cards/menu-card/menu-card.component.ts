@@ -8,13 +8,13 @@ import { ptBR } from 'date-fns/locale/pt-BR';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideChevronRight } from '@ng-icons/lucide';
 
-import { ArchiveService } from '../../../services/archive/archive.service';
+import { ArchiveService } from '@rusbe/services/archive/archive.service';
 import {
   KnowledgeService,
   MAIN_COURSE_NAME,
   MostRelevantArchiveEntryInfo,
-} from '../../../services/knowledge/knowledge.service';
-import { MealSet } from '../../../types/archive';
+} from '@rusbe/services/knowledge/knowledge.service';
+import { MealSet } from '@rusbe/types/archive';
 
 @Component({
   selector: 'rusbe-menu-card',

@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import {
   HeaderComponent,
   HeaderType,
-} from '../../components/header/header.component';
+} from '@rusbe/components/header/header.component';
 
 @Component({
   selector: 'rusbe-error-page',

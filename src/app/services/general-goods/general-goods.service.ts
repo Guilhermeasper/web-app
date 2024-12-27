@@ -5,12 +5,12 @@ import { lastValueFrom } from 'rxjs';
 
 import { jwtDecode } from 'jwt-decode';
 
-import { environment } from '../../../environments/environment';
-import { BrlCurrency } from '../../types/brl-currency';
+import { environment } from '@rusbe/environments/environment';
 import {
   LocalStorageService,
   StorageKey,
-} from '../local-storage/local-storage.service';
+} from '@rusbe/services/local-storage/local-storage.service';
+import { BrlCurrency } from '@rusbe/types/brl-currency';
 
 @Injectable({
   providedIn: 'root',

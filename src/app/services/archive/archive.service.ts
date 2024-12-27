@@ -7,12 +7,12 @@ import { differenceInMilliseconds, parse } from 'date-fns';
 
 import superjson, { SuperJSONResult } from 'superjson';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@rusbe/environments/environment';
 import {
   ArchiveEntry,
   ArchiveFileEntry,
   ArchiveIndex,
-} from '../../types/archive';
+} from '@rusbe/types/archive';
 
 @Injectable({
   providedIn: 'root',

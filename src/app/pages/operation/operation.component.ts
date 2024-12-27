@@ -6,11 +6,11 @@ import { lucideClock } from '@ng-icons/lucide';
 import {
   HeaderComponent,
   HeaderType,
-} from '../../components/header/header.component';
+} from '@rusbe/components/header/header.component';
 import {
   MEAL_PRICING_PROFILES,
   RESTAURANT_WORKING_HOURS,
-} from '../../services/knowledge/knowledge.service';
+} from '@rusbe/services/knowledge/knowledge.service';
 
 @Component({
   selector: 'rusbe-operation-page',

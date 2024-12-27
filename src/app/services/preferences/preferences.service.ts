@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import {
   LocalStorageService,
   StorageKey,
-} from '../local-storage/local-storage.service';
+} from '@rusbe/services/local-storage/local-storage.service';
 
 @Injectable({
   providedIn: 'root',

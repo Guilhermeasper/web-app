@@ -1,9 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 
-import { CryptoService, EncryptedObject } from '../crypto/crypto.service';
-import { FirebaseService } from '../firebase/firebase.service';
-import { GeneralGoodsService } from '../general-goods/general-goods.service';
-import { GoogleDriveService } from '../google-drive/google-drive.service';
+import {
+  CryptoService,
+  EncryptedObject,
+} from '@rusbe/services/crypto/crypto.service';
+import { FirebaseService } from '@rusbe/services/firebase/firebase.service';
+import { GeneralGoodsService } from '@rusbe/services/general-goods/general-goods.service';
+import { GoogleDriveService } from '@rusbe/services/google-drive/google-drive.service';
 
 @Injectable({
   providedIn: 'root',
