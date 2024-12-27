@@ -19,8 +19,8 @@ import { Calendar } from 'vanilla-calendar-pro';
 import {
   ARCHIVE_ENTRY_FILENAME_DATE_FORMAT,
   ArchiveService,
-} from '../../services/archive/archive.service';
-import { KnowledgeService } from '../../services/knowledge/knowledge.service';
+} from '@rusbe/services/archive/archive.service';
+import { KnowledgeService } from '@rusbe/services/knowledge/knowledge.service';
 
 @Component({
   selector: 'rusbe-date-picker',

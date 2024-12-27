@@ -9,11 +9,11 @@ import {
   faBrandXTwitter,
 } from '@ng-icons/font-awesome/brands';
 
-import { version } from '../../../environments/version';
 import {
   HeaderComponent,
   HeaderType,
-} from '../../components/header/header.component';
+} from '@rusbe/components/header/header.component';
+import { version } from '@rusbe/environments/version';
 
 @Component({
   selector: 'rusbe-about-page',

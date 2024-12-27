@@ -12,7 +12,7 @@ import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 
 import { firstValueFrom } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@rusbe/environments/environment';
 
 @Injectable({
   providedIn: 'root',

@@ -10,13 +10,13 @@ import { Observable, interval, startWith } from 'rxjs';
 
 import { addHours, addMinutes, isBefore, lightFormat, parse } from 'date-fns';
 
-import { ArchiveEntry, MealType } from '../../types/archive';
-import { BrlCurrency } from '../../types/brl-currency';
 import {
   ARCHIVE_ENTRY_FILENAME_DATE_FORMAT,
   ArchiveService,
-} from '../archive/archive.service';
-import { GeneralGoodsBalanceType } from '../general-goods/general-goods.service';
+} from '@rusbe/services/archive/archive.service';
+import { GeneralGoodsBalanceType } from '@rusbe/services/general-goods/general-goods.service';
+import { ArchiveEntry, MealType } from '@rusbe/types/archive';
+import { BrlCurrency } from '@rusbe/types/brl-currency';
 
 @Injectable({
   providedIn: 'root',

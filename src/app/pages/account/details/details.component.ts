@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import {
   HeaderComponent,
   HeaderType,
-} from '../../../components/header/header.component';
-import { AccountService } from '../../../services/account/account.service';
+} from '@rusbe/components/header/header.component';
+import { AccountService } from '@rusbe/services/account/account.service';
 
 @Component({
   selector: 'rusbe-account-details-page',

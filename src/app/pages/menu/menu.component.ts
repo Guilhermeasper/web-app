@@ -1,16 +1,16 @@
 import { Component, inject, linkedSignal, resource } from '@angular/core';
 
-import { DatePickerComponent } from '../../components/date-picker/date-picker.component';
+import { DatePickerComponent } from '@rusbe/components/date-picker/date-picker.component';
 import {
   HeaderComponent,
   HeaderType,
-} from '../../components/header/header.component';
-import { RestaurantMenuViewerComponent } from '../../components/restaurant-menu-viewer/restaurant-menu-viewer.component';
-import { ArchiveService } from '../../services/archive/archive.service';
+} from '@rusbe/components/header/header.component';
+import { RestaurantMenuViewerComponent } from '@rusbe/components/restaurant-menu-viewer/restaurant-menu-viewer.component';
+import { ArchiveService } from '@rusbe/services/archive/archive.service';
 import {
   KnowledgeService,
   MostRelevantArchiveEntryInfo,
-} from '../../services/knowledge/knowledge.service';
+} from '@rusbe/services/knowledge/knowledge.service';
 
 @Component({
   selector: 'rusbe-menu-page',

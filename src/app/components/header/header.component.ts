@@ -4,8 +4,8 @@ import { Component, input } from '@angular/core';
 import {
   BackButtonColorScheme,
   BackButtonComponent,
-} from '../back-button/back-button.component';
-import { LogoComponent } from '../logo/logo.component';
+} from '@rusbe/components/back-button/back-button.component';
+import { LogoComponent } from '@rusbe/components/logo/logo.component';
 
 @Component({
   selector: 'rusbe-header',

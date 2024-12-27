@@ -23,10 +23,10 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
-import { environment } from '../environments/environment';
-import { version } from '../environments/version';
-import { routes } from './app.routes';
-import { viewTransitionHandler } from './view-transition-handler';
+import { routes } from '@rusbe/app.routes';
+import { environment } from '@rusbe/environments/environment';
+import { version } from '@rusbe/environments/version';
+import { viewTransitionHandler } from '@rusbe/view-transition-handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [

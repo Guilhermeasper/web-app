@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input, linkedSignal } from '@angular/core';
 
-import { ArchiveEntry } from '../../types/archive';
+import { ArchiveEntry } from '@rusbe/types/archive';
 
 @Component({
   selector: 'rusbe-restaurant-menu-viewer',

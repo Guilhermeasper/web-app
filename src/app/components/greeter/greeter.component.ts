@@ -7,12 +7,12 @@ import { ptBR } from 'date-fns/locale/pt-BR';
 import {
   ARCHIVE_ENTRY_FILENAME_DATE_FORMAT,
   ArchiveService,
-} from '../../services/archive/archive.service';
+} from '@rusbe/services/archive/archive.service';
 import {
   KnowledgeService,
   MostRelevantArchiveEntryInfo,
   RESTAURANT_REGULARLY_OPEN_DAYS,
-} from '../../services/knowledge/knowledge.service';
+} from '@rusbe/services/knowledge/knowledge.service';
 
 @Component({
   selector: 'rusbe-greeter',
