@@ -15,10 +15,10 @@
         <button
           type="button"
           (keydown)="handleKeypressOnTabSelector(index, $event)"
-          [id]="'tab-' + index"
+          [id]="'meal-tab-' + index"
           role="tab"
           [attr.aria-selected]="selectedMealIndex() === index"
-          [attr.aria-controls]="'tabpanel-' + index"
+          [attr.aria-controls]="'meal-tabpanel-' + index"
           [tabindex]="selectedMealIndex() === index ? 0 : -1"
           (click)="selectMeal(index)"
           class="inline-block rounded-full px-4 py-2 font-geometric text-accent transition-colors hover:bg-accent/20 focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2 focus:ring-offset-background active:bg-accent/30 aria-selected:bg-accent aria-selected:text-accent-contrast aria-selected:hover:bg-accent/70 aria-selected:active:bg-accent/80"
@@ -36,10 +36,10 @@
         let index = $index
       ) {
         <div
-          [id]="'tabpanel-' + index"
+          [id]="'meal-tabpanel-' + index"
           role="tabpanel"
           *ngIf="selectedMealIndex() === index"
-          [attr.aria-labelledby]="'tab-' + index"
+          [attr.aria-labelledby]="'meal-tab-' + index"
         >
           <p>Placeholder content {{ meal.type }}</p>
         </div>
