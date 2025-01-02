@@ -24,18 +24,21 @@
 
   <button
     class="button-outline focus:ring-offset-background"
-    id="open-picker-modal"
+    id="open-picker-popover"
   >
     <ng-icon name="lucideCalendarDays" aria-hidden="true"></ng-icon>
     <span class="sr-only sm:not-sr-only">Selecionar data</span>
   </button>
 </div>
 
-<ion-modal trigger="open-picker-modal">
+<ion-popover
+  trigger="open-picker-popover"
+  side="bottom"
+  alignment="end"
+  mode="md"
+>
   <ng-template>
     <div class="w-[300px] rounded-3xl bg-overlay sm:w-[350px]">
-      <h1 class="geometric-title p-4 text-sm">Visualizar outra data</h1>
-
       <ion-datetime
         presentation="date"
         #datetime
@@ -57,7 +60,7 @@
           >
             Hoje
           </button>
-          <button class="button-text" (click)="dismissPickerModal()">
+          <button class="button-text" (click)="dismissPickerPopover()">
             Cancelar
           </button>
           <button
@@ -70,4 +73,4 @@
       </ion-datetime>
     </div>
   </ng-template>
-</ion-modal>
+</ion-popover>

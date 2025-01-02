@@ -14,7 +14,7 @@ import { ptBR } from 'date-fns/locale/pt-BR';
 import {
   DatetimeChangeEventDetail,
   IonDatetime,
-  IonModal,
+  IonPopover,
 } from '@ionic/angular/standalone';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -32,7 +32,7 @@ import { capitalizeFirstCharacter } from '@rusbe/utils/strings';
 
 @Component({
   selector: 'rusbe-date-picker',
-  imports: [NgIcon, IonDatetime, IonModal],
+  imports: [NgIcon, IonDatetime, IonPopover],
   templateUrl: './date-picker.component.html',
   styleUrl: './date-picker.component.css',
   viewProviders: [
@@ -44,7 +44,7 @@ import { capitalizeFirstCharacter } from '@rusbe/utils/strings';
   ],
 })
 export class DatePickerComponent implements OnInit, OnDestroy {
-  @ViewChild(IonModal) modal!: IonModal;
+  @ViewChild(IonPopover) popover!: IonPopover;
 
   knowledgeService = inject(KnowledgeService);
   archiveService = inject(ArchiveService);
@@ -100,20 +100,20 @@ export class DatePickerComponent implements OnInit, OnDestroy {
 
       this.selectedDate.set(selectedDate);
     }
-    this.dismissPickerModal();
+    this.dismissPickerPopover();
   }
 
   isDateMenuAvailable = (date: string) => {
     return this.availableDaysString.includes(date);
   };
 
-  async dismissPickerModal() {
-    await this.modal.dismiss();
+  async dismissPickerPopover() {
+    await this.popover.dismiss();
   }
 
   async ngOnDestroy() {
-    this.modal.animated = false;
-    await this.dismissPickerModal();
+    this.popover.animated = false;
+    await this.dismissPickerPopover();
   }
 
   async ngOnInit() {

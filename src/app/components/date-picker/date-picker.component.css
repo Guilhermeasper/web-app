@@ -1,6 +1,6 @@
 @import '@ionic/core/css/core.css';
 
-ion-modal::part(content) {
+ion-popover::part(content) {
   @apply h-fit w-fit rounded-3xl bg-overlay text-overlay-contrast;
 }
 
