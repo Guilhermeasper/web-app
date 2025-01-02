@@ -2,6 +2,8 @@
 
 Aplicação web para acompanhar o Restaurante Universitário da UFPE.
 
+[![Build status](https://github.com/rusbeapp/web-app/actions/workflows/build.yml/badge.svg)](https://github.com/rusbeapp/web-app/actions)
+
 O projeto é construído usando a framework [Angular](https://angular.dev/) e [Tailwind CSS](https://tailwindcss.com/).
 
 ## Executando o aplicativo web localmente
