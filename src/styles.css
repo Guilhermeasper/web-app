@@ -83,6 +83,10 @@
     @apply font-geometric font-bold uppercase;
   }
 
+  .currency-value {
+    @apply font-geometric font-bold tabular-nums;
+  }
+
   .bg-card-corner-over {
     @apply bg-over-distant bg-no-repeat sm:bg-over;
   }
