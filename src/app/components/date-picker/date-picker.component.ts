@@ -1,9 +1,8 @@
-import { Dialog, DialogModule } from '@angular/cdk/dialog';
 import {
   Component,
-  TemplateRef,
+  OnDestroy,
+  OnInit,
   ViewChild,
-  ViewEncapsulation,
   computed,
   inject,
   model,
@@ -12,35 +11,46 @@ import {
 import { Day, getDay, isSameDay, parse } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 
+import {
+  DatetimeChangeEventDetail,
+  IonDatetime,
+  IonModal,
+} from '@ionic/angular/standalone';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCalendarDays } from '@ng-icons/lucide';
-import { Calendar } from 'vanilla-calendar-pro';
+import {
+  lucideArrowLeft,
+  lucideArrowRight,
+  lucideCalendarDays,
+} from '@ng-icons/lucide';
 
 import {
   ARCHIVE_ENTRY_FILENAME_DATE_FORMAT,
   ArchiveService,
 } from '@rusbe/services/archive/archive.service';
 import { KnowledgeService } from '@rusbe/services/knowledge/knowledge.service';
+import { capitalizeFirstCharacter } from '@rusbe/utils/strings';
 
 @Component({
   selector: 'rusbe-date-picker',
-  imports: [NgIcon, DialogModule],
+  imports: [NgIcon, IonDatetime, IonModal],
   templateUrl: './date-picker.component.html',
   styleUrl: './date-picker.component.css',
-  encapsulation: ViewEncapsulation.None,
-  viewProviders: [provideIcons({ lucideCalendarDays })],
+  viewProviders: [
+    provideIcons({
+      lucideCalendarDays,
+      lucideArrowLeft,
+      lucideArrowRight,
+    }),
+  ],
 })
-export class DatePickerComponent {
-  // TODO: Highlight today's date and add a button to go back to today.
-
-  @ViewChild('pickerDialog') pickerDialogTemplate!: TemplateRef<Element>;
+export class DatePickerComponent implements OnInit, OnDestroy {
+  @ViewChild(IonModal) modal!: IonModal;
 
   knowledgeService = inject(KnowledgeService);
   archiveService = inject(ArchiveService);
-  dialog = inject(Dialog);
 
-  calendar?: Calendar;
   selectedDate = model.required<string | undefined>();
+  availableDaysString: string[] = [];
 
   selectedDateObject = computed(() => {
     const date = this.selectedDate();
@@ -60,7 +70,7 @@ export class DatePickerComponent {
     }
 
     const day = getDay(dateObject);
-    return this.capitalizeFirstLetter(ptBR.localize.day(day as Day));
+    return capitalizeFirstCharacter(ptBR.localize.day(day as Day));
   });
 
   selectedDayAndMonth = computed(() => {
@@ -83,51 +93,32 @@ export class DatePickerComponent {
     );
   });
 
-  async openPickerDialog() {
-    const dialogRef = this.dialog.open(this.pickerDialogTemplate, {
-      height: '400px',
-      width: '400px',
-      panelClass: 'date-picker-dialog',
-    });
+  commitDateSelection(event: CustomEvent<DatetimeChangeEventDetail>) {
+    if (event.detail.value && typeof event.detail.value === 'string') {
+      // Remove the time part from the selected date string.
+      const selectedDate = event.detail.value.slice(0, 10);
 
-    dialogRef.closed.subscribe(() => {
-      this.destroyCalendarInstance();
-    });
-
-    await this.createCalendarInstance();
+      this.selectedDate.set(selectedDate);
+    }
+    this.dismissPickerModal();
   }
 
-  async createCalendarInstance() {
-    const calendarContainer = document.querySelector(
-      '#calendar-container',
-    ) as HTMLElement;
+  isDateMenuAvailable = (date: string) => {
+    return this.availableDaysString.includes(date);
+  };
 
-    this.calendar = new Calendar(calendarContainer, {
-      disableAllDates: true,
-      locale: 'pt-BR',
-      firstWeekday: 0,
-      enableDates: await this.archiveService
-        .getAvailableEntriesList()
-        .asDateString(),
-    });
-    this.calendar.init();
-    Array.from(document.getElementsByClassName('vc-week__day')).forEach(
-      (element) => {
-        element.setAttribute('tabindex', '-1');
-      },
-    );
+  async dismissPickerModal() {
+    await this.modal.dismiss();
   }
 
-  async destroyCalendarInstance() {
-    this.calendar?.destroy();
-    this.calendar = undefined;
+  async ngOnDestroy() {
+    this.modal.animated = false;
+    await this.dismissPickerModal();
   }
 
-  async closePickerDialog() {
-    // TODO: Run animation before opening and closing the dialog.
-  }
-
-  capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+  async ngOnInit() {
+    this.availableDaysString = await this.archiveService
+      .getAvailableEntriesList()
+      .asDateString();
   }
 }

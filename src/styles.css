@@ -42,6 +42,10 @@
     --color-highlight-b-contrast: var(--color-farofa-tint);
     --color-highlight-b-accent: var(--color-acelga-tint);
     --color-highlight-b-hover: 11 41 13;
+
+    /* Semantic colors for Ionic components compatibility */
+    --color-accent-rgb: 176, 31, 68;
+    --color-overlay-rgb: 254, 246, 246;
   }
 
   body.dark {
@@ -58,13 +62,17 @@
 
     --color-accent: var(--color-quibebe);
     --color-accent-contrast: var(--color-tamarindo);
-    --color-accent-hover: 255 135 67;
+    --color-accent-hover: 255 135 167;
 
     --color-overlay: var(--color-escuro);
     --color-overlay-contrast: var(--color-farofa);
     --color-overlay-positive: var(--color-acelga-tint);
     --color-overlay-negative: var(--color-laranja);
     --color-overlay-hover: 68 53 53;
+
+    /* Semantic colors for Ionic components compatibility */
+    --color-accent-rgb: 255, 186, 204;
+    --color-overlay-rgb: 45, 32, 32;
   }
 
   .standard-page-container {
@@ -81,6 +89,26 @@
 
   .geometric-title {
     @apply font-geometric font-bold uppercase;
+  }
+
+  .button-base {
+    @apply flex flex-row items-center gap-2 rounded-full p-2 font-geometric font-semibold text-accent transition-all focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2;
+  }
+
+  .button-outline {
+    @apply button-base border-2 border-accent hover:bg-accent/10 hover:shadow-lg active:bg-accent/30 sm:px-4 sm:py-2;
+  }
+
+  .button-outline-icon {
+    @apply button-base border-2 border-accent hover:bg-accent/10 hover:shadow-lg active:bg-accent/30;
+  }
+
+  .button-text {
+    @apply button-base px-4 py-2 hover:bg-accent/10 focus:ring-offset-0 active:bg-accent/30;
+  }
+
+  .button-fill {
+    @apply button-base bg-accent px-4 py-2 text-accent-contrast hover:bg-accent-hover hover:shadow-lg active:bg-accent-hover/80;
   }
 
   .currency-value {

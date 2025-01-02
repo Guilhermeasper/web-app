@@ -24,11 +24,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "vanilla-calendar-pro/styles/layout.css",
-              "@angular/cdk/overlay-prebuilt.css",
-              "src/styles.css"
-            ],
+            "styles": ["@angular/cdk/overlay-prebuilt.css", "src/styles.css"],
             "scripts": []
           },
           "configurations": {
@@ -92,11 +88,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "vanilla-calendar-pro/styles/layout.css",
-              "@angular/cdk/overlay-prebuilt.css",
-              "src/styles.css"
-            ],
+            "styles": ["@angular/cdk/overlay-prebuilt.css", "src/styles.css"],
             "scripts": []
           }
         },

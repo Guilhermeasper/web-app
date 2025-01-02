@@ -30,6 +30,7 @@ module.exports = {
         tint: fromCssVariable('--color-acelga-tint'),
       },
       bandeja: fromCssVariable('--color-bandeja'),
+      transparent: 'transparent',
 
       // Semantic colors
       background: {

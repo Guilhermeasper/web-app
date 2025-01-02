@@ -1,98 +1,24 @@
-.vc {
-  @apply bg-overlay font-geometric text-overlay-contrast;
+@import '@ionic/core/css/core.css';
+
+ion-modal::part(content) {
+  @apply h-fit w-fit rounded-3xl bg-overlay text-overlay-contrast;
 }
 
-.vc:focus-visible,
-.vc button:focus-visible,
-.vc [tabindex='0']:focus-visible {
-  @apply outline-none ring ring-accent;
+ion-datetime {
+  @apply rounded-b-3xl font-geometric;
+  --background: transparent;
+  --ion-color-primary: rgb(var(--color-accent));
+  --ion-color-primary-contrast: rgb(var(--color-accent-contrast));
+  --ion-color-step-150: rgb(var(--color-background));
+  --ion-color-step-200: transparent;
+  --ion-color-step-300: rgb(var(--color-overlay-contrast));
+  --ion-color-step-500: rgb(var(--color-overlay-contrast));
+  --ion-color-step-650: rgb(var(--color-accent));
+
+  --ion-color-primary-rgb: var(--color-accent-rgb);
+  --wheel-fade-background-rgb: var(--color-overlay-rgb);
 }
 
-.vc-arrow {
-  @apply bg-overlay text-accent before:content-['▾'] hover:text-accent-hover;
-}
-
-.vc-header__content {
-  @apply text-overlay-contrast;
-}
-
-.vc-month,
-.vc-year {
-  @apply text-overlay-contrast disabled:text-accent/30 surehover:hover:text-accent/50;
-}
-
-.vc-months__month,
-.vc-years__year {
-  @apply bg-overlay text-accent transition-all disabled:text-accent/30 surehover:hover:bg-accent/10 disabled:surehover:hover:text-accent/30;
-}
-
-.vc-months__month[data-vc-months-month-selected],
-.vc-years__year[data-vc-years-year-selected] {
-  @apply bg-accent text-accent-contrast surehover:hover:bg-accent/50 surehover:hover:text-accent-contrast;
-}
-
-.vc-week-numbers__title {
-  @apply text-accent/50;
-}
-
-.vc-week-number {
-  @apply text-accent/50;
-}
-
-.vc-week__day {
-  @apply pointer-events-none text-accent/50;
-}
-
-.vc-date[data-vc-date-selected='middle'][data-vc-date-selected] .vc-date__btn {
-  @apply bg-accent/50 bg-opacity-70 text-accent-contrast surehover:hover:bg-accent/50 surehover:hover:bg-opacity-70 surehover:hover:text-accent-contrast;
-}
-
-.vc-date[data-vc-date-selected='middle'][data-vc-date-month='prev'][data-vc-date-selected]
-  .vc-date__btn,
-.vc-date[data-vc-date-selected='middle'][data-vc-date-month='next'][data-vc-date-selected]
-  .vc-date__btn {
-  @apply bg-accent/20 text-accent/50 surehover:hover:bg-accent/20 surehover:hover:text-accent/50;
-}
-
-.vc-date__btn {
-  @apply bg-overlay text-overlay-contrast transition-all surehover:hover:bg-accent/10;
-}
-
-.vc-date[data-vc-date-today] .vc-date__btn {
-  @apply bg-highlight-a/80 text-highlight-a-contrast surehover:hover:text-highlight-a-contrast/50;
-}
-
-.vc-date[data-vc-date-today][data-vc-date-month='prev'] .vc-date__btn,
-.vc-date[data-vc-date-today][data-vc-date-month='next'] .vc-date__btn {
-  @apply text-highlight-a/50;
-}
-
-.vc-date[data-vc-date-month='prev'] .vc-date__btn,
-.vc-date[data-vc-date-month='next'] .vc-date__btn {
-  @apply text-overlay-contrast/50;
-}
-
-.vc-date[data-vc-date-disabled] .vc-date__btn {
-  @apply text-accent/30;
-}
-
-.vc-date[data-vc-date-hover] .vc-date__btn {
-  @apply bg-accent/10;
-}
-
-.vc-date[data-vc-date-selected] .vc-date__btn {
-  @apply bg-accent text-accent-contrast surehover:hover:bg-accent/50 surehover:hover:text-accent-contrast;
-}
-
-.vc-date[data-vc-date-selected][data-vc-date-month='prev'] .vc-date__btn,
-.vc-date[data-vc-date-selected][data-vc-date-month='next'] .vc-date__btn {
-  @apply bg-accent/30 text-accent/50 surehover:hover:bg-accent/30 surehover:hover:text-accent/50;
-}
-
-.vc-date__popup {
-  @apply bg-overlay text-overlay-contrast shadow-[0_3px_15px_rgba(85,_85,_85,_0.2)];
-}
-
-.vc-date-range-tooltip {
-  @apply bg-accent/5 text-accent/50 shadow-[0px_1px_4px_rgba(85,85,85,0.2)];
+ion-datetime::part(calendar-day) {
+  @apply text-sm;
 }
