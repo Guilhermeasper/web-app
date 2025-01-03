@@ -1,5 +1,5 @@
 <div
-  class="flex justify-between"
+  class="flex flex-row justify-between"
   *ngFor="
     let pricing of mealPrincingProfile()?.pricing | slice: 1 : 3;
     let i = index
@@ -22,7 +22,7 @@
 </div>
 <div
   *ngIf="calculationType() === 'details'"
-  class="flex items-center justify-between pr-5"
+  class="flex flex-row items-center justify-between pr-5"
 >
   <span class="font-bold">Valor final</span>
   <span class="currency-value text-4xl font-bold"
