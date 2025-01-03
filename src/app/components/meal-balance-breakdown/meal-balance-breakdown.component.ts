@@ -5,6 +5,7 @@ import {
   Input,
   OnChanges,
   OnInit,
+  input,
 } from '@angular/core';
 
 import { MealPricingProfile } from '@rusbe/services/knowledge/knowledge.service';
@@ -21,10 +22,10 @@ import { MealBalanceTableComponent } from './meal-balance-table/meal-balance-tab
   host: { class: 'flex flex-col gap-5' },
 })
 export class MealBalanceBreakdownComponent implements OnInit, OnChanges {
-  @Input() calculationType: CalculationType = 'equivalence';
-  @Input() mealPricingProfile: MealPricingProfile = MEAL_PRICING_PROFILES[1];
-  @Input() numberOfDinners = 0;
-  @Input() numberOfLunches = 0;
+  calculationType = input<CalculationType>(CalculationType.Equivalence);
+  mealPrincingProfile = input<MealPricingProfile>(MEAL_PRICING_PROFILES[1]);
+  numberOfDinners = input(0);
+  numberOfLunches = input(0);
 
   @Input() get topUpValue(): BrlCurrency {
     return this._topUpValue;
@@ -59,24 +60,24 @@ export class MealBalanceBreakdownComponent implements OnInit, OnChanges {
   }
 
   private refreshMealCalculations(): void {
-    if (this.calculationType === 'equivalence') {
+    if (this.calculationType() === 'equivalence') {
       this.updateCalculatedMeals();
     } else {
       this.mealSummaryList = [
-        this.createMealCountDetails(MealIndex.Lunch, this.numberOfLunches),
-        this.createMealCountDetails(MealIndex.Dinner, this.numberOfDinners),
+        this.createMealCountDetails(MealIndex.Lunch, this.numberOfLunches()),
+        this.createMealCountDetails(MealIndex.Dinner, this.numberOfDinners()),
       ];
     }
     this.updateTotalMealsCost();
   }
 
   private updateTotalMealsCost(): void {
-    this.totalMealsCost = this.mealPrincingProfile.pricing[
-      MealIndex.Lunch
-    ].price
-      .multiply(this.mealSummaryList[MealIndex.Lunch - 1].mealCount)
+    this.totalMealsCost = this.mealPrincingProfile()
+      .pricing[MealIndex.Lunch].price.multiply(
+        this.mealSummaryList[MealIndex.Lunch - 1].mealCount,
+      )
       .add(
-        this.mealPrincingProfile.pricing[MealIndex.Dinner].price.multiply(
+        this.mealPrincingProfile().pricing[MealIndex.Dinner].price.multiply(
           this.mealSummaryList[MealIndex.Dinner - 1].mealCount,
         ),
       );
@@ -103,7 +104,7 @@ export class MealBalanceBreakdownComponent implements OnInit, OnChanges {
       return {
         mealCount: numberOfMeals,
         totalCost:
-          this.mealPrincingProfile.pricing[mealIndex].price.multiply(
+          this.mealPrincingProfile().pricing[mealIndex].price.multiply(
             numberOfMeals,
           ),
         balanceLeft: BrlCurrency.fromNumber(0),
@@ -111,12 +112,12 @@ export class MealBalanceBreakdownComponent implements OnInit, OnChanges {
     }
 
     const { quantity, remaining } = this.topUpValue.calculatePurchaseQuantity(
-      this.mealPrincingProfile.pricing[mealIndex].price,
+      this.mealPrincingProfile().pricing[mealIndex].price,
     );
     return {
       mealCount: quantity,
       totalCost:
-        this.mealPrincingProfile.pricing[mealIndex].price.multiply(quantity),
+        this.mealPrincingProfile().pricing[mealIndex].price.multiply(quantity),
       balanceLeft: remaining,
     };
   }
@@ -128,7 +129,10 @@ interface MealSummary {
   balanceLeft: BrlCurrency;
 }
 
-export type CalculationType = 'equivalence' | 'details';
+export enum CalculationType {
+  Equivalence = 'equivalence',
+  Details = 'details',
+}
 
 enum MealIndex {
   Lunch = 1,
