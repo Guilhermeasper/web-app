@@ -1,0 +1,29 @@
+<table class="border-separate border-spacing-x-5">
+  <tbody class="text-right leading-5">
+    <tr>
+      <td class="{{ calculationType === 'details' ? 'w-full text-left' : '' }}">
+        Unidade do {{ mealType | lowercase }}
+      </td>
+      <td class="font-bold">R$</td>
+      <td class="currency-value font-bold">{{ mealValue }}</td>
+    </tr>
+    <tr>
+      <td class="{{ calculationType === 'details' ? 'w-full text-left' : '' }}">
+        Quantidade de {{ mealType === 'Jantar' ? 'jantares' : 'almoços' }}
+      </td>
+      <td class="border-b-2" colspan="2">x {{ mealCount }}</td>
+    </tr>
+    <tr>
+      <td class="{{ calculationType === 'details' ? 'w-full text-left' : '' }}">
+        Valor total
+      </td>
+      <td class="font-bold">R$</td>
+      <td class="currency-value font-bold">{{ totalCost }}</td>
+    </tr>
+    <tr *ngIf="calculationType === 'equivalence'">
+      <td>Resto</td>
+      <td class="font-bold">R$</td>
+      <td class="currency-value font-bold">{{ balanceLeft }}</td>
+    </tr>
+  </tbody>
+</table>

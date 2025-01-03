@@ -40,6 +40,18 @@ export class BrlCurrency {
     return { quantity, remaining };
   }
 
+  multiply(value: number): BrlCurrency {
+    return new BrlCurrency(this.#valueInCents * value);
+  }
+
+  subtract(value: BrlCurrency): BrlCurrency {
+    return new BrlCurrency(this.#valueInCents - value.valueInCents);
+  }
+
+  add(value: BrlCurrency): BrlCurrency {
+    return new BrlCurrency(this.#valueInCents + value.valueInCents);
+  }
+
   get valueInCents(): number {
     return this.#valueInCents;
   }
