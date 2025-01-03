@@ -43,7 +43,7 @@
     --color-highlight-b-accent: var(--color-acelga-tint);
     --color-highlight-b-hover: 11 41 13;
 
-    /* Semantic colors for Ionic components compatibility */
+    /* Semantic colors subset for Ionic components compatibility */
     --color-accent-rgb: 176, 31, 68;
     --color-overlay-rgb: 254, 246, 246;
   }
@@ -62,7 +62,7 @@
 
     --color-accent: var(--color-quibebe);
     --color-accent-contrast: var(--color-tamarindo);
-    --color-accent-hover: 255 135 167;
+    --color-accent-hover: 230 139 163;
 
     --color-overlay: var(--color-escuro);
     --color-overlay-contrast: var(--color-farofa);
@@ -70,7 +70,7 @@
     --color-overlay-negative: var(--color-laranja);
     --color-overlay-hover: 68 53 53;
 
-    /* Semantic colors for Ionic components compatibility */
+    /* Semantic colors subset for Ionic components compatibility */
     --color-accent-rgb: 255, 186, 204;
     --color-overlay-rgb: 45, 32, 32;
   }
