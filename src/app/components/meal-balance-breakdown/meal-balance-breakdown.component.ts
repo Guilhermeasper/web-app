@@ -22,7 +22,7 @@ import { MealBalanceTableComponent } from './meal-balance-table/meal-balance-tab
 })
 export class MealBalanceBreakdownComponent implements OnInit, OnChanges {
   @Input() calculationType: CalculationType = 'equivalence';
-  @Input() mealPrincingProfile: MealPricingProfile = MEAL_PRICING_PROFILES[1];
+  @Input() mealPricingProfile: MealPricingProfile = MEAL_PRICING_PROFILES[1];
   @Input() numberOfDinners = 0;
   @Input() numberOfLunches = 0;
 
