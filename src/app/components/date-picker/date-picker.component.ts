@@ -8,7 +8,7 @@ import {
   model,
 } from '@angular/core';
 
-import { Day, getDay, isSameDay, parse } from 'date-fns';
+import { Day, getDay, isSameDay, lightFormat, parse } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 
 import {
@@ -92,6 +92,13 @@ export class DatePickerComponent implements OnInit, OnDestroy {
       dateObject,
     );
   });
+
+  getTodayStringInRestaurantTimezone() {
+    return lightFormat(
+      this.knowledgeService.getDateInRestaurantTimezone(),
+      ARCHIVE_ENTRY_FILENAME_DATE_FORMAT,
+    );
+  }
 
   commitDateSelection(event: CustomEvent<DatetimeChangeEventDetail>) {
     if (event.detail.value && typeof event.detail.value === 'string') {

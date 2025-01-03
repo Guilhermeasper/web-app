@@ -38,7 +38,7 @@
   mode="md"
 >
   <ng-template>
-    <div class="w-[300px] rounded-3xl bg-overlay sm:w-[350px]">
+    <div class="w-[300px] rounded-3xl bg-overlay pt-2 sm:w-[350px]">
       <ion-datetime
         presentation="date"
         #datetime
@@ -52,11 +52,7 @@
         >
           <button
             class="button-text mr-auto"
-            (click)="
-              datetime.reset(
-                knowledgeService.getDateInRestaurantTimezone().toISOString()
-              )
-            "
+            (click)="datetime.reset(getTodayStringInRestaurantTimezone())"
           >
             Hoje
           </button>
