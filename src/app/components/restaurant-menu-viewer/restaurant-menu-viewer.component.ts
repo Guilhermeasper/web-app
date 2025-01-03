@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input, linkedSignal } from '@angular/core';
 
+import { MAIN_COURSE_NAME } from '@rusbe/services/knowledge/knowledge.service';
 import { ArchiveEntry } from '@rusbe/types/archive';
+import { modulo } from '@rusbe/utils/numbers';
 
 @Component({
   selector: 'rusbe-restaurant-menu-viewer',
@@ -9,6 +11,10 @@ import { ArchiveEntry } from '@rusbe/types/archive';
   templateUrl: './restaurant-menu-viewer.component.html',
 })
 export class RestaurantMenuViewerComponent {
+  readonly MAIN_COURSE_NAME = MAIN_COURSE_NAME;
+  readonly MEAL_TAB_ID_PREFIX = 'meal-tab-';
+  readonly MEAL_TABPANEL_ID_PREFIX = 'meal-tabpanel-';
+
   archiveEntry = input.required<ArchiveEntry | undefined | null>();
 
   availableMealTypes = computed(() => {
@@ -42,6 +48,16 @@ export class RestaurantMenuViewerComponent {
     },
   });
 
+  lastUpdatedAtString = computed(() => {
+    const lastUpdatedAt = this.archiveEntry()?.lastUpdatedAt;
+
+    if (!lastUpdatedAt) {
+      return undefined;
+    }
+
+    return lastUpdatedAt.toLocaleString('pt-BR');
+  });
+
   selectMeal(index: number) {
     this.selectedMealIndex.set(index);
   }
@@ -53,14 +69,14 @@ export class RestaurantMenuViewerComponent {
     switch (event.key) {
       case 'ArrowLeft':
         this.moveFocusToTabSelector(
-          this.modulo(currentIndex - 1, availableMealTypes.length),
+          modulo(currentIndex - 1, availableMealTypes.length),
         );
         keypressHandled = true;
         break;
 
       case 'ArrowRight':
         this.moveFocusToTabSelector(
-          this.modulo(currentIndex + 1, availableMealTypes.length),
+          modulo(currentIndex + 1, availableMealTypes.length),
         );
         keypressHandled = true;
         break;
@@ -86,10 +102,6 @@ export class RestaurantMenuViewerComponent {
   }
 
   moveFocusToTabSelector(index: number) {
-    document.getElementById(`tab-${index}`)?.focus();
-  }
-
-  modulo(a: number, b: number) {
-    return ((a % b) + b) % b;
+    document.getElementById(`${this.MEAL_TAB_ID_PREFIX}${index}`)?.focus();
   }
 }

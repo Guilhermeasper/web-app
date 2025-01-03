@@ -15,37 +15,179 @@
         <button
           type="button"
           (keydown)="handleKeypressOnTabSelector(index, $event)"
-          [id]="'meal-tab-' + index"
+          [id]="MEAL_TAB_ID_PREFIX + index"
           role="tab"
           [attr.aria-selected]="selectedMealIndex() === index"
-          [attr.aria-controls]="'meal-tabpanel-' + index"
+          [attr.aria-controls]="MEAL_TABPANEL_ID_PREFIX + index"
           [tabindex]="selectedMealIndex() === index ? 0 : -1"
           (click)="selectMeal(index)"
-          class="inline-block rounded-full px-4 py-2 font-geometric text-accent transition-colors hover:bg-accent/20 focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2 focus:ring-offset-background active:bg-accent/30 aria-selected:bg-accent aria-selected:text-accent-contrast aria-selected:hover:bg-accent/70 aria-selected:active:bg-accent/80"
+          class="inline-block rounded-full px-4 py-2 font-geometric text-accent transition-all hover:bg-accent/20 focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2 focus:ring-offset-background active:bg-accent/30 aria-selected:bg-accent aria-selected:text-accent-contrast aria-selected:hover:bg-accent-hover aria-selected:active:bg-accent-hover/80"
         >
           {{ mealType }}
         </button>
       }
     </div>
   }
-  <div class="mt-4 rounded-xl bg-overlay p-4 shadow-sm md:mx-4 md:mt-8 md:p-6">
-    @if (archiveEntry()) {
+  @if (archiveEntry() === undefined) {
+    <div
+      class="mx-4 flex w-[253px] max-w-full animate-pulse flex-row gap-2 rounded-full bg-accent/10 p-1 text-center sm:w-[305px] sm:p-2"
+    >
+      <div
+        class="inline-block h-8 w-[85px] animate-pulse rounded-full bg-accent/20 sm:h-10 sm:w-[102px]"
+      ></div>
+      <div
+        class="inline-block h-8 w-[75px] animate-pulse rounded-full bg-accent/20 sm:h-10 sm:w-[90px]"
+      ></div>
+      <div
+        class="inline-block h-8 w-[68px] animate-pulse rounded-full bg-accent/20 sm:h-10 sm:w-[80px]"
+      ></div>
+    </div>
+  }
+  <div
+    class="mt-4 rounded-xl bg-overlay p-4 shadow-sm md:mx-4 md:mt-8 md:rounded-2xl md:p-6"
+  >
+    @if (archiveEntry() && archiveEntry()!.operationDay.meals.length > 0) {
       @for (
         meal of archiveEntry()!.operationDay!.meals;
         track meal.type;
         let index = $index
       ) {
         <div
-          [id]="'meal-tabpanel-' + index"
+          [id]="MEAL_TABPANEL_ID_PREFIX + index"
           role="tabpanel"
           *ngIf="selectedMealIndex() === index"
-          [attr.aria-labelledby]="'meal-tab-' + index"
+          [attr.aria-labelledby]="MEAL_TAB_ID_PREFIX + index"
+          class="columns-sm gap-16 pt-1 sm:pt-2"
         >
-          <p>Placeholder content {{ meal.type }}</p>
+          <section
+            *ngFor="let mealSet of meal.sets"
+            class="mb-8 break-inside-avoid-column sm:mb-10"
+          >
+            <h2 class="geometric-title mb-2 sm:mb-3">
+              {{ mealSet.name }}
+            </h2>
+            <ul
+              class="flex flex-col gap-1 sm:gap-2"
+              [ngClass]="{
+                'text-base sm:text-xl': mealSet.name !== MAIN_COURSE_NAME,
+                'text-xl font-medium sm:text-3xl':
+                  mealSet.name === MAIN_COURSE_NAME,
+              }"
+            >
+              <!-- TODO: Hoist main course if setting is enabled -->
+              <li
+                *ngFor="let item of mealSet.items"
+                class="flex flex-row flex-wrap items-center gap-2.5"
+              >
+                <span>{{ item.name }}</span>
+                @if (item.notes && item.notes.length > 0) {
+                  <div
+                    *ngFor="let note of item.notes"
+                    class="rounded-md bg-overlay-contrast px-1.5 py-1 font-geometric text-xs font-semibold uppercase text-overlay"
+                  >
+                    {{ note }}
+                  </div>
+                }
+              </li>
+            </ul>
+          </section>
         </div>
       }
+    } @else if (
+      archiveEntry() && archiveEntry()!.operationDay.meals.length === 0
+    ) {
+      <!-- Entry published with zero meals -->
+      <div
+        class="flex flex-col items-center gap-8 py-2 text-center text-base sm:py-4 sm:text-xl"
+      >
+        <img
+          class="w-32"
+          alt=""
+          src="assets/artworks/shapes-question-mark.svg"
+        />
+        <p>Nenhum cardápio publicado para esta data.</p>
+      </div>
+    } @else if (archiveEntry() === null) {
+      <!-- Entry is not available -->
+      <div
+        class="flex flex-col items-center gap-8 py-2 text-center text-base sm:py-4 sm:text-xl"
+      >
+        <img
+          class="w-32"
+          alt=""
+          src="assets/artworks/shapes-question-mark.svg"
+        />
+        <p>O cardápio para esta data não está disponível.</p>
+      </div>
     } @else {
-      <p>Nenhum cardápio disponível para esta data.</p>
+      <!-- Entry is loading -->
+      <div class="columns-sm gap-16 pt-1 sm:pt-2">
+        <div class="mb-8 break-inside-avoid-column sm:mb-10">
+          <div
+            class="mb-2 h-4 w-16 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:mb-3 sm:h-6 sm:w-20"
+          ></div>
+          <div class="flex flex-col gap-1 sm:gap-2">
+            <div
+              class="h-6 w-32 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-7 sm:w-36"
+            ></div>
+            <div
+              class="h-6 w-72 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-7 sm:w-80"
+            ></div>
+          </div>
+        </div>
+        <div class="mb-8 break-inside-avoid-column sm:mb-10">
+          <div
+            class="mb-2 h-4 w-24 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:mb-3 sm:h-6 sm:w-28"
+          ></div>
+          <div class="flex flex-col gap-1 sm:gap-2">
+            <div
+              class="h-6 w-56 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-7 sm:w-60"
+            ></div>
+            <div
+              class="h-6 w-40 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-7 sm:w-48"
+            ></div>
+          </div>
+        </div>
+        <div class="mb-8 break-inside-avoid-column sm:mb-10">
+          <div
+            class="mb-2 h-4 w-20 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:mb-3 sm:h-6 sm:w-24"
+          ></div>
+          <div class="flex flex-col gap-1 sm:gap-2">
+            <div
+              class="h-6 w-56 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-7 sm:w-60"
+            ></div>
+            <div
+              class="h-6 w-48 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-7 sm:w-52"
+            ></div>
+            <div
+              class="h-6 w-60 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-7 sm:w-64"
+            ></div>
+          </div>
+        </div>
+        <div class="mb-8 break-inside-avoid-column sm:mb-10">
+          <div
+            class="mb-2 h-4 w-36 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:mb-3 sm:h-6 sm:w-40"
+          ></div>
+          <div class="flex flex-col gap-1 sm:gap-2">
+            <div
+              class="h-6 w-40 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-7 sm:w-48"
+            ></div>
+            <div
+              class="h-6 w-48 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:h-7 sm:w-52"
+            ></div>
+          </div>
+        </div>
+      </div>
     }
   </div>
+  @if (lastUpdatedAtString()) {
+    <p class="mx-4 py-4 text-background-contrast/60 md:text-right">
+      Última atualização em {{ lastUpdatedAtString() }}
+    </p>
+  }
+  @if (archiveEntry() === undefined) {
+    <div
+      class="m-4 h-4 w-56 max-w-full animate-pulse rounded-xl bg-background-contrast/10 sm:h-6 sm:w-72 md:ml-auto"
+    ></div>
+  }
 </section>
