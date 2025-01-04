@@ -7,10 +7,14 @@ import {
   linkedSignal,
 } from '@angular/core';
 
-import { MAIN_COURSE_NAME } from '@rusbe/services/knowledge/knowledge.service';
+import {
+  KnowledgeService,
+  MAIN_COURSE_NAME,
+} from '@rusbe/services/knowledge/knowledge.service';
 import { PreferencesService } from '@rusbe/services/preferences/preferences.service';
-import { ArchiveEntry, Meal } from '@rusbe/types/archive';
+import { ArchiveEntry, Meal, MealType } from '@rusbe/types/archive';
 import { modulo } from '@rusbe/utils/numbers';
+import { stripTimeFromIsoDateTimeString } from '@rusbe/utils/strings';
 
 @Component({
   selector: 'rusbe-restaurant-menu-viewer',
@@ -22,6 +26,7 @@ export class RestaurantMenuViewerComponent {
   readonly MEAL_TAB_ID_PREFIX = 'meal-tab-';
   readonly MEAL_TABPANEL_ID_PREFIX = 'meal-tabpanel-';
 
+  knowledgeService = inject(KnowledgeService);
   preferencesService = inject(PreferencesService);
 
   archiveEntry = input.required<ArchiveEntry | undefined | null>();
@@ -38,8 +43,41 @@ export class RestaurantMenuViewerComponent {
         return undefined;
       }
 
-      // If the `currentlySelectedMealIndex` is not defined, default to the first option.
       if (currentlySelectedMealIndex?.value === undefined) {
+        // If the `currentlySelectedMealIndex` is not defined, check if the selected archive entry is the one deemed most relevant.
+        const archiveEntry = this.archiveEntry();
+        const mostRelevantArchiveEntryInfo =
+          this.knowledgeService.mostRelevantArchiveEntryInfo();
+
+        // If so, select the most relevant meal type.
+        if (
+          archiveEntry &&
+          mostRelevantArchiveEntryInfo &&
+          stripTimeFromIsoDateTimeString(
+            archiveEntry.operationDay.date.toISOString(),
+          ) === mostRelevantArchiveEntryInfo.title &&
+          newAvailableMealTypes.includes(mostRelevantArchiveEntryInfo.mealType)
+        ) {
+          return newAvailableMealTypes.indexOf(
+            mostRelevantArchiveEntryInfo.mealType,
+          );
+        }
+
+        // If not, try to find the first option that is a relevant meal type per the user preferences.
+        const relevantMeals =
+          this.preferencesService.userPreferences()?.relevantMeals;
+
+        if (relevantMeals) {
+          const relevantMealType = newAvailableMealTypes.find((mealType) =>
+            relevantMeals.includes(mealType as MealType),
+          );
+
+          if (relevantMealType) {
+            return newAvailableMealTypes.indexOf(relevantMealType);
+          }
+        }
+
+        // Otherwise, default to the first option.
         return 0;
       }
 

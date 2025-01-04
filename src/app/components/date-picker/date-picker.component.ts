@@ -28,7 +28,10 @@ import {
   ArchiveService,
 } from '@rusbe/services/archive/archive.service';
 import { KnowledgeService } from '@rusbe/services/knowledge/knowledge.service';
-import { capitalizeFirstCharacter } from '@rusbe/utils/strings';
+import {
+  capitalizeFirstCharacter,
+  stripTimeFromIsoDateTimeString,
+} from '@rusbe/utils/strings';
 
 @Component({
   selector: 'rusbe-date-picker',
@@ -102,11 +105,10 @@ export class DatePickerComponent implements OnInit, OnDestroy {
 
   commitDateSelection(event: CustomEvent<DatetimeChangeEventDetail>) {
     if (event.detail.value && typeof event.detail.value === 'string') {
-      // Remove the time part from the selected date string.
-      const selectedDate = event.detail.value.slice(0, 10);
-
+      const selectedDate = stripTimeFromIsoDateTimeString(event.detail.value);
       this.selectedDate.set(selectedDate);
     }
+
     this.dismissPickerPopover();
   }
 
