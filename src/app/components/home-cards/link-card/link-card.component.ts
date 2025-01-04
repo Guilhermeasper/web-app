@@ -7,6 +7,7 @@ import {
   lucideFolderClock,
   lucideInfo,
   lucideMegaphone,
+  lucideSettings,
   lucideWallet,
 } from '@ng-icons/lucide';
 
@@ -16,6 +17,7 @@ const ICONS = {
   lucideMegaphone,
   lucideInfo,
   lucideFolderClock,
+  lucideSettings,
 };
 
 @Component({

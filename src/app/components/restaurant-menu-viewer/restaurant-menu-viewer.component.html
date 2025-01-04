@@ -47,21 +47,17 @@
     class="mt-4 rounded-xl bg-overlay p-4 shadow-sm md:mx-4 md:mt-8 md:rounded-2xl md:p-6"
   >
     @if (archiveEntry() && archiveEntry()!.operationDay.meals.length > 0) {
-      @for (
-        meal of archiveEntry()!.operationDay!.meals;
-        track meal.type;
-        let index = $index
-      ) {
+      @for (meal of meals(); track meal.type; let index = $index) {
         <div
           [id]="MEAL_TABPANEL_ID_PREFIX + index"
           role="tabpanel"
           *ngIf="selectedMealIndex() === index"
           [attr.aria-labelledby]="MEAL_TAB_ID_PREFIX + index"
-          class="columns-sm gap-16 pt-1 sm:pt-2"
+          class="columns-sm gap-16 pb-2 pt-1 sm:pb-4 sm:pt-2"
         >
           <section
             *ngFor="let mealSet of meal.sets"
-            class="mb-8 break-inside-avoid-column sm:mb-10"
+            class="mb-8 break-inside-avoid-column last:mb-0 sm:mb-10"
           >
             <h2 class="geometric-title mb-2 sm:mb-3">
               {{ mealSet.name }}
@@ -69,15 +65,19 @@
             <ul
               class="flex flex-col gap-1 sm:gap-2"
               [ngClass]="{
-                'text-base sm:text-xl': mealSet.name !== MAIN_COURSE_NAME,
+                'text-base sm:text-xl':
+                  mealSet.name !== MAIN_COURSE_NAME ||
+                  !preferencesService.userPreferences()
+                    ?.showMainCourseWithLargerFont,
                 'text-xl font-medium sm:text-3xl':
-                  mealSet.name === MAIN_COURSE_NAME,
+                  mealSet.name === MAIN_COURSE_NAME &&
+                  preferencesService.userPreferences()
+                    ?.showMainCourseWithLargerFont,
               }"
             >
-              <!-- TODO: Hoist main course if setting is enabled -->
               <li
                 *ngFor="let item of mealSet.items"
-                class="flex flex-row flex-wrap items-center gap-2.5"
+                class="gap flex flex-row flex-wrap items-center gap-x-2.5 gap-y-0.5"
               >
                 <span>{{ item.name }}</span>
                 @if (item.notes && item.notes.length > 0) {
@@ -121,8 +121,8 @@
       </div>
     } @else {
       <!-- Entry is loading -->
-      <div class="columns-sm gap-16 pt-1 sm:pt-2">
-        <div class="mb-8 break-inside-avoid-column sm:mb-10">
+      <div class="columns-sm gap-16 pb-2 pt-1 sm:pb-4 sm:pt-2">
+        <div class="mb-8 break-inside-avoid-column last:mb-0 sm:mb-10">
           <div
             class="mb-2 h-4 w-16 max-w-full animate-pulse rounded-xl bg-overlay-contrast/30 sm:mb-3 sm:h-6 sm:w-20"
           ></div>

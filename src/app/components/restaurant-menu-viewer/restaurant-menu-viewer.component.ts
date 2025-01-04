@@ -1,8 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input, linkedSignal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+} from '@angular/core';
 
 import { MAIN_COURSE_NAME } from '@rusbe/services/knowledge/knowledge.service';
-import { ArchiveEntry } from '@rusbe/types/archive';
+import { PreferencesService } from '@rusbe/services/preferences/preferences.service';
+import { ArchiveEntry, Meal } from '@rusbe/types/archive';
 import { modulo } from '@rusbe/utils/numbers';
 
 @Component({
@@ -15,16 +22,17 @@ export class RestaurantMenuViewerComponent {
   readonly MEAL_TAB_ID_PREFIX = 'meal-tab-';
   readonly MEAL_TABPANEL_ID_PREFIX = 'meal-tabpanel-';
 
+  preferencesService = inject(PreferencesService);
+
   archiveEntry = input.required<ArchiveEntry | undefined | null>();
 
   availableMealTypes = computed(() => {
     return this.archiveEntry()?.operationDay.meals.map((meal) => meal.type);
   });
+
   selectedMealIndex = linkedSignal<string[] | undefined, number | undefined>({
     source: this.availableMealTypes,
     computation: (newAvailableMealTypes, currentlySelectedMealIndex) => {
-      // TODO: Improve this logic
-
       // If there are no available meal types, return undefined.
       if (!newAvailableMealTypes || newAvailableMealTypes.length === 0) {
         return undefined;
@@ -40,12 +48,46 @@ export class RestaurantMenuViewerComponent {
       const currentMealType =
         this.availableMealTypes()?.[currentlySelectedMealIndex.value];
 
-      if (currentMealType) {
-        return newAvailableMealTypes.indexOf(currentMealType) ?? 0;
+      if (currentMealType && newAvailableMealTypes.includes(currentMealType)) {
+        return newAvailableMealTypes.indexOf(currentMealType);
       }
 
       return 0;
     },
+  });
+
+  meals = computed(() => {
+    const archiveMeals = this.archiveEntry()?.operationDay.meals;
+
+    if (!archiveMeals) {
+      return undefined;
+    }
+
+    if (this.preferencesService.userPreferences()?.showMainCourseOnTop) {
+      const meals: Meal[] = archiveMeals.map((meal) => {
+        const mainCourse = meal.sets.find(
+          (set) => set.name === MAIN_COURSE_NAME,
+        );
+
+        if (!mainCourse) {
+          return meal;
+        }
+
+        const filteredSets = meal.sets.filter(
+          (set) => set.name !== MAIN_COURSE_NAME,
+        );
+        return {
+          type: meal.type,
+          sets: [mainCourse, ...filteredSets],
+          startTime: meal.startTime,
+          endTime: meal.endTime,
+        };
+      });
+
+      return meals;
+    }
+
+    return archiveMeals;
   });
 
   lastUpdatedAtString = computed(() => {

@@ -46,6 +46,8 @@
     /* Semantic colors subset for Ionic components compatibility */
     --color-accent-rgb: 176, 31, 68;
     --color-overlay-rgb: 254, 246, 246;
+
+    color-scheme: light;
   }
 
   body.dark {
@@ -73,6 +75,24 @@
     /* Semantic colors subset for Ionic components compatibility */
     --color-accent-rgb: 255, 186, 204;
     --color-overlay-rgb: 45, 32, 32;
+
+    color-scheme: dark;
+  }
+
+  select {
+    @apply bg-[url('/assets/elements/icon-chevron-down-light.svg')];
+  }
+
+  body.dark select {
+    @apply bg-[url('/assets/elements/icon-chevron-down-dark.svg')];
+  }
+
+  [type='checkbox']:checked {
+    @apply bg-[url('/assets/elements/icon-checkbox-light.svg')];
+  }
+
+  body.dark [type='checkbox']:checked {
+    @apply bg-[url('/assets/elements/icon-checkbox-dark.svg')];
   }
 
   .standard-page-container {
@@ -137,6 +157,18 @@
 
   .grouping-card-title {
     @apply geometric-title my-2 text-accent;
+  }
+
+  .grouping-card-strip {
+    @apply px-4 py-2 text-sm sm:px-6 sm:py-4 sm:text-lg;
+  }
+
+  .grouping-card-strip-button {
+    @apply w-full rounded-sm font-bold text-accent transition-all hover:bg-accent/10 focus:outline-none focus:ring focus:ring-accent focus:ring-offset-0 active:bg-accent/30 sm:gap-6;
+  }
+
+  .grouping-card-strip-button-inner {
+    @apply ml-4 flex flex-row items-center gap-4 border-b-2 border-accent/10 py-3 pr-4 text-start text-sm sm:ml-6 sm:py-6 sm:pr-6 sm:text-lg;
   }
 
   .themed-scrollbar {

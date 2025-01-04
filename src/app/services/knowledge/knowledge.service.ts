@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 
-import { Observable, interval, startWith } from 'rxjs';
+import { Observable, filter, interval, startWith, switchMap } from 'rxjs';
 
 import { addHours, addMinutes, isBefore, lightFormat, parse } from 'date-fns';
 
@@ -18,20 +18,21 @@ import { GeneralGoodsBalanceType } from '@rusbe/services/general-goods/general-g
 import { ArchiveEntry, MealType } from '@rusbe/types/archive';
 import { BrlCurrency } from '@rusbe/types/brl-currency';
 
+import {
+  DEFAULT_USER_PREFERENCES,
+  PreferencesService,
+  UserPreferences,
+} from '../preferences/preferences.service';
+
 @Injectable({
   providedIn: 'root',
 })
 export class KnowledgeService {
   private readonly KNOWLEDGE_UPDATE_INTERVAL_IN_MILLIS = 60 * 1000;
   private readonly DAYS_TO_CHECK_WHEN_TRAVERSING_ARCHIVE_ENTRIES = 7;
-  // TODO: Move this to be an user preference
-  private readonly RELEVANT_MEALS = [
-    MealType.Breakfast,
-    MealType.Lunch,
-    MealType.Dinner,
-  ];
 
   private archiveService = inject(ArchiveService);
+  private preferencesService = inject(PreferencesService);
   private knowledgeUpdateObservable: Observable<number>;
   private writableCurrentOperationStatus: WritableSignal<
     OperationStatus | undefined
@@ -47,9 +48,22 @@ export class KnowledgeService {
   > = this.writableMostRelevantArchiveEntryInfo.asReadonly();
 
   constructor() {
-    this.knowledgeUpdateObservable = interval(
-      this.KNOWLEDGE_UPDATE_INTERVAL_IN_MILLIS,
-    ).pipe(startWith(0));
+    // Wait for preferences to be defined, then start interval
+    this.knowledgeUpdateObservable =
+      this.preferencesService.userPreferencesObservable.pipe(
+        // Filter out when preferences are undefined
+        filter(
+          (preferences): preferences is UserPreferences =>
+            preferences !== undefined,
+        ),
+        // Start the interval stream only after preferences are set
+        switchMap(() => {
+          return interval(this.KNOWLEDGE_UPDATE_INTERVAL_IN_MILLIS).pipe(
+            startWith(0),
+          );
+        }),
+      );
+
     this.setupKnowledgeAutoRefresh();
   }
 
@@ -71,7 +85,18 @@ export class KnowledgeService {
     this.writableMostRelevantArchiveEntryInfo.set(mostRelevantArchiveEntryInfo);
   }
 
+  private getRelevantMeals(): MealType[] {
+    const preferences = this.preferencesService.userPreferences()!;
+
+    if (!preferences.relevantMeals || preferences.relevantMeals.length === 0) {
+      return DEFAULT_USER_PREFERENCES.relevantMeals;
+    }
+
+    return preferences.relevantMeals;
+  }
+
   private async getMostRelevantArchiveEntryInfo(): Promise<MostRelevantArchiveEntryInfo> {
+    const relevantMeals = this.getRelevantMeals();
     const currentOperationStatus = this.currentOperationStatus();
 
     if (!currentOperationStatus) {
@@ -81,9 +106,7 @@ export class KnowledgeService {
 
     if (
       currentOperationStatus.currentStatus === OperationStatusType.Open &&
-      this.RELEVANT_MEALS.includes(
-        currentOperationStatus.servingMeal as MealType,
-      )
+      relevantMeals.includes(currentOperationStatus.servingMeal as MealType)
     ) {
       return {
         title: currentOperationStatus.sourceArchiveEntryDateString,
@@ -94,7 +117,7 @@ export class KnowledgeService {
 
     if (
       currentOperationStatus.currentStatus === OperationStatusType.Closed &&
-      this.RELEVANT_MEALS.includes(
+      relevantMeals.includes(
         currentOperationStatus.nextMilestone?.meal as MealType,
       )
     ) {
@@ -111,7 +134,7 @@ export class KnowledgeService {
     if (relevantStartingPoint) {
       return this.traverseArchiveEntriesToFindMostRelevantInfo(
         relevantStartingPoint,
-        this.RELEVANT_MEALS,
+        relevantMeals,
         false,
         currentOperationStatus.nextMilestone?.meal,
       );
@@ -125,7 +148,7 @@ export class KnowledgeService {
 
     return this.traverseArchiveEntriesToFindMostRelevantInfo(
       latestEntry,
-      this.RELEVANT_MEALS,
+      relevantMeals,
       true,
     );
   }

@@ -59,6 +59,13 @@ export const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
+    path: 'preferences',
+    loadComponent: () =>
+      import('./pages/preferences/preferences.component').then(
+        (m) => m.PreferencesPageComponent,
+      ),
+  },
+  {
     path: 'about',
     loadComponent: () =>
       import('./pages/about/about.component').then((m) => m.AboutPageComponent),
