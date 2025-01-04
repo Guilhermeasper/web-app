@@ -135,6 +135,21 @@ export class PreferencesService {
       'dark',
       literalInterfaceTheme === InterfaceTheme.Dark,
     );
+
+    const literalInterfaceThemeToMetaColor = {
+      [InterfaceTheme.Light]: '#fee7e5',
+      [InterfaceTheme.Dark]: '#131313',
+    };
+    const metaThemeColorTag = document.querySelector(
+      'meta[name="theme-color"]',
+    );
+
+    if (metaThemeColorTag) {
+      metaThemeColorTag.setAttribute(
+        'content',
+        literalInterfaceThemeToMetaColor[literalInterfaceTheme],
+      );
+    }
   }
 
   private async refreshUserPreferencesFromStorage() {
