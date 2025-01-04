@@ -13,10 +13,16 @@
       ></div>
     }
     @if (selectedDateObject()) {
-      <h2 class="text-xl sm:text-2xl">
-        <strong>{{ selectedWeekday() }}</strong
-        >, {{ selectedDayAndMonth() }}
-      </h2>
+      <div class="flex flex-col gap-1">
+        <h2 class="text-xl sm:text-2xl">
+          <strong>{{ selectedWeekday() }}</strong
+          >, {{ selectedDayAndMonth() }}
+        </h2>
+
+        @if (!isToday()) {
+          <p>Visualizando uma data que não é hoje.</p>
+        }
+      </div>
     }
 
     @if (false) {
