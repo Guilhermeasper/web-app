@@ -10,12 +10,13 @@
   "description": "Seu jeito de acompanhar o Restaurante Universitário da UFPE com mais tempero.",
   "shortcuts": [
     {
-      "name": "Cardápio",
-      "description": "Ver o cardápio completo do RU",
+      "short_name": "Cardápio",
+      "name": "Ver cardápio",
+      "description": "Ir para o cardápio completo do RU",
       "url": "/menu?utm_source=homescreen",
       "icons": [
         {
-          "src": "/icons/shorcuts/menu.png",
+          "src": "/assets/icons/shortcuts/menu.png",
           "sizes": "192x192",
           "type": "image/png"
         }
