@@ -6,9 +6,7 @@
   <main class="grouping-cards-container my-2 sm:my-4">
     @if (preferencesService.userPreferences() && this.relevantMealsModel) {
       <section class="grouping-card">
-        <h2 class="grouping-card-title grouping-card-horizontal-padding">
-          Aparência
-        </h2>
+        <h2 class="grouping-card-title px-responsive">Aparência</h2>
         <label
           class="grouping-card-strip flex flex-row items-center gap-4 sm:gap-6"
         >
@@ -97,7 +95,7 @@
         </label>
       </section>
 
-      <section class="grouping-card grouping-card-horizontal-padding">
+      <section class="grouping-card px-responsive">
         <h2 class="grouping-card-title">Refeições relevantes</h2>
         <p class="my-1 text-xs sm:text-base">
           Selecione as refeições que são relevantes para você e o Rusbé
@@ -129,9 +127,7 @@
       </section>
 
       <section class="grouping-card">
-        <h2 class="grouping-card-title grouping-card-horizontal-padding">
-          Opções avançadas
-        </h2>
+        <h2 class="grouping-card-title px-responsive">Opções avançadas</h2>
 
         <button
           class="grouping-card-strip-button w-full"

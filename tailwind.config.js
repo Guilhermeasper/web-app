@@ -64,7 +64,6 @@ module.exports = {
       },
     },
     screens: {
-      surehover: { raw: '(hover: hover) and (pointer: fine)' },
       xs: '390px',
       ...defaultTheme.screens,
     },

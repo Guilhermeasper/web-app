@@ -79,6 +79,42 @@
     color-scheme: dark;
   }
 
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-from-right {
+    from {
+      transform: translateX(30px);
+    }
+  }
+
+  @keyframes slide-to-left {
+    to {
+      transform: translateX(-30px);
+    }
+  }
+
+  ::view-transition-old(root) {
+    animation:
+      90ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+      300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+  }
+
+  ::view-transition-new(root) {
+    animation:
+      210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+      300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+  }
+
   select {
     @apply bg-[url('/assets/elements/icon-chevron-down-light.svg')];
   }
@@ -94,21 +130,11 @@
   body.dark [type='checkbox']:checked {
     @apply bg-[url('/assets/elements/icon-checkbox-dark.svg')];
   }
+}
 
-  .standard-page-container {
-    @apply mx-auto max-w-screen-xl;
-  }
-
-  .reduced-page-container {
-    @apply mx-auto max-w-screen-md;
-  }
-
+@layer components {
   .body-link {
     @apply box-decoration-clone text-accent underline underline-offset-4 transition-colors hover:text-accent-hover focus:rounded-md focus:outline-none focus:ring focus:ring-accent-hover;
-  }
-
-  .geometric-title {
-    @apply font-geometric font-bold uppercase;
   }
 
   .button-base {
@@ -131,18 +157,6 @@
     @apply button-base bg-accent px-4 py-2 text-accent-contrast hover:bg-accent-hover hover:shadow-lg active:bg-accent-hover/80;
   }
 
-  .currency-value {
-    @apply font-geometric font-bold tabular-nums;
-  }
-
-  .bg-card-corner-over {
-    @apply bg-over-distant bg-no-repeat sm:bg-over;
-  }
-
-  .bg-card-corner-close {
-    @apply bg-close bg-no-repeat;
-  }
-
   .grouping-cards-container {
     @apply flex flex-col gap-4 sm:gap-6;
   }
@@ -151,16 +165,12 @@
     @apply bg-overlay py-4 sm:mx-4 sm:rounded-xl;
   }
 
-  .grouping-card-horizontal-padding {
-    @apply px-4 sm:px-6;
-  }
-
   .grouping-card-title {
     @apply geometric-title my-2 text-accent;
   }
 
   .grouping-card-strip {
-    @apply px-4 py-2 text-sm sm:px-6 sm:py-4 sm:text-lg;
+    @apply px-responsive py-2 text-sm sm:py-4 sm:text-lg;
   }
 
   .grouping-card-strip-button {
@@ -170,6 +180,28 @@
   .grouping-card-strip-button-inner {
     @apply ml-4 flex flex-row items-center gap-4 border-b-2 border-accent/10 py-3 pr-4 text-start text-sm sm:ml-6 sm:py-6 sm:pr-6 sm:text-lg;
   }
+}
+
+@layer utilities {
+  .standard-page-container {
+    @apply mx-auto max-w-screen-xl;
+  }
+
+  .reduced-page-container {
+    @apply mx-auto max-w-screen-md;
+  }
+
+  .px-responsive {
+    @apply px-4 sm:px-6;
+  }
+
+  .geometric-title {
+    @apply font-geometric font-bold uppercase;
+  }
+
+  .currency-value {
+    @apply font-geometric font-bold tabular-nums;
+  }
 
   .themed-scrollbar {
     --scrollbar-color-thumb: rgb(var(--color-overlay-negative));
@@ -177,61 +209,33 @@
     --scrollbar-width: auto;
     --scrollbar-width-legacy: 0.5rem;
   }
-}
 
-@supports (scrollbar-width: auto) {
-  .themed-scrollbar {
-    scrollbar-color: var(--scrollbar-color-thumb) var(--scrollbar-color-track);
-    scrollbar-width: var(--scrollbar-width);
+  @supports (scrollbar-width: auto) {
+    .themed-scrollbar {
+      scrollbar-color: var(--scrollbar-color-thumb) var(--scrollbar-color-track);
+      scrollbar-width: var(--scrollbar-width);
+    }
   }
-}
 
-@supports selector(::-webkit-scrollbar) {
-  .themed-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-color-thumb);
-    @apply rounded-full;
+  @supports selector(::-webkit-scrollbar) {
+    .themed-scrollbar::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-color-thumb);
+      @apply rounded-full;
+    }
+    .themed-scrollbar::-webkit-scrollbar-track {
+      background: var(--scrollbar-color-track);
+    }
+    .themed-scrollbar::-webkit-scrollbar {
+      max-width: var(--scrollbar-width-legacy);
+      max-height: var(--scrollbar-width-legacy);
+    }
   }
-  .themed-scrollbar::-webkit-scrollbar-track {
-    background: var(--scrollbar-color-track);
-  }
-  .themed-scrollbar::-webkit-scrollbar {
-    max-width: var(--scrollbar-width-legacy);
-    max-height: var(--scrollbar-width-legacy);
-  }
-}
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
+  .bg-card-corner-over {
+    @apply bg-over-distant bg-no-repeat sm:bg-over;
   }
-}
 
-@keyframes fade-out {
-  to {
-    opacity: 0;
+  .bg-card-corner-close {
+    @apply bg-close bg-no-repeat;
   }
-}
-
-@keyframes slide-from-right {
-  from {
-    transform: translateX(30px);
-  }
-}
-
-@keyframes slide-to-left {
-  to {
-    transform: translateX(-30px);
-  }
-}
-
-::view-transition-old(root) {
-  animation:
-    90ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
-    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
-}
-
-::view-transition-new(root) {
-  animation:
-    210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
-    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
 }
