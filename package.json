@@ -1,6 +1,6 @@
 {
   "name": "rusbe-web-app",
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0-beta.3",
   "author": "Erick de Almeida Oliveira Riso",
   "homepage": "https://rusbe.app",
   "description": "Aplicação web para acompanhar o Restaurante Universitário da UFPE.",
@@ -8,11 +8,13 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "prepare": "genversion --es6 --semi src/environments/version.prod.ts && npx husky",
+    "prepare": "npm run genversion && npx husky",
+    "prebuild": "npm run genversion",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "prettier": "npx prettier --write ."
+    "prettier": "npx prettier --write .",
+    "genversion": "genversion --es6 --semi src/environments/version.prod.ts"
   },
   "private": true,
   "dependencies": {
