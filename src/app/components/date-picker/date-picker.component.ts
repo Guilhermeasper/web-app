@@ -11,11 +11,14 @@ import {
 import { Day, getDay, isSameDay, lightFormat, parse } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 
+import { AngularDelegate } from '@ionic/angular/common';
 import {
   DatetimeChangeEventDetail,
   IonDatetime,
   IonPopover,
+  PopoverController,
 } from '@ionic/angular/standalone';
+import { initialize as initializeIonicCore } from '@ionic/core/components';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideArrowLeft,
@@ -33,9 +36,12 @@ import {
   stripTimeFromIsoDateTimeString,
 } from '@rusbe/utils/strings';
 
+initializeIonicCore();
+
 @Component({
   selector: 'rusbe-date-picker',
   imports: [NgIcon, IonDatetime, IonPopover],
+  providers: [AngularDelegate, PopoverController],
   templateUrl: './date-picker.component.html',
   styleUrl: './date-picker.component.css',
   viewProviders: [

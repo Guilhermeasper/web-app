@@ -23,8 +23,6 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
-import { provideIonicAngular } from '@ionic/angular/standalone';
-
 import { routes } from '@rusbe/app.routes';
 import { environment } from '@rusbe/environments/environment';
 import { version } from '@rusbe/environments/version';
@@ -48,7 +46,6 @@ export const appConfig: ApplicationConfig = {
       registrationStrategy: 'registerWhenStable:30000',
     }),
     provideHttpClient(),
-    provideIonicAngular(),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
