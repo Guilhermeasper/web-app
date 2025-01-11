@@ -115,6 +115,16 @@
       300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root) {
+      @apply animate-none;
+    }
+
+    ::view-transition-new(root) {
+      @apply animate-none;
+    }
+  }
+
   select {
     @apply bg-[url('/assets/elements/icon-chevron-down-light.svg')];
   }
