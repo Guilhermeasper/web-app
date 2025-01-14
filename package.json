@@ -1,6 +1,6 @@
 {
   "name": "rusbe-web-app",
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0-beta.4",
   "author": "Erick de Almeida Oliveira Riso",
   "homepage": "https://rusbe.app",
   "description": "Aplicação web para acompanhar o Restaurante Universitário da UFPE.",
@@ -53,7 +53,7 @@
     "angular-eslint": "19.0.2",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.18.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.0.1",
     "genversion": "^3.2.0",
     "husky": "^9.1.7",
     "jasmine-core": "~5.5.0",
@@ -63,12 +63,12 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "lint-staged": "^15.3.0",
-    "postcss": "^8.4.49",
+    "postcss": "^8.5.0",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.6.3",
-    "typescript-eslint": "8.19.1"
+    "typescript-eslint": "8.20.0"
   },
   "lint-staged": {
     "!(*.{js,ts})": "prettier --write --ignore-unknown",
