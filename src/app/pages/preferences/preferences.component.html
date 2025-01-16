@@ -1,197 +1,201 @@
-<div class="reduced-page-container p-4">
-  <rusbe-header [type]="HEADER_TYPE"> Preferências </rusbe-header>
-</div>
+<div class="p-safe">
+  <div class="reduced-page-container p-4">
+    <rusbe-header [type]="HEADER_TYPE"> Preferências </rusbe-header>
+  </div>
 
-<div class="reduced-page-container">
-  <main class="grouping-cards-container my-2 sm:my-4">
-    @if (preferencesService.userPreferences() && this.relevantMealsModel) {
-      <section class="grouping-card">
-        <h2 class="grouping-card-title px-responsive">Aparência</h2>
-        <label
-          class="grouping-card-strip flex flex-row items-center gap-4 sm:gap-6"
-          for="interface-theme-select"
-        >
-          <ng-icon
-            class="min-w-fit"
-            name="lucidePalette"
-            aria-hidden="true"
-          ></ng-icon>
-          <h3 class="w-full font-bold">Tema da interface</h3>
-          <select
-            [ngModel]="preferencesService.userPreferences()?.interfaceTheme"
-            (ngModelChange)="updateInterfaceThemePreference($event)"
-            class="w-40 rounded-lg border-0 bg-overlay px-4 py-2 text-sm font-bold text-accent transition-all hover:bg-accent/10 focus:ring focus:ring-accent sm:w-48 sm:text-lg"
-            id="interface-theme-select"
+  <div class="reduced-page-container">
+    <main class="grouping-cards-container my-2 sm:my-4">
+      @if (preferencesService.userPreferences() && this.relevantMealsModel) {
+        <section class="grouping-card">
+          <h2 class="grouping-card-title px-responsive">Aparência</h2>
+          <label
+            class="grouping-card-strip flex flex-row items-center gap-4 sm:gap-6"
+            for="interface-theme-select"
           >
-            @for (option of INTERFACE_THEME_OPTIONS; track option.value) {
-              <option value="{{ option.value }}">{{ option.label }}</option>
-            }
-          </select>
-        </label>
-
-        <label
-          class="grouping-card-strip flex cursor-pointer flex-row items-center gap-4 sm:gap-6"
-          for="show-main-course-on-top-toggle"
-        >
-          <ng-icon
-            class="min-w-fit"
-            name="lucideListStart"
-            aria-hidden="true"
-          ></ng-icon>
-          <div class="w-full">
-            <h3 class="font-bold">Mostrar pratos principais no topo</h3>
-            <p class="my-1 text-xs sm:text-base">
-              Se ativado, o cardápio será mostrado com os pratos principais no
-              topo. Se desativado, o cardápio mostrará os pratos principais na
-              mesma ordem que no site oficial.
-            </p>
-          </div>
-          <div class="mb-5 inline-flex items-center">
-            <input
-              type="checkbox"
-              [ngModel]="
-                preferencesService.userPreferences()?.showMainCourseOnTop
-              "
-              (ngModelChange)="updateShowMainCourseOnTopPreference($event)"
-              class="peer sr-only"
-              checked
-              id="show-main-course-on-top-toggle"
-            />
-            <div
-              class="peer relative h-4 w-7 rounded-full bg-accent/40 transition-all after:absolute after:start-[2px] after:top-[2px] after:h-3 after:w-3 after:rounded-full after:bg-overlay after:transition-all after:content-[''] peer-checked:bg-accent peer-checked:after:translate-x-full peer-hover:ring-4 peer-hover:ring-accent/20 peer-focus:outline-none peer-focus:ring peer-focus:ring-accent peer-focus:ring-offset-2 peer-focus:ring-offset-overlay sm:h-6 sm:w-11 sm:after:h-5 sm:after:w-5 rtl:peer-checked:after:-translate-x-full"
-            ></div>
-          </div>
-        </label>
-
-        <label
-          class="grouping-card-strip flex cursor-pointer flex-row items-center gap-4 sm:gap-6"
-          for="show-main-course-with-larger-font-toggle"
-        >
-          <ng-icon
-            class="min-w-fit"
-            name="lucideFullscreen"
-            aria-hidden="true"
-          ></ng-icon>
-          <div class="w-full">
-            <h3 class="font-bold">Mostrar pratos principais com texto maior</h3>
-            <p class="my-1 text-xs sm:text-base">
-              Se ativado, o cardápio será mostrado com os pratos principais de
-              forma destacada. Se desativado, o cardápio mostrará os pratos
-              principais com o texto no mesmo tamanho que os outros.
-            </p>
-          </div>
-          <div class="mb-5 inline-flex items-center">
-            <input
-              type="checkbox"
-              [ngModel]="
-                preferencesService.userPreferences()
-                  ?.showMainCourseWithLargerFont
-              "
-              (ngModelChange)="
-                updateShowMainCourseWithLargerFontPreference($event)
-              "
-              class="peer sr-only"
-              checked
-              id="show-main-course-with-larger-font-toggle"
-            />
-            <div
-              class="peer relative h-4 w-7 rounded-full bg-accent/40 transition-all after:absolute after:start-[2px] after:top-[2px] after:h-3 after:w-3 after:rounded-full after:bg-overlay after:transition-all after:content-[''] peer-checked:bg-accent peer-checked:after:translate-x-full peer-hover:ring-4 peer-hover:ring-accent/20 peer-focus:outline-none peer-focus:ring peer-focus:ring-accent peer-focus:ring-offset-2 peer-focus:ring-offset-overlay sm:h-6 sm:w-11 sm:after:h-5 sm:after:w-5 rtl:peer-checked:after:-translate-x-full"
-            ></div>
-          </div>
-        </label>
-      </section>
-
-      <section class="grouping-card px-responsive">
-        <h2 class="grouping-card-title">Refeições relevantes</h2>
-        <p class="my-1 text-xs sm:text-base">
-          Selecione as refeições que são relevantes para você e o Rusbé
-          priorizará mostrá-las na tela inicial e no cardápio. Pelo menos uma
-          refeição precisa estar selecionada.
-        </p>
-
-        <fieldset class="mb-2 mt-4 grid gap-2 sm:grid-cols-3 sm:gap-4">
-          @for (meal of MEAL_TYPES; track meal) {
-            <label
-              class="flex w-full items-center rounded-xl border-2 border-accent p-3 text-sm transition-all hover:bg-accent/10 focus:ring-accent"
-              for="relevant-meal-checkbox-{{ meal }}"
+            <ng-icon
+              class="min-w-fit"
+              name="lucidePalette"
+              aria-hidden="true"
+            ></ng-icon>
+            <h3 class="w-full font-bold">Tema da interface</h3>
+            <select
+              [ngModel]="preferencesService.userPreferences()?.interfaceTheme"
+              (ngModelChange)="updateInterfaceThemePreference($event)"
+              class="w-40 rounded-lg border-0 bg-overlay px-4 py-2 text-sm font-bold text-accent transition-all hover:bg-accent/10 focus:ring focus:ring-accent sm:w-48 sm:text-lg"
+              id="interface-theme-select"
             >
-              <input
-                type="checkbox"
-                [ngModel]="relevantMealsModel.isSelected(meal)"
-                (ngModelChange)="
-                  updateRelevantMealsPreferenceSelection(meal, $event)
-                "
-                [disabled]="!isMealEnabledForSelection(meal)"
-                class="shrink-0 rounded border-2 border-accent bg-overlay text-accent transition-all focus:ring focus:ring-accent focus:ring-offset-overlay disabled:pointer-events-none disabled:opacity-50"
-                id="relevant-meal-checkbox-{{ meal }}"
-              />
-              <span
-                class="ms-3 font-geometric text-xs font-semibold text-accent sm:text-base"
-                >{{ meal }}</span
-              >
-            </label>
-          }
-        </fieldset>
-      </section>
+              @for (option of INTERFACE_THEME_OPTIONS; track option.value) {
+                <option value="{{ option.value }}">{{ option.label }}</option>
+              }
+            </select>
+          </label>
 
-      <section class="grouping-card">
-        <h2 class="grouping-card-title px-responsive">Opções avançadas</h2>
-
-        <button
-          class="grouping-card-strip-button w-full"
-          (click)="promptResetUserPreferences()"
-        >
-          <div class="grouping-card-strip-button-inner">
+          <label
+            class="grouping-card-strip flex cursor-pointer flex-row items-center gap-4 sm:gap-6"
+            for="show-main-course-on-top-toggle"
+          >
             <ng-icon
               class="min-w-fit"
-              name="lucideEraser"
+              name="lucideListStart"
               aria-hidden="true"
             ></ng-icon>
-            <h3 class="w-full text-overlay-contrast">
-              Redefinir preferências para os valores padrão
-            </h3>
-            <ng-icon
-              class="min-w-fit"
-              name="lucideChevronRight"
-              aria-hidden="true"
-            ></ng-icon>
-          </div>
-        </button>
-
-        <button
-          class="grouping-card-strip-button w-full"
-          (click)="promptClearAllData()"
-        >
-          <div class="grouping-card-strip-button-inner">
-            <ng-icon
-              class="min-w-fit"
-              name="lucideRotateCcw"
-              aria-hidden="true"
-            ></ng-icon>
-            <div class="w-full text-overlay-contrast">
-              <h3>Limpar todos os dados do Rusbé</h3>
-              <p class="my-1 text-xs font-normal sm:text-base">
-                Redefine suas preferências e apaga todas as informações do Rusbé
-                salvas neste dispositivo.
+            <div class="w-full">
+              <h3 class="font-bold">Mostrar pratos principais no topo</h3>
+              <p class="my-1 text-xs sm:text-base">
+                Se ativado, o cardápio será mostrado com os pratos principais no
+                topo. Se desativado, o cardápio mostrará os pratos principais na
+                mesma ordem que no site oficial.
               </p>
             </div>
+            <div class="mb-5 inline-flex items-center">
+              <input
+                type="checkbox"
+                [ngModel]="
+                  preferencesService.userPreferences()?.showMainCourseOnTop
+                "
+                (ngModelChange)="updateShowMainCourseOnTopPreference($event)"
+                class="peer sr-only"
+                checked
+                id="show-main-course-on-top-toggle"
+              />
+              <div
+                class="peer relative h-4 w-7 rounded-full bg-accent/40 transition-all after:absolute after:start-[2px] after:top-[2px] after:h-3 after:w-3 after:rounded-full after:bg-overlay after:transition-all after:content-[''] peer-checked:bg-accent peer-checked:after:translate-x-full peer-hover:ring-4 peer-hover:ring-accent/20 peer-focus:outline-none peer-focus:ring peer-focus:ring-accent peer-focus:ring-offset-2 peer-focus:ring-offset-overlay sm:h-6 sm:w-11 sm:after:h-5 sm:after:w-5 rtl:peer-checked:after:-translate-x-full"
+              ></div>
+            </div>
+          </label>
+
+          <label
+            class="grouping-card-strip flex cursor-pointer flex-row items-center gap-4 sm:gap-6"
+            for="show-main-course-with-larger-font-toggle"
+          >
             <ng-icon
               class="min-w-fit"
-              name="lucideChevronRight"
+              name="lucideFullscreen"
               aria-hidden="true"
             ></ng-icon>
-          </div>
-        </button>
-      </section>
-    } @else {
-      <div
-        class="grouping-card flex h-80 flex-col items-center justify-center sm:h-96"
-      >
-        <rusbe-spinner class="h-8 w-8 text-accent"></rusbe-spinner>
-        <p class="pt-2 text-base sm:pt-4 sm:text-xl">Um momento...</p>
-      </div>
-    }
-  </main>
+            <div class="w-full">
+              <h3 class="font-bold">
+                Mostrar pratos principais com texto maior
+              </h3>
+              <p class="my-1 text-xs sm:text-base">
+                Se ativado, o cardápio será mostrado com os pratos principais de
+                forma destacada. Se desativado, o cardápio mostrará os pratos
+                principais com o texto no mesmo tamanho que os outros.
+              </p>
+            </div>
+            <div class="mb-5 inline-flex items-center">
+              <input
+                type="checkbox"
+                [ngModel]="
+                  preferencesService.userPreferences()
+                    ?.showMainCourseWithLargerFont
+                "
+                (ngModelChange)="
+                  updateShowMainCourseWithLargerFontPreference($event)
+                "
+                class="peer sr-only"
+                checked
+                id="show-main-course-with-larger-font-toggle"
+              />
+              <div
+                class="peer relative h-4 w-7 rounded-full bg-accent/40 transition-all after:absolute after:start-[2px] after:top-[2px] after:h-3 after:w-3 after:rounded-full after:bg-overlay after:transition-all after:content-[''] peer-checked:bg-accent peer-checked:after:translate-x-full peer-hover:ring-4 peer-hover:ring-accent/20 peer-focus:outline-none peer-focus:ring peer-focus:ring-accent peer-focus:ring-offset-2 peer-focus:ring-offset-overlay sm:h-6 sm:w-11 sm:after:h-5 sm:after:w-5 rtl:peer-checked:after:-translate-x-full"
+              ></div>
+            </div>
+          </label>
+        </section>
+
+        <section class="grouping-card px-responsive">
+          <h2 class="grouping-card-title">Refeições relevantes</h2>
+          <p class="my-1 text-xs sm:text-base">
+            Selecione as refeições que são relevantes para você e o Rusbé
+            priorizará mostrá-las na tela inicial e no cardápio. Pelo menos uma
+            refeição precisa estar selecionada.
+          </p>
+
+          <fieldset class="mb-2 mt-4 grid gap-2 sm:grid-cols-3 sm:gap-4">
+            @for (meal of MEAL_TYPES; track meal) {
+              <label
+                class="flex w-full items-center rounded-xl border-2 border-accent p-3 text-sm transition-all hover:bg-accent/10 focus:ring-accent"
+                for="relevant-meal-checkbox-{{ meal }}"
+              >
+                <input
+                  type="checkbox"
+                  [ngModel]="relevantMealsModel.isSelected(meal)"
+                  (ngModelChange)="
+                    updateRelevantMealsPreferenceSelection(meal, $event)
+                  "
+                  [disabled]="!isMealEnabledForSelection(meal)"
+                  class="shrink-0 rounded border-2 border-accent bg-overlay text-accent transition-all focus:ring focus:ring-accent focus:ring-offset-overlay disabled:pointer-events-none disabled:opacity-50"
+                  id="relevant-meal-checkbox-{{ meal }}"
+                />
+                <span
+                  class="ms-3 font-geometric text-xs font-semibold text-accent sm:text-base"
+                  >{{ meal }}</span
+                >
+              </label>
+            }
+          </fieldset>
+        </section>
+
+        <section class="grouping-card">
+          <h2 class="grouping-card-title px-responsive">Opções avançadas</h2>
+
+          <button
+            class="grouping-card-strip-button w-full"
+            (click)="promptResetUserPreferences()"
+          >
+            <div class="grouping-card-strip-button-inner">
+              <ng-icon
+                class="min-w-fit"
+                name="lucideEraser"
+                aria-hidden="true"
+              ></ng-icon>
+              <h3 class="w-full text-overlay-contrast">
+                Redefinir preferências para os valores padrão
+              </h3>
+              <ng-icon
+                class="min-w-fit"
+                name="lucideChevronRight"
+                aria-hidden="true"
+              ></ng-icon>
+            </div>
+          </button>
+
+          <button
+            class="grouping-card-strip-button w-full"
+            (click)="promptClearAllData()"
+          >
+            <div class="grouping-card-strip-button-inner">
+              <ng-icon
+                class="min-w-fit"
+                name="lucideRotateCcw"
+                aria-hidden="true"
+              ></ng-icon>
+              <div class="w-full text-overlay-contrast">
+                <h3>Limpar todos os dados do Rusbé</h3>
+                <p class="my-1 text-xs font-normal sm:text-base">
+                  Redefine suas preferências e apaga todas as informações do
+                  Rusbé salvas neste dispositivo.
+                </p>
+              </div>
+              <ng-icon
+                class="min-w-fit"
+                name="lucideChevronRight"
+                aria-hidden="true"
+              ></ng-icon>
+            </div>
+          </button>
+        </section>
+      } @else {
+        <div
+          class="grouping-card flex h-80 flex-col items-center justify-center sm:h-96"
+        >
+          <rusbe-spinner class="h-8 w-8 text-accent"></rusbe-spinner>
+          <p class="pt-2 text-base sm:pt-4 sm:text-xl">Um momento...</p>
+        </div>
+      }
+    </main>
+  </div>
 </div>
 
 <ng-template #confirmDialog>

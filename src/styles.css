@@ -193,11 +193,32 @@
 }
 
 @layer utilities {
-  .padding-viewport-safe-area {
+  .pt-safe {
     padding-top: env(safe-area-inset-top);
+  }
+
+  .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pl-safe {
     padding-left: env(safe-area-inset-left);
+  }
+
+  .pr-safe {
     padding-right: env(safe-area-inset-right);
+  }
+
+  .px-safe {
+    @apply pl-safe pr-safe;
+  }
+
+  .py-safe {
+    @apply pt-safe pb-safe;
+  }
+
+  .p-safe {
+    @apply pt-safe pb-safe pl-safe pr-safe;
   }
 
   .standard-page-container {

@@ -1,74 +1,76 @@
-<div class="standard-page-container p-4">
-  <rusbe-header [type]="HEADER_TYPE"> Funcionamento </rusbe-header>
-</div>
+<div class="p-safe">
+  <div class="standard-page-container p-4">
+    <rusbe-header [type]="HEADER_TYPE"> Funcionamento </rusbe-header>
+  </div>
 
-<div class="standard-page-container">
-  <main class="grouping-cards-container my-2 sm:my-4">
-    <section class="grouping-card px-responsive">
-      <h2 class="grouping-card-title">Horários</h2>
+  <div class="standard-page-container">
+    <main class="grouping-cards-container my-2 sm:my-4">
+      <section class="grouping-card px-responsive">
+        <h2 class="grouping-card-title">Horários</h2>
 
-      <p class="my-4 sm:my-6">
-        O RU funciona <strong>de segunda à sexta-feira</strong>, conforme o
-        calendário acadêmico.
-      </p>
+        <p class="my-4 sm:my-6">
+          O RU funciona <strong>de segunda à sexta-feira</strong>, conforme o
+          calendário acadêmico.
+        </p>
 
-      <ol class="my-2 sm:my-4">
-        @for (period of RESTAURANT_WORKING_HOURS; track period.meal) {
-          <li class="mt-4">
-            <strong class="text-sm sm:text-lg">{{ period.meal }}</strong>
-            <span class="flex items-center gap-2 font-geometric">
-              <ng-icon name="lucideClock" aria-hidden="true"></ng-icon>
-              das {{ period.startTime }} às {{ period.endTime }}
-            </span>
-          </li>
-        }
-      </ol>
-    </section>
+        <ol class="my-2 sm:my-4">
+          @for (period of RESTAURANT_WORKING_HOURS; track period.meal) {
+            <li class="mt-4">
+              <strong class="text-sm sm:text-lg">{{ period.meal }}</strong>
+              <span class="flex items-center gap-2 font-geometric">
+                <ng-icon name="lucideClock" aria-hidden="true"></ng-icon>
+                das {{ period.startTime }} às {{ period.endTime }}
+              </span>
+            </li>
+          }
+        </ol>
+      </section>
 
-    <section class="grouping-card">
-      <h2 class="grouping-card-title px-responsive">Valor das refeições</h2>
+      <section class="grouping-card">
+        <h2 class="grouping-card-title px-responsive">Valor das refeições</h2>
 
-      <div
-        class="themed-scrollbar mt-4 flex snap-x snap-mandatory scroll-pl-4 flex-row gap-2 overflow-x-auto px-4 pb-4 sm:mt-6 sm:scroll-pl-6 sm:px-6 sm:pb-6 md:grid md:grid-cols-2 md:gap-4"
-      >
-        @for (
-          pricingProfile of MEAL_PRICING_PROFILES;
-          track pricingProfile.balanceType
-        ) {
-          <div
-            class="flex min-w-full snap-start snap-always flex-col rounded-xl border-2 border-accent bg-overlay py-4 shadow-sm sm:py-6"
-          >
-            <h3
-              class="mb-2 px-4 text-base font-bold text-accent sm:mb-4 sm:px-6 sm:text-xl"
+        <div
+          class="themed-scrollbar mt-4 flex snap-x snap-mandatory scroll-pl-4 flex-row gap-2 overflow-x-auto px-4 pb-4 sm:mt-6 sm:scroll-pl-6 sm:px-6 sm:pb-6 md:grid md:grid-cols-2 md:gap-4"
+        >
+          @for (
+            pricingProfile of MEAL_PRICING_PROFILES;
+            track pricingProfile.balanceType
+          ) {
+            <div
+              class="flex min-w-full snap-start snap-always flex-col rounded-xl border-2 border-accent bg-overlay py-4 shadow-sm sm:py-6"
             >
-              {{ pricingProfile.title }}
-            </h3>
-            <p class="mb-auto px-4 pb-4 sm:px-6 sm:pb-6">
-              {{ pricingProfile.description }}
-            </p>
+              <h3
+                class="mb-2 px-4 text-base font-bold text-accent sm:mb-4 sm:px-6 sm:text-xl"
+              >
+                {{ pricingProfile.title }}
+              </h3>
+              <p class="mb-auto px-4 pb-4 sm:px-6 sm:pb-6">
+                {{ pricingProfile.description }}
+              </p>
 
-            <table class="w-full">
-              @for (item of pricingProfile.pricing; track item.meal) {
-                <tr class="odd:bg-background">
-                  <td class="px-4 py-2 font-bold sm:px-6">
-                    {{ item.meal }}
-                  </td>
-                  <td class="w-24 px-4 py-2 text-right sm:w-32 sm:px-6">
-                    @if (item.price.valueInCents === 0) {
-                      <span class="text-accent">Sem custo</span>
-                    } @else {
-                      <span class="float-start text-accent">R$ </span>
-                      <span class="currency-value float-end">
-                        {{ item.price.toString() }}</span
-                      >
-                    }
-                  </td>
-                </tr>
-              }
-            </table>
-          </div>
-        }
-      </div>
-    </section>
-  </main>
+              <table class="w-full">
+                @for (item of pricingProfile.pricing; track item.meal) {
+                  <tr class="odd:bg-background">
+                    <td class="px-4 py-2 font-bold sm:px-6">
+                      {{ item.meal }}
+                    </td>
+                    <td class="w-24 px-4 py-2 text-right sm:w-32 sm:px-6">
+                      @if (item.price.valueInCents === 0) {
+                        <span class="text-accent">Sem custo</span>
+                      } @else {
+                        <span class="float-start text-accent">R$ </span>
+                        <span class="currency-value float-end">
+                          {{ item.price.toString() }}</span
+                        >
+                      }
+                    </td>
+                  </tr>
+                }
+              </table>
+            </div>
+          }
+        </div>
+      </section>
+    </main>
+  </div>
 </div>

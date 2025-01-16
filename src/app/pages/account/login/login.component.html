@@ -1,10 +1,10 @@
-<div class="w-full bg-acerola">
+<div class="pt-safe px-safe w-full bg-acerola">
   <div class="reduced-page-container h-56 p-4 sm:h-72">
     <rusbe-header [type]="HEADER_TYPE">Fazer login</rusbe-header>
   </div>
 </div>
 
-<div class="reduced-page-container flex flex-col items-center">
+<div class="reduced-page-container px-safe flex flex-col items-center">
   <img
     alt=""
     class="-mt-36 max-h-80 p-4 sm:-mt-40"
@@ -12,21 +12,23 @@
   />
 </div>
 
-<div
-  class="reduced-page-container flex h-[50vh] flex-col justify-between p-4 text-center sm:mt-8"
->
-  <div>
-    <h2 class="pb-4 text-2xl text-accent sm:text-3xl">
-      O Rusbé fica ainda mais gostoso <strong>com uma conta</strong>.
-    </h2>
-    <p class="text-base sm:text-lg">
-      Faça login no Rusbé com seu UFPE ID para ver seu saldo e fazer recargas
-      diretamente pelo app. Você precisa ter cadastro no RU.
-    </p>
-  </div>
+<div class="px-safe pb-safe">
+  <div
+    class="reduced-page-container flex h-[50vh] flex-col justify-between p-4 text-center sm:mt-8"
+  >
+    <div>
+      <h2 class="pb-4 text-2xl text-accent sm:text-3xl">
+        O Rusbé fica ainda mais gostoso <strong>com uma conta</strong>.
+      </h2>
+      <p class="text-base sm:text-lg">
+        Faça login no Rusbé com seu UFPE ID para ver seu saldo e fazer recargas
+        diretamente pelo app. Você precisa ter cadastro no RU.
+      </p>
+    </div>
 
-  <div class="flex flex-col items-center gap-2 sm:gap-4">
-    <button (click)="goBack()">Mais tarde</button>
-    <button (click)="signIn()">Continuar com UFPE ID</button>
+    <div class="flex flex-col items-center gap-2 sm:gap-4">
+      <button (click)="goBack()">Mais tarde</button>
+      <button (click)="signIn()">Continuar com UFPE ID</button>
+    </div>
   </div>
 </div>
