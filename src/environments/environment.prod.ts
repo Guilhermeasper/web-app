@@ -5,7 +5,7 @@ export const environment = {
     storageBucket: 'rusbeplatform.firebasestorage.app',
     locationId: 'us-central',
     apiKey: 'AIzaSyBtsd8ViYqfl59A6PhhQsT6ddQ-b71zXh0',
-    authDomain: 'rusbeplatform.firebaseapp.com',
+    authDomain: 'rusbe.app',
     messagingSenderId: '412058106218',
     measurementId: 'G-S79FLBKKJM',
   },
