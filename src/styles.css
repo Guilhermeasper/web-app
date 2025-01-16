@@ -167,6 +167,14 @@
     @apply button-base bg-accent px-4 py-2 text-accent-contrast hover:bg-accent-hover hover:shadow-lg active:bg-accent-hover/80;
   }
 
+  .button-full {
+    @apply w-full justify-center;
+  }
+
+  .button-large {
+    @apply p-4 text-sm sm:text-lg;
+  }
+
   .grouping-cards-container {
     @apply flex flex-col gap-4 sm:gap-6;
   }

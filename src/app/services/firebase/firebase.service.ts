@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Signal, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import {
   Auth,
@@ -10,8 +11,6 @@ import {
 } from '@angular/fire/auth';
 import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 
-import { firstValueFrom } from 'rxjs';
-
 import { environment } from '@rusbe/environments/environment';
 
 @Injectable({
@@ -20,6 +19,13 @@ import { environment } from '@rusbe/environments/environment';
 export class FirebaseService {
   private auth: Auth = inject(Auth);
   private firestore: Firestore = inject(Firestore);
+
+  public readonly currentUser: Signal<UserInfo | null | undefined> = toSignal(
+    user(this.auth),
+  );
+  public readonly isLoggedIn: Signal<boolean> = computed(() => {
+    return Boolean(this.currentUser());
+  });
 
   public async signInWithPopup(): Promise<UserCredential> {
     const provider = new GoogleAuthProvider();
@@ -31,18 +37,6 @@ export class FirebaseService {
 
   public async signOut() {
     await this.auth.signOut();
-  }
-
-  public get currentUser(): Promise<UserInfo | null> {
-    return firstValueFrom(user(this.auth));
-  }
-
-  public get isLoggedIn(): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.currentUser.then((user) => {
-        resolve(Boolean(user));
-      });
-    });
   }
 
   public async getFirestoreDocument<T>(path: string): Promise<T | null> {

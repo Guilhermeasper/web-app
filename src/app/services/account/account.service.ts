@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Signal, computed, inject } from '@angular/core';
 
 import {
   CryptoService,
-  EncryptedObject,
+  SerializedEncryptedObject,
 } from '@rusbe/services/crypto/crypto.service';
 import { FirebaseService } from '@rusbe/services/firebase/firebase.service';
 import { GeneralGoodsService } from '@rusbe/services/general-goods/general-goods.service';
@@ -20,116 +20,104 @@ export class AccountService {
   private googleDriveService: GoogleDriveService = inject(GoogleDriveService);
   private cryptoService: CryptoService = inject(CryptoService);
 
-  public async signInWithPopup() {
+  public readonly currentUser: Signal<User | null> = computed(() => {
+    const firebaseUser = this.firebaseService.currentUser();
+
+    if (!firebaseUser) {
+      return null;
+    }
+
+    return {
+      displayName: firebaseUser.displayName,
+      email: firebaseUser.email,
+      photoUrl: firebaseUser.photoURL,
+      uid: firebaseUser.uid,
+    };
+  });
+  public readonly isLoggedIn = this.firebaseService.isLoggedIn;
+
+  public async signIn() {
     const userCredential = await this.firebaseService.signInWithPopup();
 
-    const token = (
-      userCredential.user as unknown as { accessToken: string } | null
-    )?.accessToken;
+    const token = this.extractTokenFromUserCredential(userCredential);
 
     if (token) {
       this.googleDriveService.cacheToken(token);
     }
   }
 
-  get currentUser(): Promise<User | null> {
-    return new Promise((resolve) => {
-      (async () => {
-        const firebaseUser = await this.firebaseService.currentUser;
-
-        if (!firebaseUser) {
-          resolve(null);
-          return;
-        }
-
-        resolve({
-          displayName: firebaseUser.displayName,
-          email: firebaseUser.email,
-          photoUrl: firebaseUser.photoURL,
-          uid: firebaseUser.uid,
-        });
-      })();
-    });
-  }
-
-  get isLoggedIn(): Promise<boolean> {
-    return new Promise((resolve) => {
-      (async () => {
-        resolve(await this.firebaseService.isLoggedIn);
-      })();
-    });
-  }
-
   public async signOut() {
     await this.firebaseService.signOut();
   }
 
-  public async setupNewGeneralGoodsAccount(identifier: string) {
-    const user = await this.currentUser;
-
-    if (!user) {
-      throw new Error('UserNotLoggedIn');
-    }
-
-    if (!this.userHasAllFields(user)) {
-      throw new Error('RequiredUserDataMissing');
-    }
-
+  public async generateGeneralGoodsAccountStub(
+    customEmail?: string,
+  ): Promise<GeneralGoodsAccountStub> {
+    const user = this.ensureCurrentUser();
     const password = this.cryptoService.generateRandomPassword();
 
+    return {
+      email: customEmail ?? user.email!,
+      password,
+    };
+  }
+
+  public async createNewGeneralGoodsAccount(
+    stub: GeneralGoodsAccountStub,
+    identifier: string,
+  ) {
     try {
       await this.generalGoodsService.registerAccount({
-        email: user.email!,
+        email: stub.email,
         identifier,
-        password,
+        password: stub.password,
       });
     } catch {
       throw new Error('GeneralGoodsAccountCreationFailed');
       // TODO: Distinguish between different errors (e.g. account already exists)
     }
-
-    let encryptionKey: JsonWebKey;
-
-    try {
-      encryptionKey = await this.getEncryptionKey();
-    } catch {
-      // TODO: Move this to a function
-      encryptionKey = await this.cryptoService.generateKey();
-      this.googleDriveService.uploadFileToAppData(
-        this.ENCRYPTION_KEY_FILE_NAME,
-        new Blob([JSON.stringify(encryptionKey)]),
-      );
-    }
-
-    const encryptedPassword = await this.cryptoService.encryptUsingKey(
-      password,
-      encryptionKey,
-    );
-
-    // TODO: Move this to a function
-    const generalGoodsIntegrationData: GeneralGoodsIntegrationData = {
-      encryptedPassword,
-      personId: identifier,
-      email: user.email!,
-    };
-
-    await this.firebaseService.setFirestoreDocument(
-      `users/${user.uid}/integrations/general-goods`,
-      generalGoodsIntegrationData,
-    );
   }
 
-  public async setupExistingGeneralGoodsAccount(
-    identifier: string,
-    email: string,
+  public async sendNewGeneralGoodsAccountVerificationEmail(
+    stub: GeneralGoodsAccountStub,
   ) {
-    throw new Error(`NotImplemented ${identifier} ${email}`);
-    // TODO: Check if token is actually working (does the user need to confirm the email? does the password need to be reset?)
+    try {
+      await this.generalGoodsService.sendVerificationEmail(stub.email);
+    } catch {
+      throw new Error('GeneralGoodsAccountVerificationEmailFailed');
+    }
   }
 
-  public async getGeneralGoodsAuthToken() {
-    const integrationData = await this.getGeneralGoodsIntegrationData();
-    const encryptionKey = await this.getEncryptionKey();
+  public async sendExistingGeneralGoodsAccountPasswordResetEmail(
+    stub: GeneralGoodsAccountStub,
+  ) {
+    try {
+      await this.generalGoodsService.sendPasswordResetEmail(stub.email);
+    } catch {
+      // TODO: Distinguish between different errors (e.g. account does not exist)
+      throw new Error('GeneralGoodsAccountResetEmailFailed');
+    }
+  }
+
+  public async completeGeneralGoodsAccountSetup(stub: GeneralGoodsAccountStub) {
+    try {
+      await this.generalGoodsService.login({
+        email: stub.email,
+        password: stub.password,
+      });
+
+      // TODO: Should we commit in a previous step? Consider the user might exit to see the email and
+      // then come back to complete the setup, and browser might kill the session
+      await this.commitGeneralGoodsIntegrationData(stub);
+    } catch {
+      throw new Error('GeneralGoodsAccountLoginFailed');
+    }
+    // TODO: Distinguish between different errors (does the user need to confirm the email? does the password need to be reset?)
+  }
+
+  public async fetchGeneralGoodsAuthToken() {
+    const integrationData = await this.fetchGeneralGoodsIntegrationData();
+    const encryptionKey = await this.fetchEncryptionKey();
 
     const password = await this.cryptoService.decryptUsingKey(
       integrationData.encryptedPassword,
@@ -142,13 +130,9 @@ export class AccountService {
     });
   }
 
-  private async getEncryptionKey(): Promise<JsonWebKey> {
-    // TODO: Test if Google Drive token needs to be refreshed
-
-    const fileList = await this.googleDriveService.listAppDataFiles();
-    const encrytionKeyFileId = fileList.files.find(
-      (file) => file.name === this.ENCRYPTION_KEY_FILE_NAME,
-    )?.id;
+  private async fetchEncryptionKey(fileId?: string): Promise<JsonWebKey> {
+    const encrytionKeyFileId =
+      fileId ?? (await this.fetchEncryptionKeyFileId());
 
     if (!encrytionKeyFileId) {
       throw new Error('EncryptionKeyNotFound');
@@ -162,10 +146,93 @@ export class AccountService {
     return encryptionKey;
   }
 
-  private async getGeneralGoodsIntegrationData(): Promise<
+  private async fetchEncryptionKeyFileId(): Promise<string | undefined> {
+    const fileList = await this.googleDriveService.listAppDataFiles();
+    const encrytionKeyFileId = fileList.files.find(
+      (file) => file.name === this.ENCRYPTION_KEY_FILE_NAME,
+    )?.id;
+
+    return encrytionKeyFileId;
+  }
+
+  private async uploadEncryptionKey(encryptionKey: JsonWebKey) {
+    const encryptionKeyBlob = new Blob([JSON.stringify(encryptionKey)]);
+    await this.googleDriveService.uploadFileToAppData(
+      this.ENCRYPTION_KEY_FILE_NAME,
+      encryptionKeyBlob,
+    );
+  }
+
+  private async fetchOrCreateEncryptionKey(): Promise<JsonWebKey> {
+    const encryptionKeyFileId = await this.fetchEncryptionKeyFileId();
+
+    if (encryptionKeyFileId) {
+      return await this.fetchEncryptionKey(encryptionKeyFileId);
+    } else {
+      const encryptionKey = await this.cryptoService.generateKey();
+      await this.uploadEncryptionKey(encryptionKey);
+      return encryptionKey;
+    }
+  }
+
+  private async commitGeneralGoodsIntegrationData(
+    stub: GeneralGoodsAccountStub,
+  ) {
+    const encryptionKey = await this.fetchOrCreateEncryptionKey();
+
+    const encryptedPassword = await this.cryptoService.encryptUsingKey(
+      stub.password,
+      encryptionKey,
+    );
+
+    const generalGoodsIntegrationData: GeneralGoodsIntegrationData = {
+      encryptedPassword,
+      email: stub.email,
+    };
+
+    await this.firebaseService.setFirestoreDocument(
+      this.getGeneralGoodsIntegrationDataDocumentPath(),
+      generalGoodsIntegrationData,
+    );
+  }
+
+  private async fetchGeneralGoodsIntegrationData(): Promise<
     Required<GeneralGoodsIntegrationData>
   > {
-    const user = await this.currentUser;
+    const integrationData =
+      await this.firebaseService.getFirestoreDocument<GeneralGoodsIntegrationData>(
+        this.getGeneralGoodsIntegrationDataDocumentPath(),
+      );
+
+    if (
+      !integrationData ||
+      !this.integrationDataHasAllFields(integrationData)
+    ) {
+      throw new Error('GeneralGoodsIntegrationDataMissing');
+    }
+
+    return integrationData as Required<GeneralGoodsIntegrationData>;
+  }
+
+  private getGeneralGoodsIntegrationDataDocumentPath(): string {
+    const user = this.ensureCurrentUser();
+    return `users/${user.uid}/integrations/general-goods`;
+  }
+
+  private extractTokenFromUserCredential(
+    userCredential: unknown,
+  ): string | undefined {
+    return (
+      userCredential as {
+        _tokenResponse?: {
+          oauthAccessToken: string;
+        };
+      }
+    )?.['_tokenResponse']?.oauthAccessToken;
+  }
+
+  private ensureCurrentUser(): User {
+    const user = this.currentUser();
 
     if (!user) {
       throw new Error('UserNotLoggedIn');
@@ -175,16 +242,7 @@ export class AccountService {
       throw new Error('RequiredUserDataMissing');
     }
 
-    const integrationData =
-      await this.firebaseService.getFirestoreDocument<GeneralGoodsIntegrationData>(
-        `users/${user.uid}/integrations/general-goods`,
-      );
-
-    if (integrationData && !this.integrationDataHasAllFields(integrationData)) {
-      throw new Error('GeneralGoodsDataMissing');
-    }
-
-    return integrationData as Required<GeneralGoodsIntegrationData>;
+    return user;
   }
 
   private userHasAllFields(user: User): user is Required<User> {
@@ -197,17 +255,19 @@ export class AccountService {
     integrationData: GeneralGoodsIntegrationData,
   ): integrationData is Required<GeneralGoodsIntegrationData> {
     return (
-      integrationData.encryptedPassword != null &&
-      integrationData.personId != null &&
-      integrationData.email != null
+      integrationData.encryptedPassword != null && integrationData.email != null
     );
   }
 }
 
 interface GeneralGoodsIntegrationData {
-  encryptedPassword?: EncryptedObject;
-  personId?: string;
+  encryptedPassword?: SerializedEncryptedObject;
   email?: string;
+}
+
+export interface GeneralGoodsAccountStub {
+  email: string;
+  password: string;
 }
 
 export interface User {

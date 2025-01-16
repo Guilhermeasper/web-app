@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, WritableSignal, inject, signal } from '@angular/core';
 
 import { lastValueFrom } from 'rxjs';
 
@@ -21,8 +21,8 @@ export class GeneralGoodsService {
   private generalGoodsBaseUrl = new URL('api/', environment.generalGoodsApiUrl);
   private http: HttpClient = inject(HttpClient);
   private localStorage: LocalStorageService = inject(LocalStorageService);
-  private bearerTokenPromise: Promise<string | undefined> =
-    Promise.resolve(undefined);
+  private bearerTokenSignal: WritableSignal<string | undefined> =
+    signal(undefined);
 
   constructor() {
     this.retrieveBearerTokenFromLocalStorage();
@@ -37,12 +37,18 @@ export class GeneralGoodsService {
     body?: unknown,
   ): Promise<T> {
     try {
+      let additionalHeaders: Record<string, string> = {};
+
+      if (requestDetails.bearerToken) {
+        additionalHeaders = {
+          Authorization: `Bearer ${requestDetails.bearerToken}`,
+        };
+      }
+
       const headers = new HttpHeaders({
         Accept: 'application/json',
+        ...additionalHeaders,
       });
-      if (requestDetails.bearerToken) {
-        headers.append('Authorization', `Bearer ${requestDetails.bearerToken}`);
-      }
 
       const response = await lastValueFrom(
         this.http.request<T>(
@@ -117,7 +123,7 @@ export class GeneralGoodsService {
 
   public async refreshToken() {
     const requestUrl = new URL(`refresh/`, this.generalGoodsBaseUrl);
-    const bearerToken = await this.ensureAvailableToken();
+    const bearerToken = await this.ensureBearerToken();
 
     const accountData =
       await this.performRequest<GeneralGoodsAccountDataResponseBody>({
@@ -133,7 +139,7 @@ export class GeneralGoodsService {
 
   public async logout() {
     const requestUrl = new URL(`logout/`, this.generalGoodsBaseUrl);
-    const bearerToken = await this.ensureAvailableToken();
+    const bearerToken = await this.ensureBearerToken();
 
     await this.performRequest({ url: requestUrl, method: 'POST', bearerToken });
     await this.clearBearerToken();
@@ -141,12 +147,12 @@ export class GeneralGoodsService {
 
   public async getAccountData(): Promise<GeneralGoodsAccountData> {
     const requestUrl = new URL(`user-data/`, this.generalGoodsBaseUrl);
-    const bearerToken = await this.ensureAvailableToken();
+    const bearerToken = await this.ensureBearerToken();
 
     const responseData =
       await this.performRequest<GeneralGoodsAccountDataResponseBody>({
         url: requestUrl,
-        method: 'GET',
+        method: 'POST',
         bearerToken,
       });
     return this.parseAccountData(responseData);
@@ -157,7 +163,7 @@ export class GeneralGoodsService {
   ): Promise<GeneralGoodsPixTransactionData> {
     const requestUrl = new URL(`payment/pix/`, this.generalGoodsBaseUrl);
     const requestBody = { amount: amount.toNumber(), type: 'Pix' };
-    const bearerToken = await this.ensureAvailableToken();
+    const bearerToken = await this.ensureBearerToken();
 
     const responseData =
       await this.performRequest<GeneralGoodsPixTransactionDataResponseBody>(
@@ -173,23 +179,26 @@ export class GeneralGoodsService {
   }
 
   private async retrieveBearerTokenFromLocalStorage() {
-    this.bearerTokenPromise = this.localStorage.get(
+    const bearerToken = await this.localStorage.get<string>(
       StorageKey.GeneralGoodsBearerToken,
     );
+    if (bearerToken) {
+      this.bearerTokenSignal.set(bearerToken);
+    }
   }
 
   private async saveBearerToken(token: string) {
-    this.bearerTokenPromise = Promise.resolve(token);
     await this.localStorage.set(StorageKey.GeneralGoodsBearerToken, token);
+    this.bearerTokenSignal.set(token);
   }
 
   private async clearBearerToken() {
-    this.bearerTokenPromise = Promise.resolve(undefined);
     await this.localStorage.remove(StorageKey.GeneralGoodsBearerToken);
+    this.bearerTokenSignal.set(undefined);
   }
 
-  private async ensureAvailableToken(): Promise<string> {
-    const bearerToken = await this.bearerTokenPromise;
+  private async ensureBearerToken(): Promise<string> {
+    const bearerToken = this.bearerTokenSignal();
 
     if (!bearerToken) {
       throw new Error('GeneralGoodsTokenNotAvailable');
@@ -211,6 +220,7 @@ export class GeneralGoodsService {
     return bearerToken;
   }
 
+  // TODO: Use this method to handle errors in requests
   private throwIfRequestIsNotSuccessful(response: GeneralGoodsResponseStatus) {
     if (
       response.message === 'Credenciais inválidas ou cadastro não confirmado.'

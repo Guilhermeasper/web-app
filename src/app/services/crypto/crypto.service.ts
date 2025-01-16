@@ -53,7 +53,7 @@ export class CryptoService {
   public async encryptUsingKey(
     data: string,
     jwk: JsonWebKey,
-  ): Promise<EncryptedObject> {
+  ): Promise<SerializedEncryptedObject> {
     const encodedData = this.encodeText(data);
     const iv = window.crypto.getRandomValues(new Uint8Array(12));
     const key = await this.importKey(jwk);
@@ -67,17 +67,22 @@ export class CryptoService {
       encodedData,
     );
 
-    return {
+    const encryptedObject: EncryptedObject = {
       data: encryptedData,
       iv,
     };
+
+    return this.serializeEncryptedObject(encryptedObject);
   }
 
   public async decryptUsingKey(
-    encryptedObject: EncryptedObject,
+    serializedEncryptedObject: SerializedEncryptedObject,
     jwk: JsonWebKey,
   ): Promise<string> {
     const key = await this.importKey(jwk);
+    const encryptedObject = this.deserializeEncryptedObject(
+      serializedEncryptedObject,
+    );
 
     const encodedData = await window.crypto.subtle.decrypt(
       {
@@ -98,9 +103,52 @@ export class CryptoService {
   public decodeText(data: ArrayBuffer): string {
     return new TextDecoder().decode(data);
   }
+
+  private serializeEncryptedObject(
+    encryptedObject: EncryptedObject,
+  ): SerializedEncryptedObject {
+    return {
+      data: this.arrayBufferToBase64(encryptedObject.data),
+      iv: this.arrayBufferToBase64(encryptedObject.iv),
+    };
+  }
+
+  private deserializeEncryptedObject(
+    serializedEncryptedObject: SerializedEncryptedObject,
+  ): EncryptedObject {
+    return {
+      data: this.base64ToArrayBuffer(serializedEncryptedObject.data),
+      iv: new Uint8Array(
+        this.base64ToArrayBuffer(serializedEncryptedObject.iv),
+      ),
+    };
+  }
+
+  private arrayBufferToBase64(buffer: ArrayBuffer): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  }
+
+  private base64ToArrayBuffer(base64: string): ArrayBuffer {
+    const binaryString = window.atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
 }
 
-export interface EncryptedObject {
+interface EncryptedObject {
   data: ArrayBuffer;
   iv: Uint8Array;
+}
+
+export interface SerializedEncryptedObject {
+  data: string;
+  iv: string;
 }

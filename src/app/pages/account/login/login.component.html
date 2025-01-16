@@ -7,28 +7,38 @@
 <div class="reduced-page-container px-safe flex flex-col items-center">
   <img
     alt=""
-    class="-mt-36 max-h-80 p-4 sm:-mt-40"
+    class="-mt-36 max-h-64 p-4 sm:-mt-40 sm:max-h-80"
     src="assets/artworks/shapes-fruit-coat-of-arms.svg"
   />
 </div>
 
 <div class="px-safe pb-safe">
-  <div
-    class="reduced-page-container flex h-[50vh] flex-col justify-between p-4 text-center sm:mt-8"
+  <main
+    class="reduced-page-container flex h-[calc(100vh-22rem)] flex-col justify-between gap-8 p-4 text-center sm:mt-8 sm:h-[calc(100vh-36rem)] sm:gap-10"
   >
     <div>
-      <h2 class="pb-4 text-2xl text-accent sm:text-3xl">
+      <h2 class="text-balance pb-4 text-xl text-accent sm:text-3xl">
         O Rusbé fica ainda mais gostoso <strong>com uma conta</strong>.
       </h2>
-      <p class="text-base sm:text-lg">
+      <p class="text-pretty text-sm sm:text-lg">
         Faça login no Rusbé com seu UFPE ID para ver seu saldo e fazer recargas
         diretamente pelo app. Você precisa ter cadastro no RU.
       </p>
     </div>
 
     <div class="flex flex-col items-center gap-2 sm:gap-4">
-      <button (click)="goBack()">Mais tarde</button>
-      <button (click)="signIn()">Continuar com UFPE ID</button>
+      <button
+        (click)="goBack()"
+        class="button-text button-full button-large focus:ring-offset-background"
+      >
+        Mais tarde
+      </button>
+      <button
+        (click)="signIn()"
+        class="button-fill button-full button-large focus:ring-offset-background"
+      >
+        Continuar com UFPE ID
+      </button>
     </div>
-  </div>
+  </main>
 </div>

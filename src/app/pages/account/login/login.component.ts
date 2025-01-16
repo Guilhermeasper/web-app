@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -13,18 +14,31 @@ import { AccountService } from '@rusbe/services/account/account.service';
   templateUrl: './login.component.html',
 })
 export class AccountLoginPageComponent {
-  HEADER_TYPE = HeaderType.PageNameWithBackButtonOnColoredBackground;
+  readonly HEADER_TYPE = HeaderType.PageNameWithBackButtonOnColoredBackground;
 
-  private accountService = inject(AccountService);
   private router = inject(Router);
+  private location = inject(Location);
+  private accountService = inject(AccountService);
+
+  private readonly previousPageIsWithinApp: boolean;
+
+  constructor() {
+    this.previousPageIsWithinApp = Boolean(
+      this.router.getCurrentNavigation()?.previousNavigation,
+    );
+  }
 
   goBack() {
-    // FIXME: Implement goBack
-    throw new Error('Not implemented');
+    if (this.previousPageIsWithinApp) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   signIn() {
-    this.accountService.signInWithPopup().then(() => {
+    this.accountService.signIn().then(() => {
+      // TODO: Check if user needs to do wizard, if so, redirect to wizard
       this.router.navigate(['/account/details']);
     });
   }
