@@ -41,9 +41,9 @@ export class KnowledgeService {
     MostRelevantArchiveEntryInfo | undefined
   > = signal(undefined);
 
-  public currentOperationStatus: Signal<OperationStatus | undefined> =
+  public readonly currentOperationStatus: Signal<OperationStatus | undefined> =
     this.writableCurrentOperationStatus.asReadonly();
-  public mostRelevantArchiveEntryInfo: Signal<
+  public readonly mostRelevantArchiveEntryInfo: Signal<
     MostRelevantArchiveEntryInfo | undefined
   > = this.writableMostRelevantArchiveEntryInfo.asReadonly();
 

@@ -16,8 +16,10 @@ export class PreferencesService {
   private writableUserPreferences: WritableSignal<UserPreferences | undefined> =
     signal(undefined);
 
-  public userPreferences = this.writableUserPreferences.asReadonly();
-  public userPreferencesObservable = toObservable(this.userPreferences);
+  public readonly userPreferences = this.writableUserPreferences.asReadonly();
+  public readonly userPreferencesObservable = toObservable(
+    this.userPreferences,
+  );
 
   private systemDarkThemeMediaQuery = window.matchMedia(
     '(prefers-color-scheme: dark)',
