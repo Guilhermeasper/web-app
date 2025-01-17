@@ -1,7 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import {
   ApplicationConfig,
+  inject,
   isDevMode,
+  provideAppInitializer,
   provideZoneChangeDetection,
 } from '@angular/core';
 import {
@@ -28,9 +30,16 @@ import { environment } from '@rusbe/environments/environment';
 import { version } from '@rusbe/environments/version';
 import { viewTransitionHandler } from '@rusbe/view-transition-handler';
 
+import { AccountService } from './services/account/account.service';
+import { PreferencesService } from './services/preferences/preferences.service';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideAppInitializer(() => {
+      inject(PreferencesService);
+      inject(AccountService);
+    }),
     provideRouter(
       routes,
       withViewTransitions({

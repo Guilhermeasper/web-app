@@ -1,7 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-
-import { PreferencesService } from '@rusbe/services/preferences/preferences.service';
 
 @Component({
   selector: 'rusbe-root',
@@ -11,5 +9,4 @@ import { PreferencesService } from '@rusbe/services/preferences/preferences.serv
 })
 export class AppComponent {
   title = 'rusbe-web-app';
-  preferencesService = inject(PreferencesService);
 }
