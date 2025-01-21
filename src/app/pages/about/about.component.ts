@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
@@ -17,7 +18,7 @@ import { version } from '@rusbe/environments/version';
 
 @Component({
   selector: 'rusbe-about-page',
-  imports: [CommonModule, HeaderComponent, NgIconComponent],
+  imports: [CommonModule, RouterLink, HeaderComponent, NgIconComponent],
   templateUrl: './about.component.html',
   viewProviders: [
     provideIcons({

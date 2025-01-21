@@ -71,6 +71,20 @@ export const routes: Routes = [
       import('./pages/about/about.component').then((m) => m.AboutPageComponent),
   },
   {
+    path: 'legal/privacy',
+    loadComponent: () =>
+      import('./pages/legal/privacy/privacy.component').then(
+        (m) => m.LegalPrivacyPageComponent,
+      ),
+  },
+  {
+    path: 'legal/terms',
+    loadComponent: () =>
+      import('./pages/legal/terms/terms.component').then(
+        (m) => m.LegalTermsPageComponent,
+      ),
+  },
+  {
     path: '404',
     loadComponent: () =>
       import('./pages/error/error.component').then((m) => m.ErrorPageComponent),

@@ -50,7 +50,7 @@
   </div>
 
   <div
-    class="mb-8 bg-overlay py-4 font-geometric text-base sm:mb-12 sm:text-lg md:mx-4 md:mt-4 md:rounded-xl md:px-2"
+    class="mb-6 bg-overlay py-4 font-geometric text-base sm:mb-8 sm:text-lg md:mx-4 md:mt-4 md:rounded-xl md:px-2"
   >
     <h3 class="geometric-title my-2 px-4 text-accent">
       Siga a gente nas redes sociais
@@ -63,6 +63,29 @@
           [href]="socialNetwork.url"
           ><ng-icon aria-hidden="true" [name]="socialNetwork.icon"></ng-icon
           >{{ socialNetwork.name }}</a
+        >
+      </li>
+    </ul>
+  </div>
+
+  <div
+    class="mb-6 bg-overlay py-4 font-geometric text-base sm:mb-8 sm:text-lg md:mx-4 md:mt-4 md:rounded-xl md:px-2"
+  >
+    <h3 class="geometric-title my-2 px-4 text-accent">Mais informações</h3>
+
+    <ul class="my-4 flex flex-col justify-between gap-3 sm:gap-4">
+      <li>
+        <a
+          class="body-link flex flex-row items-center gap-2 px-4"
+          routerLink="/legal/terms"
+          >Termos de Serviço</a
+        >
+      </li>
+      <li>
+        <a
+          class="body-link flex flex-row items-center gap-2 px-4"
+          routerLink="/legal/privacy"
+          >Política de Privacidade</a
         >
       </li>
     </ul>

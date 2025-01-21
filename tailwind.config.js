@@ -73,7 +73,18 @@ module.exports = {
         over: 'right -15% bottom -15%',
         'over-distant': 'right -15% bottom -10%',
       },
+      typography: ({ theme }) => ({
+        DEFAULT: {
+          css: {
+            '--tw-prose-body': theme('colors.background.contrast'),
+            '--tw-prose-headings': theme('colors.accent.DEFAULT'),
+            '--tw-prose-links': theme('colors.accent.DEFAULT'),
+            '--tw-prose-bold': theme('colors.accent.DEFAULT'),
+            '--tw-prose-bullets': theme('colors.background.contrast'),
+          },
+        },
+      }),
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 };
