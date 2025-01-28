@@ -13,6 +13,7 @@ import {
   MostRelevantArchiveEntryInfo,
   RESTAURANT_REGULARLY_OPEN_DAYS,
 } from '@rusbe/services/knowledge/knowledge.service';
+import { formatArrayAsCommaSeparatedString } from '@rusbe/utils/strings';
 
 @Component({
   selector: 'rusbe-greeter',
@@ -71,12 +72,7 @@ export class GreeterComponent {
       return 'O RU não opera hoje.';
     }
 
-    const formatter = new Intl.ListFormat('pt-br', {
-      style: 'long',
-      type: 'conjunction',
-    });
-
-    return `O RU está operando hoje para ${formatter.format(mealsArray).toLowerCase()}.`;
+    return `O RU está operando hoje para ${formatArrayAsCommaSeparatedString(mealsArray).toLowerCase()}.`;
   });
 
   greeting = computed(() => {
