@@ -28,7 +28,7 @@ import {
   providedIn: 'root',
 })
 export class KnowledgeService {
-  private readonly KNOWLEDGE_UPDATE_INTERVAL_IN_MILLIS = 60 * 1000;
+  private readonly KNOWLEDGE_UPDATE_INTERVAL_IN_MILLIS = 60 * 1000; // 1 minute
   private readonly DAYS_TO_CHECK_WHEN_TRAVERSING_ARCHIVE_ENTRIES = 7;
 
   private archiveService = inject(ArchiveService);
