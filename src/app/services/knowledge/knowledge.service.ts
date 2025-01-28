@@ -67,7 +67,7 @@ export class KnowledgeService {
     this.setupKnowledgeAutoRefresh();
   }
 
-  private async setupKnowledgeAutoRefresh() {
+  private setupKnowledgeAutoRefresh() {
     this.knowledgeUpdateObservable.subscribe(async () => {
       await this.updateCurrentOperationStatusSignal();
       await this.updateMostRelevantArchiveEntryInfoSignal();
