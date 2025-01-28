@@ -4,6 +4,7 @@
   "author": "Erick de Almeida Oliveira Riso",
   "homepage": "https://rusbe.app",
   "description": "Aplicação web para acompanhar o Restaurante Universitário da UFPE.",
+  "license": "AGPL-3.0-only",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
