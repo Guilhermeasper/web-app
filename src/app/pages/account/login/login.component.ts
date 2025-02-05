@@ -21,7 +21,7 @@ export class AccountLoginPageComponent {
   private accountService = inject(AccountService);
 
   goBack() {
-    if (this.router.lastSuccessfulNavigation != null) {
+    if (this.router.lastSuccessfulNavigation?.previousNavigation != null) {
       this.location.back();
     } else {
       this.router.navigate(['/']);
