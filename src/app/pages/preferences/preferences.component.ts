@@ -16,18 +16,17 @@ import {
   lucideUtensils,
 } from '@ng-icons/lucide';
 
+import {
+  HeaderComponent,
+  HeaderType,
+} from '@rusbe/components/header/header.component';
+import { SpinnerComponent } from '@rusbe/components/spinner/spinner.component';
 import { LocalStorageService } from '@rusbe/services/local-storage/local-storage.service';
 import {
   InterfaceTheme,
   PreferencesService,
 } from '@rusbe/services/preferences/preferences.service';
 import { MealType } from '@rusbe/types/archive';
-
-import {
-  HeaderComponent,
-  HeaderType,
-} from '../../components/header/header.component';
-import { SpinnerComponent } from '../../components/spinner/spinner.component';
 
 @Component({
   selector: 'rusbe-preferences-page',

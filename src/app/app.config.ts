@@ -28,10 +28,9 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { routes } from '@rusbe/app.routes';
 import { environment } from '@rusbe/environments/environment';
 import { version } from '@rusbe/environments/version';
+import { AccountService } from '@rusbe/services/account/account.service';
+import { PreferencesService } from '@rusbe/services/preferences/preferences.service';
 import { viewTransitionHandler } from '@rusbe/view-transition-handler';
-
-import { AccountService } from './services/account/account.service';
-import { PreferencesService } from './services/preferences/preferences.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

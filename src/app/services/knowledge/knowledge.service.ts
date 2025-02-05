@@ -15,14 +15,13 @@ import {
   ArchiveService,
 } from '@rusbe/services/archive/archive.service';
 import { GeneralGoodsBalanceType } from '@rusbe/services/general-goods/general-goods.service';
-import { ArchiveEntry, MealType } from '@rusbe/types/archive';
-import { BrlCurrency } from '@rusbe/types/brl-currency';
-
 import {
   DEFAULT_USER_PREFERENCES,
   PreferencesService,
   UserPreferences,
-} from '../preferences/preferences.service';
+} from '@rusbe/services/preferences/preferences.service';
+import { ArchiveEntry, MealType } from '@rusbe/types/archive';
+import { BrlCurrency } from '@rusbe/types/brl-currency';
 
 @Injectable({
   providedIn: 'root',
