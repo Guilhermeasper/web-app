@@ -9,7 +9,7 @@
         <section class="grouping-card">
           <h2 class="grouping-card-title px-responsive">Aparência</h2>
           <label
-            class="grouping-card-strip flex flex-row items-center gap-4 sm:gap-6"
+            class="grouping-card-strip group flex flex-row items-center gap-4 sm:gap-6"
             for="interface-theme-select"
           >
             <ng-icon
@@ -18,16 +18,21 @@
               aria-hidden="true"
             ></ng-icon>
             <h3 class="w-full font-bold">Tema da interface</h3>
-            <select
-              [ngModel]="preferencesService.userPreferences()?.interfaceTheme"
-              (ngModelChange)="updateInterfaceThemePreference($event)"
-              class="w-40 rounded-lg border-0 bg-overlay px-4 py-2 text-sm font-bold text-accent transition-all hover:bg-accent/10 focus:ring focus:ring-accent sm:w-48 sm:text-lg"
-              id="interface-theme-select"
-            >
-              @for (option of INTERFACE_THEME_OPTIONS; track option.value) {
-                <option value="{{ option.value }}">{{ option.label }}</option>
-              }
-            </select>
+            <div class="relative w-40 sm:w-48">
+              <div
+                class="absolute inset-0 rounded-lg bg-overlay transition-all group-hover:bg-accent/10"
+              ></div>
+              <select
+                [ngModel]="preferencesService.userPreferences()?.interfaceTheme"
+                (ngModelChange)="updateInterfaceThemePreference($event)"
+                class="relative w-full rounded-lg border-0 bg-transparent px-4 py-2 text-sm font-bold text-accent transition-all focus:ring focus:ring-accent sm:text-lg"
+                id="interface-theme-select"
+              >
+                @for (option of INTERFACE_THEME_OPTIONS; track option.value) {
+                  <option value="{{ option.value }}">{{ option.label }}</option>
+                }
+              </select>
+            </div>
           </label>
 
           <label
