@@ -8,7 +8,15 @@ import {
   model,
 } from '@angular/core';
 
-import { Day, getDay, isSameDay, lightFormat, parse } from 'date-fns';
+import {
+  Day,
+  addDays,
+  getDay,
+  isSameDay,
+  lightFormat,
+  parse,
+  subDays,
+} from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 
 import { AngularDelegate } from '@ionic/angular/common';
@@ -116,6 +124,32 @@ export class DatePickerComponent implements OnInit, OnDestroy {
     }
 
     this.dismissPickerPopover();
+  }
+
+  goToPreviousDate() {
+    const dateObject = this.selectedDateObject();
+
+    if (dateObject === undefined) {
+      return;
+    }
+
+    const previousDay = subDays(dateObject, 1);
+    this.selectedDate.set(
+      lightFormat(previousDay, ARCHIVE_ENTRY_FILENAME_DATE_FORMAT),
+    );
+  }
+
+  goToNextDate() {
+    const dateObject = this.selectedDateObject();
+
+    if (dateObject === undefined) {
+      return;
+    }
+
+    const nextDay = addDays(dateObject, 1);
+    this.selectedDate.set(
+      lightFormat(nextDay, ARCHIVE_ENTRY_FILENAME_DATE_FORMAT),
+    );
   }
 
   isDateMenuAvailable = (date: string) => {

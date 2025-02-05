@@ -5,7 +5,10 @@
 
   <div class="standard-page-container">
     <main class="flex flex-col gap-4 sm:gap-8">
-      <rusbe-date-picker [(selectedDate)]="selectedDate"></rusbe-date-picker>
+      <rusbe-date-picker
+        [(selectedDate)]="selectedDate"
+        class="px-4 pb-4 pt-2 sm:pt-4"
+      ></rusbe-date-picker>
       <rusbe-restaurant-menu-viewer
         [archiveEntry]="selectedArchiveEntry.value()"
       ></rusbe-restaurant-menu-viewer>

@@ -148,7 +148,7 @@
   }
 
   .button-base {
-    @apply flex flex-row items-center gap-2 rounded-full p-2 font-geometric font-semibold text-accent transition-all focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2;
+    @apply flex touch-manipulation flex-row items-center gap-2 rounded-full p-2 font-geometric font-semibold text-accent transition-all focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2;
   }
 
   .button-outline {

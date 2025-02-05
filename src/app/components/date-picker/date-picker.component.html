@@ -1,19 +1,14 @@
-<div class="flex w-full flex-row items-center justify-between gap-2 p-4">
+<div
+  class="flex w-full flex-col justify-between gap-4 md:flex-row md:items-center"
+>
   <div class="flex flex-row items-center gap-4">
-    <!-- TODO: Implement next/previous date selection -->
-    @if (false) {
-      <button class="button-outline-icon focus:ring-offset-background">
-        <ng-icon name="lucideArrowLeft" aria-hidden="true"></ng-icon>
-        <span class="sr-only">Data anterior</span>
-      </button>
-    }
-    @if (!selectedDateObject()) {
-      <div
-        class="h-7 w-64 animate-pulse rounded-xl bg-background-contrast/30 sm:h-8 sm:w-80"
-      ></div>
-    }
-    @if (selectedDateObject()) {
-      <div class="flex flex-col gap-1">
+    <div class="flex min-h-12 flex-col justify-center gap-1 sm:min-h-16">
+      @if (!selectedDateObject()) {
+        <div
+          class="h-7 w-64 animate-pulse rounded-xl bg-background-contrast/30 sm:h-8 sm:w-80"
+        ></div>
+      }
+      @if (selectedDateObject()) {
         <h2 class="text-xl sm:text-2xl">
           <strong>{{ selectedWeekday() }}</strong
           >, {{ selectedDayAndMonth() }}
@@ -22,30 +17,51 @@
         @if (!isToday()) {
           <p>Visualizando uma data que não é hoje.</p>
         }
-      </div>
-    }
-
-    @if (false) {
-      <button class="button-outline-icon focus:ring-offset-background">
-        <ng-icon name="lucideArrowRight" aria-hidden="true"></ng-icon>
-        <span class="sr-only">Próxima data</span>
-      </button>
-    }
+      }
+    </div>
   </div>
 
-  <button
-    class="button-outline focus:ring-offset-background"
-    id="open-picker-popover"
-  >
-    <ng-icon name="lucideCalendarDays" aria-hidden="true"></ng-icon>
-    <span class="sr-only sm:not-sr-only">Selecionar data</span>
-  </button>
+  <div class="flex flex-row items-center gap-2">
+    <button
+      class="button-outline-icon focus:ring-offset-background"
+      (click)="goToPreviousDate()"
+    >
+      <ng-icon
+        class="m-0.5 sm:m-1"
+        name="lucideArrowLeft"
+        aria-hidden="true"
+      ></ng-icon>
+      <span class="sr-only">Data anterior</span>
+    </button>
+    <button
+      class="button-outline flex w-full flex-row justify-center text-center focus:ring-offset-background"
+      id="open-picker-popover"
+    >
+      <ng-icon
+        class="min-w-fit"
+        name="lucideCalendarDays"
+        aria-hidden="true"
+      ></ng-icon>
+      <span>Selecionar data</span>
+    </button>
+    <button
+      class="button-outline-icon focus:ring-offset-background"
+      (click)="goToNextDate()"
+    >
+      <ng-icon
+        class="m-0.5 sm:m-1"
+        name="lucideArrowRight"
+        aria-hidden="true"
+      ></ng-icon>
+      <span class="sr-only">Próxima data</span>
+    </button>
+  </div>
 </div>
 
 <ion-popover
   trigger="open-picker-popover"
   side="bottom"
-  alignment="end"
+  alignment="center"
   mode="md"
 >
   <ng-template>
