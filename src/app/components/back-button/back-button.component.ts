@@ -18,16 +18,8 @@ export class BackButtonComponent {
   router = inject(Router);
   location = inject(Location);
 
-  private readonly previousPageIsWithinApp: boolean;
-
-  constructor() {
-    this.previousPageIsWithinApp = Boolean(
-      this.router.getCurrentNavigation()?.previousNavigation,
-    );
-  }
-
   goBack() {
-    if (this.previousPageIsWithinApp) {
+    if (this.router.lastSuccessfulNavigation != null) {
       this.location.back();
     } else {
       this.router.navigate(['/']);
