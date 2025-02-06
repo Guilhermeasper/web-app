@@ -133,6 +133,14 @@
     @apply bg-[url('/assets/elements/icon-chevron-down-dark.svg')];
   }
 
+  select option {
+    @apply bg-overlay text-overlay-contrast;
+  }
+
+  select option:hover {
+    @apply bg-accent text-accent-contrast;
+  }
+
   [type='checkbox']:checked {
     @apply bg-[url('/assets/elements/icon-checkbox-light.svg')];
   }
