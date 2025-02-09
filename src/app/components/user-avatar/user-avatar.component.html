@@ -1,0 +1,8 @@
+@if (currentUser()) {
+  <img
+    src="{{ currentUser()!.photoUrl }}"
+    (error)="setFallbackAvatarImage($event)"
+    alt=""
+    class="aspect-square rounded-full shadow-sm"
+  />
+}

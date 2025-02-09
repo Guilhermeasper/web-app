@@ -1,1 +1,160 @@
-<p>wizard works!</p>
+<div
+  class="hidden h-full overflow-hidden lg:fixed lg:left-0 lg:top-0 lg:block lg:w-60 lg:bg-[url('/assets/artworks/shapes-vertical-strip.svg')]"
+></div>
+
+<div class="p-safe h-svh overflow-auto lg:ml-60">
+  <div class="flex h-full flex-col items-start justify-start">
+    <div class="reduced-page-container w-full p-4">
+      <rusbe-header [type]="HeaderType.PageNameWithCloseButton">
+        {{ pageTitle() }}
+      </rusbe-header>
+    </div>
+
+    <div class="reduced-page-container w-full flex-grow p-4">
+      <main class="h-full">
+        @switch (currentStep()) {
+          @case (WizardStep.Loading) {
+            <div
+              class="transition-appear flex h-full w-full flex-col items-center justify-center gap-2 sm:gap-4"
+            >
+              <rusbe-spinner class="h-8 w-8 text-accent"></rusbe-spinner>
+              <p class="text-base sm:text-xl">Um momento...</p>
+            </div>
+          }
+
+          @case (WizardStep.GeneralGoodsServiceUnavailable) {
+            <div
+              class="transition-appear flex h-full w-full flex-col items-center justify-center gap-2 sm:gap-4"
+            >
+              <p class="text-base sm:text-xl">
+                Infelizmente, o sistema da General Goods está fora do ar.
+              </p>
+              <p>Não se preocupe, você pode configurar sua conta mais tarde.</p>
+            </div>
+          }
+
+          @case (WizardStep.CredentialRefresh) {
+            <rusbe-wizard-firebase-user-check
+              class="transition-appear"
+              (goToStep)="goToStep($event)"
+              [requestSignIn]="true"
+            ></rusbe-wizard-firebase-user-check>
+          }
+
+          @case (WizardStep.CredentialMismatchWarning) {
+            <rusbe-wizard-credential-mismatch-warning
+              class="transition-appear"
+              (goToStep)="goToStep($event)"
+              (exitWizard)="exitWizard()"
+            ></rusbe-wizard-credential-mismatch-warning>
+          }
+
+          @case (WizardStep.SetupGreeting) {
+            <rusbe-wizard-firebase-user-check
+              class="transition-appear"
+              (goToStep)="goToStep($event)"
+              [requestSignIn]="false"
+            ></rusbe-wizard-firebase-user-check>
+          }
+
+          @case (WizardStep.ChooseGeneralGoodsIntegrationType) {
+            <rusbe-wizard-integration-type-chooser
+              class="transition-appear"
+              (chooseIntegrationType)="chooseIntegrationType($event)"
+            ></rusbe-wizard-integration-type-chooser>
+          }
+
+          @case (WizardStep.ExistingGeneralGoodsAccountDisclaimer) {
+            <rusbe-wizard-account-setup-disclaimer
+              class="transition-appear"
+              (goToStep)="goToStep($event)"
+              [integrationType]="GeneralGoodsIntegrationType.ExistingAccount"
+            >
+            </rusbe-wizard-account-setup-disclaimer>
+          }
+
+          @case (WizardStep.ExistingGeneralGoodsAccountEmailCheck) {
+            <rusbe-wizard-existing-account-email-check
+              class="transition-appear"
+              (configureAccount)="configureAccount($event)"
+              (goToStep)="goToStep($event)"
+              [generalGoodsAccountEmail]="generalGoodsAccountEmail()"
+            >
+            </rusbe-wizard-existing-account-email-check>
+          }
+
+          @case (WizardStep.ExistingGeneralGoodsAccountEmailInput) {
+            <rusbe-wizard-existing-account-email-input
+              class="transition-appear"
+              (goToStep)="goToStep($event)"
+              [(email)]="generalGoodsAccountEmail"
+            >
+            </rusbe-wizard-existing-account-email-input>
+          }
+
+          @case (
+            WizardStep.ExistingGeneralGoodsAccountConfigurationInProgress
+          ) {
+            <rusbe-wizard-account-configuration-in-progress
+              class="transition-appear"
+              [integrationType]="GeneralGoodsIntegrationType.ExistingAccount"
+            >
+            </rusbe-wizard-account-configuration-in-progress>
+          }
+
+          @case (WizardStep.NewGeneralGoodsAccountDisclaimer) {
+            <rusbe-wizard-account-setup-disclaimer
+              class="transition-appear"
+              (goToStep)="goToStep($event)"
+              [integrationType]="GeneralGoodsIntegrationType.NewAccount"
+            >
+            </rusbe-wizard-account-setup-disclaimer>
+          }
+
+          @case (WizardStep.NewGeneralGoodsAccountIdentifierInput) {
+            <rusbe-wizard-new-account-identifier-input
+              class="transition-appear"
+              (goToStep)="goToStep($event)"
+              (configureAccount)="configureAccount($event)"
+              [(identifier)]="generalGoodsAccountIdentifier"
+            >
+            </rusbe-wizard-new-account-identifier-input>
+          }
+
+          @case (WizardStep.NewGeneralGoodsAccountConfigurationInProgress) {
+            <rusbe-wizard-account-configuration-in-progress
+              class="transition-appear"
+              [integrationType]="GeneralGoodsIntegrationType.NewAccount"
+            >
+            </rusbe-wizard-account-configuration-in-progress>
+          }
+
+          @case (WizardStep.GeneralGoodsAccountConfigurationError) {
+            <rusbe-wizard-account-configuration-error
+              class="transition-appear"
+              (goToStep)="goToStep($event)"
+            >
+            </rusbe-wizard-account-configuration-error>
+          }
+
+          @case (WizardStep.GeneralGoodsAccountVerification) {
+            <rusbe-wizard-account-verification
+              class="transition-appear"
+              [(accountStub)]="generalGoodsAccountStub"
+              (goToStep)="goToStep($event)"
+            >
+            </rusbe-wizard-account-verification>
+          }
+
+          @case (WizardStep.SetupComplete) {
+            <rusbe-wizard-setup-complete
+              class="transition-appear"
+              (exitWizard)="exitWizard()"
+            >
+            </rusbe-wizard-setup-complete>
+          }
+        }
+      </main>
+    </div>
+  </div>
+</div>

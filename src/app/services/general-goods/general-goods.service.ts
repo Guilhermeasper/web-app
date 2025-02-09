@@ -1,7 +1,12 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Injectable, WritableSignal, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 
-import { lastValueFrom } from 'rxjs';
+import { Observable, lastValueFrom, map } from 'rxjs';
 
 import { jwtDecode } from 'jwt-decode';
 
@@ -21,8 +26,21 @@ export class GeneralGoodsService {
   private generalGoodsBaseUrl = new URL('api/', environment.generalGoodsApiUrl);
   private http: HttpClient = inject(HttpClient);
   private localStorage: LocalStorageService = inject(LocalStorageService);
-  private bearerTokenSignal: WritableSignal<string | undefined> =
+  // Using same pattern as Firebase Auth, where `undefined` means the service is
+  // still loading, while `null` means the token is not available.
+  private bearerTokenSignal: WritableSignal<string | null | undefined> =
     signal(undefined);
+  public isLoggedIn: Observable<boolean | undefined> = toObservable(
+    this.bearerTokenSignal,
+  ).pipe(
+    map((bearerToken) => {
+      if (bearerToken === undefined) {
+        return undefined;
+      } else {
+        return bearerToken !== null;
+      }
+    }),
+  );
 
   constructor() {
     this.retrieveBearerTokenFromLocalStorage();
@@ -58,8 +76,13 @@ export class GeneralGoodsService {
         ),
       );
       return response;
-    } catch {
-      throw new Error('RequestFailedError');
+    } catch (error) {
+      if (error instanceof HttpErrorResponse) {
+        this.handleRequestError(error.error as GeneralGoodsResponseStatus);
+      }
+
+      // This should never happen.
+      throw new Error('GeneralGoodsRequestFailed');
     }
   }
 
@@ -77,7 +100,7 @@ export class GeneralGoodsService {
       password_confirmation: accountRegisterData.password,
     };
 
-    // TODO: Investigate if the account registration fails if the user doesn't have an account at the restaurant itself (i.e., biometric collection to enter)
+    // TODO: Investigate if/how the account registration fails if the user doesn't have an account at the restaurant itself (i.e., biometric collection to enter)
 
     const accountData = await this.performRequest<
       GeneralGoodsAccountDataResponseBody & GeneralGoodsResponseStatus
@@ -116,14 +139,14 @@ export class GeneralGoodsService {
         requestBody,
       );
 
-    // FIXME: Implement error handling
-
     await this.saveBearerToken(accountData.authorisation.token);
   }
 
   public async refreshToken() {
     const requestUrl = new URL(`refresh/`, this.generalGoodsBaseUrl);
-    const bearerToken = await this.ensureBearerToken();
+    const bearerToken = await this.ensureBearerToken({
+      skipRefreshCheck: true,
+    });
 
     const accountData =
       await this.performRequest<GeneralGoodsAccountDataResponseBody>({
@@ -132,17 +155,14 @@ export class GeneralGoodsService {
         bearerToken,
       });
 
-    // FIXME: Implement error handling
-
     await this.saveBearerToken(accountData.authorisation.token);
   }
 
   public async logout() {
     const requestUrl = new URL(`logout/`, this.generalGoodsBaseUrl);
     const bearerToken = await this.ensureBearerToken();
-
-    await this.performRequest({ url: requestUrl, method: 'POST', bearerToken });
     await this.clearBearerToken();
+    await this.performRequest({ url: requestUrl, method: 'POST', bearerToken });
   }
 
   public async getAccountData(): Promise<GeneralGoodsAccountData> {
@@ -178,12 +198,19 @@ export class GeneralGoodsService {
     return this.parsePixTransactionData(responseData);
   }
 
+  async clearBearerToken() {
+    await this.localStorage.remove(StorageKey.GeneralGoodsBearerToken);
+    this.bearerTokenSignal.set(null);
+  }
+
   private async retrieveBearerTokenFromLocalStorage() {
     const bearerToken = await this.localStorage.get<string>(
       StorageKey.GeneralGoodsBearerToken,
     );
     if (bearerToken) {
       this.bearerTokenSignal.set(bearerToken);
+    } else {
+      this.bearerTokenSignal.set(null);
     }
   }
 
@@ -192,12 +219,9 @@ export class GeneralGoodsService {
     this.bearerTokenSignal.set(token);
   }
 
-  private async clearBearerToken() {
-    await this.localStorage.remove(StorageKey.GeneralGoodsBearerToken);
-    this.bearerTokenSignal.set(undefined);
-  }
-
-  private async ensureBearerToken(): Promise<string> {
+  private async ensureBearerToken(
+    options: { skipRefreshCheck?: boolean } = { skipRefreshCheck: false },
+  ): Promise<string> {
     const bearerToken = this.bearerTokenSignal();
 
     if (!bearerToken) {
@@ -213,18 +237,23 @@ export class GeneralGoodsService {
     }
 
     // If token expires within the threshold, refresh it
-    if (decodedToken.exp - now < this.BEARER_TOKEN_REFRESH_THRESHOLD) {
+    if (
+      !options.skipRefreshCheck &&
+      decodedToken.exp - now < this.BEARER_TOKEN_REFRESH_THRESHOLD
+    ) {
       await this.refreshToken();
+      // TODO: Instead of refreshing the token if it's about to expire, schedule it to be refreshed in the background
     }
 
     return bearerToken;
   }
 
-  // TODO: Use this method to handle errors in requests
-  private throwIfRequestIsNotSuccessful(response: GeneralGoodsResponseStatus) {
+  private handleRequestError(response: GeneralGoodsResponseStatus) {
     if (
       response.message === 'Credenciais inválidas ou cadastro não confirmado.'
     ) {
+      // Although this messages implies that the credentials are invalid, when the password is incorrect,
+      // the server usually returns `Unauthorized` instead.
       throw new Error('GeneralGoodsInvalidCredentialsOrEmailNotConfirmed');
     }
 
@@ -239,6 +268,10 @@ export class GeneralGoodsService {
         throw new Error('GeneralGoodsRequestFailed');
       }
     }
+
+    throw new Error('GeneralGoodsRequestFailed');
+
+    // TODO: Narrow down when General Goods service is unavailable
   }
 
   private parseAccountData(
@@ -263,7 +296,15 @@ export class GeneralGoodsService {
       responseBody.user.pessoa.classificacao_id == '2' ||
       responseBody.user.pessoa.consumo_limite_credito == null
     ) {
-      return { type: GeneralGoodsBalanceType.FullGrant };
+      if (
+        responseBody.user.pessoa.horarios.find(
+          (horario) => horario.inicio === '07:00',
+        )
+      ) {
+        return { type: GeneralGoodsBalanceType.FullGrantStudentHousing };
+      } else {
+        return { type: GeneralGoodsBalanceType.FullGrant };
+      }
     }
 
     return {
@@ -399,7 +440,9 @@ export interface GeneralGoodsPartialGrantBalance {
 }
 
 export interface GeneralGoodsFullGrantBalance {
-  type: GeneralGoodsBalanceType.FullGrant;
+  type:
+    | GeneralGoodsBalanceType.FullGrant
+    | GeneralGoodsBalanceType.FullGrantStudentHousing;
 }
 
 export enum GeneralGoodsBalanceType {

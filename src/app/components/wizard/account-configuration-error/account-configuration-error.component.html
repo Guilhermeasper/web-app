@@ -1,0 +1,22 @@
+<div class="flex min-h-[70%] flex-col gap-4 py-4 sm:gap-8">
+  <img
+    src="assets/artworks/shapes-key.svg"
+    alt=""
+    class="h-12 self-start sm:h-16"
+  />
+
+  <p class="text-balance text-xl sm:text-3xl">
+    <strong>Ocorreu um erro ao configurar sua conta.</strong> Verifique seus
+    dados e tente novamente.
+  </p>
+</div>
+<div
+  class="flex min-h-[30%] flex-col items-center justify-end gap-2 py-4 sm:gap-4 sm:pb-16"
+>
+  <button
+    (click)="goToStep.emit(WizardStep.ChooseGeneralGoodsIntegrationType)"
+    class="button-fill button-full button-large focus:ring-offset-background"
+  >
+    Tentar novamente
+  </button>
+</div>

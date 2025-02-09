@@ -13,6 +13,7 @@
 </div>
 
 <div class="px-safe pb-safe">
+  <!-- FIXME: Layout issues in small height devices -->
   <main
     class="reduced-page-container flex h-[calc(100vh-22rem)] flex-col justify-between gap-8 p-4 text-center sm:mt-8 sm:h-[calc(100vh-36rem)] sm:gap-10"
   >
@@ -39,6 +40,14 @@
       >
         Continuar com UFPE ID
       </button>
+      <p class="text-pretty pt-2 text-xs sm:text-base">
+        Ao fazer login, você concorda com os
+        <a class="body-link" routerLink="/legal/terms">Termos de Uso</a> e a
+        <a class="body-link" routerLink="/legal/privacy"
+          >Política de Privacidade</a
+        >
+        do Rusbé.
+      </p>
     </div>
   </main>
 </div>

@@ -1,0 +1,25 @@
+@switch (loginStatus()) {
+  @case (AccountAuthState.LoggedOut) {
+    <a class="button-text" routerLink="/account/login"> Fazer login </a>
+  }
+
+  @case (undefined) {
+    <div
+      class="h-8 w-8 animate-pulse rounded-full bg-accent/10 sm:h-10 sm:w-36"
+    ></div>
+  }
+
+  @default {
+    <a
+      class="button-text p-0 hover:opacity-70 focus:ring-offset-4 focus:ring-offset-background sm:pl-4 sm:hover:opacity-100 sm:focus:ring-offset-0"
+      routerLink="/account/details"
+    >
+      <span class="sr-only sm:not-sr-only sm:pr-2">Sua conta</span>
+      <rusbe-user-avatar
+        class="h-8 w-8 rounded-full ring ring-accent sm:h-10 sm:w-10"
+      ></rusbe-user-avatar>
+    </a>
+  }
+
+  <!-- TODO: Maybe add indicators for special cases (like credential refresh required)? -->
+}

@@ -93,6 +93,10 @@ export const routes: Routes = [
     },
   },
   {
+    path: 'login',
+    redirectTo: '/account/login',
+  },
+  {
     path: '**',
     redirectTo: '/404',
   },

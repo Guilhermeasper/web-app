@@ -1,0 +1,69 @@
+<div class="flex min-h-[70%] flex-col gap-4 py-4 sm:gap-8">
+  <img
+    src="assets/artworks/shapes-key.svg"
+    alt=""
+    class="h-12 self-start sm:h-16"
+  />
+
+  <p class="text-balance text-xl sm:text-3xl">
+    @if (integrationType() === GeneralGoodsIntegrationType.NewAccount) {
+      Certo, <strong>iremos criar uma conta da General Goods para você</strong>.
+    }
+    @if (integrationType() === GeneralGoodsIntegrationType.ExistingAccount) {
+      Para usar o Rusbé,
+      <strong
+        >é preciso substituir a senha da sua conta da General Goods por uma
+        chave aleatória</strong
+      >.
+    }
+  </p>
+  <p>
+    @if (integrationType() === GeneralGoodsIntegrationType.NewAccount) {
+      Sua conta será protegida por uma chave aleatória, que é mais segura que
+      uma senha comum e permite que o Rusbé se comunique com o sistema da
+      General Goods.
+    }
+    @if (integrationType() === GeneralGoodsIntegrationType.ExistingAccount) {
+      Uma chave aleatória é mais segura e permite que o Rusbé se comunique com o
+      sistema da General Goods sem ter acesso à sua senha.
+    }
+  </p>
+
+  <!-- FIXME: Layout issues on mobile -->
+  <div class="flex flex-col gap-2 sm:gap-4">
+    @for (entry of faqEntries; track entry.question) {
+      <details
+        name="setup-faq"
+        class="group w-full rounded-md bg-overlay sm:rounded-xl"
+      >
+        <summary
+          class="flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md p-3 font-bold transition-all marker:content-[''] hover:bg-accent/10 focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2 focus:ring-offset-background sm:gap-4 sm:rounded-xl sm:p-4"
+        >
+          <span [innerHTML]="entry.question"></span>
+          <ng-icon
+            aria-hidden="true"
+            name="lucideChevronDown"
+            class="transition-transform group-open:rotate-180"
+          ></ng-icon>
+        </summary>
+        <p class="p-3 sm:p-4" [innerHTML]="entry.answer"></p>
+      </details>
+    }
+  </div>
+</div>
+<div
+  class="flex min-h-[30%] flex-col items-center justify-end gap-2 py-4 sm:gap-4 sm:pb-16"
+>
+  <button
+    (click)="goToStep.emit(WizardStep.ChooseGeneralGoodsIntegrationType)"
+    class="button-text button-full button-large focus:ring-offset-background"
+  >
+    Voltar
+  </button>
+  <button
+    (click)="accept()"
+    class="button-fill button-full button-large focus:ring-offset-background"
+  >
+    Certo, continuar
+  </button>
+</div>

@@ -1,0 +1,35 @@
+<div class="flex min-h-[70%] flex-col gap-4 py-4 sm:gap-8">
+  <img
+    src="assets/artworks/shapes-key.svg"
+    alt=""
+    class="h-12 self-start sm:h-16"
+  />
+
+  <p class="text-balance text-xl sm:text-3xl">
+    O e-mail que você usa com sua conta da General Goods é o
+    <strong>{{ generalGoodsAccountEmail() }}</strong
+    >?
+  </p>
+</div>
+<div
+  class="flex min-h-[30%] flex-col items-center justify-end gap-2 py-4 sm:gap-4 sm:pb-16"
+>
+  <button
+    (click)="goToStep.emit(WizardStep.ExistingGeneralGoodsAccountDisclaimer)"
+    class="button-text button-full button-large focus:ring-offset-background"
+  >
+    Voltar
+  </button>
+  <button
+    (click)="goToStep.emit(WizardStep.ExistingGeneralGoodsAccountEmailInput)"
+    class="button-text button-full button-large focus:ring-offset-background"
+  >
+    Não, uso outro e-mail
+  </button>
+  <button
+    (click)="continue()"
+    class="button-fill button-full button-large focus:ring-offset-background"
+  >
+    Sim, continuar
+  </button>
+</div>

@@ -1,0 +1,21 @@
+<button
+  class="flex h-8 w-8 flex-row items-center justify-center rounded-md transition-all focus:outline-none focus:ring"
+  (click)="close()"
+  [ngClass]="{
+    'hover:bg-accent/10 focus:ring-accent active:bg-accent/30':
+      colorScheme() === ButtonColorScheme.Page,
+    'hover:bg-farofa-tint/10 focus:ring-farofa-tint active:bg-farofa-tint/30':
+      colorScheme() === ButtonColorScheme.ColoredBackground,
+  }"
+>
+  <span class="sr-only">Fechar</span>
+  <ng-icon
+    class="text-2xl sm:text-3xl"
+    [ngClass]="{
+      'text-accent': colorScheme() === ButtonColorScheme.Page,
+      'text-farofa-tint': colorScheme() === ButtonColorScheme.ColoredBackground,
+    }"
+    name="lucideX"
+    aria-hidden="true"
+  ></ng-icon>
+</button>

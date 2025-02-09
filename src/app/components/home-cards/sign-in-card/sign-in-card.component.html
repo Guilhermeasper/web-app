@@ -1,10 +1,35 @@
 <a
   class="bg-card-corner-close flex h-full flex-col justify-between rounded-2xl border-overlay-contrast bg-overlay bg-[url('/assets/artworks/shapes-coat-of-arms.svg')] bg-[length:4rem_5.75rem] p-4 text-overlay-contrast shadow-sm transition-all hover:bg-overlay-hover hover:shadow-lg focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2 focus:ring-offset-background active:bg-overlay-hover sm:rounded-3xl sm:bg-[length:6rem_8rem] sm:p-6"
-  routerLink="/"
+  [routerLink]="cardLinkUrl()"
+  draggable="false"
 >
   <h2 class="geometric-title">Conta Rusbé</h2>
 
   <p class="max-w-64 pt-2 text-xl sm:pt-3 sm:text-2xl">
-    Faça login para ver seu saldo e fazer recargas.
+    @switch (loginStatus()) {
+      @case (AccountAuthState.LoggedIn) {
+        Veja informações sobre sua conta.
+      }
+
+      @case (AccountAuthState.LoggedOut) {
+        Faça login para ver seu saldo e fazer recargas.
+      }
+
+      @case (AccountAuthState.CredentialRefreshRequired) {
+        Confirme que é você para ver seu saldo.
+      }
+
+      @case (AccountAuthState.GeneralGoodsAccountCredentialMismatch) {
+        Reconfiguração de conta necessária.
+      }
+
+      @case (AccountAuthState.GeneralGoodsServiceUnavailable) {
+        General Goods está indisponível.
+      }
+
+      @default {
+        Configure sua conta para ver seu saldo.
+      }
+    }
   </p>
 </a>

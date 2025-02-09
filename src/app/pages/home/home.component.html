@@ -23,25 +23,16 @@
       >
         <rusbe-status-card class="xs:col-span-2"></rusbe-status-card>
         <rusbe-menu-card class="xs:col-span-2 xs:row-span-2"></rusbe-menu-card>
-        <rusbe-credits-card
-          class="xs:col-span-2"
-          *ngIf="false"
-        ></rusbe-credits-card>
-        <rusbe-sign-in-card
-          class="xs:col-span-2"
-          *ngIf="false"
-        ></rusbe-sign-in-card>
+        @if (showSignInCard()) {
+          <rusbe-sign-in-card class="xs:col-span-2"></rusbe-sign-in-card>
+        } @else {
+          <rusbe-credits-card class="xs:col-span-2"></rusbe-credits-card>
+        }
         <rusbe-link-card
           destination="/about"
           iconName="lucideWallet"
           *ngIf="false"
           >Adicionar créditos</rusbe-link-card
-        >
-        <rusbe-link-card
-          destination="/about"
-          iconName="lucideInfo"
-          *ngIf="false"
-          >Sua conta</rusbe-link-card
         >
         <rusbe-link-card destination="/menu" iconName="lucideFolderClock"
           >Histórico de cardápios</rusbe-link-card

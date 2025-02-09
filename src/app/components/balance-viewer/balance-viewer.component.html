@@ -1,0 +1,83 @@
+@if (balance()) {
+  <div>
+    <p
+      class="py-1 text-2xl sm:py-2 sm:text-3xl"
+      [ngClass]="{
+        'text-highlight-b-accent':
+          colorScheme() === BalanceViewerColorScheme.Highlight,
+        'text-overlay-contrast':
+          colorScheme() === BalanceViewerColorScheme.Overlay,
+      }"
+    >
+      @switch (balance()!.type) {
+        @case (GeneralGoodsBalanceType.FullGrantStudentHousing) {
+          <span>Ilimitado</span>
+        }
+        @case (GeneralGoodsBalanceType.FullGrant) {
+          <span>Ilimitado</span>
+        }
+        @case (GeneralGoodsBalanceType.PartialGrant) {
+          <span
+            >R$
+            <span class="currency-value">
+              {{ balanceValue() }}
+            </span></span
+          >
+        }
+      }
+
+      <!-- TODO: Show unavailable when General Goods service is unavailable -->
+      @if (false) {
+        <span>Indisponível</span>
+      }
+    </p>
+    <!-- TODO: Implement button to show/hide credits -->
+  </div>
+
+  <p
+    [ngClass]="{
+      'text-highlight-b-contrast':
+        colorScheme() === BalanceViewerColorScheme.Highlight,
+      'text-overlay-contrast':
+        colorScheme() === BalanceViewerColorScheme.Overlay,
+    }"
+  >
+    @if (balance()!.type === GeneralGoodsBalanceType.PartialGrant) {
+      pode adquirir
+      <strong
+        >{{ purchasableLunches() }}
+        {{ purchasableLunches() === 1 ? 'almoço' : 'almoços' }}</strong
+      >
+      ou
+      <strong
+        >{{ purchasableDinners() }}
+        {{ purchasableDinners() === 1 ? 'jantar' : 'jantares' }}</strong
+      >
+      <!-- TODO: Insufficient funds warning -->
+    } @else if (purchasableMealsString()) {
+      para uso em {{ purchasableMealsString() }}
+    }
+  </p>
+}
+
+@if (balance() === undefined) {
+  <div
+    class="my-1 h-8 w-28 max-w-full animate-pulse rounded-xl sm:my-2 sm:h-9 sm:w-36"
+    [ngClass]="{
+      'bg-highlight-b-accent/30':
+        colorScheme() === BalanceViewerColorScheme.Highlight,
+      'bg-overlay-contrast/30':
+        colorScheme() === BalanceViewerColorScheme.Overlay,
+    }"
+  ></div>
+
+  <div
+    class="h-3 w-56 max-w-full animate-pulse rounded-xl sm:h-4 sm:w-72"
+    [ngClass]="{
+      'bg-highlight-b-contrast/30':
+        colorScheme() === BalanceViewerColorScheme.Highlight,
+      'bg-overlay-contrast/30':
+        colorScheme() === BalanceViewerColorScheme.Overlay,
+    }"
+  ></div>
+}

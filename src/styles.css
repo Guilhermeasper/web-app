@@ -200,7 +200,7 @@
   }
 
   .grouping-card-strip-button {
-    @apply w-full rounded-sm font-bold text-accent transition-all hover:bg-accent/10 focus:outline-none focus:ring focus:ring-accent focus:ring-offset-0 active:bg-accent/30 sm:gap-6;
+    @apply w-full touch-manipulation rounded-sm font-bold text-accent transition-all hover:bg-accent/10 focus:outline-none focus:ring focus:ring-accent focus:ring-offset-0 active:bg-accent/30 sm:gap-6;
   }
 
   .grouping-card-strip-button-inner {
@@ -249,6 +249,11 @@
     @apply px-4 sm:px-6;
   }
 
+  .text-condensed {
+    font-stretch: condensed;
+    @apply font-grotesque uppercase;
+  }
+
   .geometric-title {
     @apply font-geometric font-bold uppercase;
   }
@@ -282,6 +287,18 @@
     .themed-scrollbar::-webkit-scrollbar {
       max-width: var(--scrollbar-width-legacy);
       max-height: var(--scrollbar-width-legacy);
+    }
+  }
+
+  .transition-appear {
+    animation:
+      210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+      300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .transition-appear {
+      @apply animate-none;
     }
   }
 

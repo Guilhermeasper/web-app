@@ -20,24 +20,31 @@ export class AccountService {
   private googleDriveService: GoogleDriveService = inject(GoogleDriveService);
   private cryptoService: CryptoService = inject(CryptoService);
 
-  public readonly currentUser: Signal<User | null> = computed(() => {
-    const firebaseUser = this.firebaseService.currentUser();
+  public readonly currentUser: Signal<User | null | undefined> = computed(
+    () => {
+      const firebaseUser = this.firebaseService.currentUser();
 
-    if (!firebaseUser) {
-      return null;
-    }
+      if (!firebaseUser) {
+        // Careful: `undefined` means Firebase is still loading,
+        // while `null` means the user is logged out.
+        return firebaseUser;
+      }
 
-    return {
-      displayName: firebaseUser.displayName,
-      email: firebaseUser.email,
-      photoUrl: firebaseUser.photoURL,
-      uid: firebaseUser.uid,
-    };
-  });
-  public readonly isLoggedIn = this.firebaseService.isLoggedIn;
+      return {
+        displayName: firebaseUser.displayName,
+        email: firebaseUser.email,
+        photoUrl: firebaseUser.photoURL,
+        uid: firebaseUser.uid,
+      };
+    },
+  );
 
-  public async signIn() {
-    const userCredential = await this.firebaseService.signInWithPopup();
+  public async signIn(
+    options: { suggestSameUser: boolean } = {
+      suggestSameUser: false,
+    },
+  ) {
+    const userCredential = await this.firebaseService.signInWithPopup(options);
 
     const token = this.extractTokenFromUserCredential(userCredential);
 
@@ -48,9 +55,12 @@ export class AccountService {
 
   public async signOut() {
     await this.firebaseService.signOut();
+    this.googleDriveService.clearToken();
+    await this.generalGoodsService.logout();
   }
 
   public async generateGeneralGoodsAccountStub(
+    integrationType: GeneralGoodsIntegrationType,
     customEmail?: string,
   ): Promise<GeneralGoodsAccountStub> {
     const user = this.ensureCurrentUser();
@@ -59,6 +69,7 @@ export class AccountService {
     return {
       email: customEmail ?? user.email!,
       password,
+      integrationType,
     };
   }
 
@@ -72,6 +83,7 @@ export class AccountService {
         identifier,
         password: stub.password,
       });
+      await this.commitGeneralGoodsIntegrationData(stub);
     } catch {
       throw new Error('GeneralGoodsAccountCreationFailed');
       // TODO: Distinguish between different errors (e.g. account already exists)
@@ -93,6 +105,7 @@ export class AccountService {
   ) {
     try {
       await this.generalGoodsService.sendPasswordResetEmail(stub.email);
+      await this.commitGeneralGoodsIntegrationData(stub);
     } catch {
       // TODO: Distinguish between different errors (e.g. account does not exist)
       throw new Error('GeneralGoodsAccountResetEmailFailed');
@@ -105,29 +118,63 @@ export class AccountService {
         email: stub.email,
         password: stub.password,
       });
-
-      // TODO: Should we commit in a previous step? Consider the user might exit to see the email and
-      // then come back to complete the setup, and browser might kill the session
-      await this.commitGeneralGoodsIntegrationData(stub);
+      await this.markGeneralGoodsIntegrationAsCompleted();
     } catch {
       throw new Error('GeneralGoodsAccountLoginFailed');
     }
-    // TODO: Distinguish between different errors (does the user need to confirm the email? does the password need to be reset?)
   }
 
-  public async fetchGeneralGoodsAuthToken() {
-    const integrationData = await this.fetchGeneralGoodsIntegrationData();
+  public async saveLegalConsent() {
+    const userDocumentPath = this.getUserDocumentPath();
+    await this.firebaseService.updateFirestoreDocument(userDocumentPath, {
+      legalConsentTimestamp: new Date().toISOString(),
+    });
+  }
+
+  public async fetchGeneralGoodsAccountCredentials(): Promise<GeneralGoodsAccountStub> {
     const encryptionKey = await this.fetchEncryptionKey();
+    const integrationData = await this.fetchGeneralGoodsIntegrationData();
 
     const password = await this.cryptoService.decryptUsingKey(
       integrationData.encryptedPassword,
       encryptionKey,
     );
 
-    this.generalGoodsService.login({
+    return {
+      email: integrationData.email,
+      password,
+      integrationType: integrationData.integrationType,
+    };
+  }
+
+  public async fetchGeneralGoodsAuthToken() {
+    const encryptionKey = await this.fetchEncryptionKey();
+    const integrationData = await this.fetchGeneralGoodsIntegrationData();
+
+    const password = await this.cryptoService.decryptUsingKey(
+      integrationData.encryptedPassword,
+      encryptionKey,
+    );
+
+    await this.generalGoodsService.login({
       email: integrationData.email,
       password,
     });
+  }
+
+  async deleteGeneralGoodsIntegrationData() {
+    await this.firebaseService.deleteFirestoreDocument(
+      this.getGeneralGoodsIntegrationDataDocumentPath(),
+    );
+    await this.googleDriveService.deleteFile(this.ENCRYPTION_KEY_FILE_NAME);
+  }
+
+  async deleteAccount() {
+    await this.deleteGeneralGoodsIntegrationData();
+    await this.firebaseService.deleteFirestoreDocument(
+      this.getUserDocumentPath(),
+    );
+    await this.firebaseService.deleteAccount();
   }
 
   private async fetchEncryptionKey(fileId?: string): Promise<JsonWebKey> {
@@ -188,11 +235,20 @@ export class AccountService {
     const generalGoodsIntegrationData: GeneralGoodsIntegrationData = {
       encryptedPassword,
       email: stub.email,
+      integrationType: stub.integrationType,
+      integrationCompleted: false,
     };
 
     await this.firebaseService.setFirestoreDocument(
       this.getGeneralGoodsIntegrationDataDocumentPath(),
       generalGoodsIntegrationData,
+    );
+  }
+
+  private async markGeneralGoodsIntegrationAsCompleted() {
+    await this.firebaseService.updateFirestoreDocument(
+      this.getGeneralGoodsIntegrationDataDocumentPath(),
+      { integrationCompleted: true },
     );
   }
 
@@ -214,9 +270,26 @@ export class AccountService {
     return integrationData as Required<GeneralGoodsIntegrationData>;
   }
 
-  private getGeneralGoodsIntegrationDataDocumentPath(): string {
+  public async fetchGeneralGoodsIntegrationStatus(): Promise<
+    Required<GeneralGoodsIntegrationStatus>
+  > {
+    const { integrationType, integrationCompleted } =
+      await this.fetchGeneralGoodsIntegrationData();
+
+    return {
+      integrationCompleted,
+      integrationType,
+    };
+  }
+
+  private getUserDocumentPath(): string {
     const user = this.ensureCurrentUser();
-    return `users/${user.uid}/integrations/general-goods`;
+    return `users/${user.uid}`;
+  }
+
+  private getGeneralGoodsIntegrationDataDocumentPath(): string {
+    const userDocumentPath = this.getUserDocumentPath();
+    return `${userDocumentPath}/integrations/general-goods`;
   }
 
   private extractTokenFromUserCredential(
@@ -255,19 +328,30 @@ export class AccountService {
     integrationData: GeneralGoodsIntegrationData,
   ): integrationData is Required<GeneralGoodsIntegrationData> {
     return (
-      integrationData.encryptedPassword != null && integrationData.email != null
+      integrationData.encryptedPassword != null &&
+      integrationData.email != null &&
+      integrationData.integrationType != null &&
+      integrationData.integrationCompleted != null
     );
   }
 }
 
-interface GeneralGoodsIntegrationData {
+export interface GeneralGoodsIntegrationStatus {
+  integrationType?: GeneralGoodsIntegrationType;
+  integrationCompleted?: boolean;
+}
+
+interface GeneralGoodsIntegrationData extends GeneralGoodsIntegrationStatus {
   encryptedPassword?: SerializedEncryptedObject;
   email?: string;
+  integrationType?: GeneralGoodsIntegrationType;
+  integrationCompleted?: boolean;
 }
 
 export interface GeneralGoodsAccountStub {
   email: string;
   password: string;
+  integrationType: GeneralGoodsIntegrationType;
 }
 
 export interface User {
@@ -275,4 +359,9 @@ export interface User {
   email?: string | null;
   photoUrl?: string | null;
   uid: string;
+}
+
+export enum GeneralGoodsIntegrationType {
+  NewAccount = 'new-account',
+  ExistingAccount = 'existing-account',
 }

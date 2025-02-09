@@ -1,0 +1,74 @@
+@if (integrationStatus() === undefined) {
+  <div class="flex min-h-[70%] flex-col gap-4 py-4 sm:gap-8">
+    <div class="h-12 w-12 sm:h-16 sm:w-16">
+      <rusbe-spinner></rusbe-spinner>
+    </div>
+
+    <p class="text-balance text-xl sm:text-3xl">
+      Estamos verificando seus dados...
+    </p>
+  </div>
+}
+
+@if (integrationStatus() !== undefined) {
+  <div class="flex min-h-[70%] flex-col gap-4 py-4 sm:gap-8">
+    <img
+      src="assets/artworks/shapes-key.svg"
+      alt=""
+      class="h-12 self-start sm:h-16"
+    />
+    @if (
+      integrationStatus()?.integrationType ===
+      GeneralGoodsIntegrationType.NewAccount
+    ) {
+      <p class="text-balance text-xl sm:text-3xl">
+        <strong>Um e-mail foi enviado para confirmar seu cadastro</strong>. Siga
+        as instruções para ativar sua conta.
+      </p>
+    }
+
+    @if (
+      integrationStatus()?.integrationType ===
+      GeneralGoodsIntegrationType.ExistingAccount
+    ) {
+      <p class="text-balance text-xl sm:text-3xl">
+        Uma mensagem foi enviada para seu e-mail solicitando a redefinição de
+        senha. <strong>Altere a sua senha para a chave abaixo.</strong>
+      </p>
+
+      <div class="px-responsive rounded-xl bg-overlay py-4">
+        <code class="select-all font-geometric">{{
+          accountStub()?.password
+        }}</code>
+        <button
+          (click)="copyPasswordToClipboard()"
+          class="button-fill button-full mb-2 mt-4 justify-between focus:ring-offset-overlay"
+        >
+          <span class="flex flex-row items-center gap-2">
+            <ng-icon name="lucideCopy" aria-hidden="true"></ng-icon>
+            Copiar chave
+          </span>
+          @if (copiedToClipboard()) {
+            <span class="font-light"> Copiado! </span>
+          }
+        </button>
+      </div>
+    }
+  </div>
+  <div
+    class="flex min-h-[30%] flex-col items-center justify-end gap-2 py-4 sm:gap-4 sm:pb-16"
+  >
+    <button
+      (click)="resendEmail()"
+      class="button-text button-full button-large focus:ring-offset-background"
+    >
+      Reenviar e-mail
+    </button>
+    <button
+      (click)="completeSetup()"
+      class="button-fill button-full button-large focus:ring-offset-background"
+    >
+      Completei este passo
+    </button>
+  </div>
+}

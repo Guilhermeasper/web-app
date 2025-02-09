@@ -1,0 +1,26 @@
+<div
+  class="flex min-h-[70%] flex-col items-center justify-center gap-8 sm:gap-12"
+>
+  <img src="assets/artworks/move-to-rusbe.png" alt="" class="h-16 sm:h-24" />
+  <p class="text-balance text-center text-xl font-bold sm:text-3xl">
+    Você já tem uma conta no app oficial da General Goods?
+  </p>
+</div>
+<div
+  class="flex min-h-[30%] flex-col items-center justify-end gap-2 py-4 sm:gap-4 sm:pb-16"
+>
+  <button
+    (click)="
+      chooseIntegrationType.emit(GeneralGoodsIntegrationType.ExistingAccount)
+    "
+    class="button-text button-full button-large focus:ring-offset-background"
+  >
+    Sim, já tenho
+  </button>
+  <button
+    (click)="chooseIntegrationType.emit(GeneralGoodsIntegrationType.NewAccount)"
+    class="button-fill button-full button-large focus:ring-offset-background"
+  >
+    Não, nunca usei
+  </button>
+</div>

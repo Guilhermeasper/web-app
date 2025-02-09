@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { GreeterComponent } from '@rusbe/components/greeter/greeter.component';
@@ -13,6 +13,10 @@ import { MenuCardComponent } from '@rusbe/components/home-cards/menu-card/menu-c
 import { SignInCardComponent } from '@rusbe/components/home-cards/sign-in-card/sign-in-card.component';
 import { StatusCardComponent } from '@rusbe/components/home-cards/status-card/status-card.component';
 import { WarningCardComponent } from '@rusbe/components/warning-card/warning-card.component';
+import {
+  AccountAuthState,
+  AuthStateService,
+} from '@rusbe/services/auth-state/auth-state.service';
 import { KnowledgeService } from '@rusbe/services/knowledge/knowledge.service';
 
 @Component({
@@ -32,9 +36,14 @@ import { KnowledgeService } from '@rusbe/services/knowledge/knowledge.service';
   templateUrl: './home.component.html',
 })
 export class HomePageComponent {
-  readonly HEADER_TYPE = HeaderType.LogoOnly;
+  readonly HEADER_TYPE = HeaderType.LogoWithUserAccountButton;
   knowledgeService = inject(KnowledgeService);
+  authStateService = inject(AuthStateService);
 
   public isInRestaurantTimezone =
     this.knowledgeService.isDeviceInRestaurantTimezone();
+  public showSignInCard = computed(() => {
+    const authState = this.authStateService.accountAuthState();
+    return authState && authState !== AccountAuthState.LoggedIn;
+  });
 }

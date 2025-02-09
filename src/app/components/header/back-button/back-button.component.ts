@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideChevronLeft } from '@ng-icons/lucide';
 
+import { ButtonColorScheme } from '@rusbe/components/header/button-color-scheme';
+
 @Component({
   selector: 'rusbe-back-button',
   imports: [CommonModule, NgIconComponent],
@@ -12,8 +14,8 @@ import { lucideChevronLeft } from '@ng-icons/lucide';
   templateUrl: './back-button.component.html',
 })
 export class BackButtonComponent {
-  colorScheme = input<BackButtonColorScheme>(BackButtonColorScheme.Page);
-  BackButtonColorScheme = BackButtonColorScheme;
+  colorScheme = input<ButtonColorScheme>(ButtonColorScheme.Page);
+  ButtonColorScheme = ButtonColorScheme;
 
   router = inject(Router);
   location = inject(Location);
@@ -25,9 +27,4 @@ export class BackButtonComponent {
       this.router.navigate(['/']);
     }
   }
-}
-
-export enum BackButtonColorScheme {
-  Page = 'page',
-  ColoredBackground = 'colored-background',
 }

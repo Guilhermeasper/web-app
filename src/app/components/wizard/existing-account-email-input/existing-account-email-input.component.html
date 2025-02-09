@@ -1,0 +1,33 @@
+<div class="flex min-h-[70%] flex-col gap-4 py-4 sm:gap-8">
+  <img
+    src="assets/artworks/shapes-key.svg"
+    alt=""
+    class="h-12 self-start sm:h-16"
+  />
+
+  <p class="text-balance text-xl sm:text-3xl">
+    Qual o <strong>e-mail que você usa em sua conta da General Goods</strong>?
+  </p>
+  <rusbe-jumbo-text-input
+    identifier="general-goods-email-input"
+    label="E-mail"
+    placeholder="voce@exemplo.com"
+    [(value)]="email"
+  ></rusbe-jumbo-text-input>
+</div>
+<div
+  class="flex min-h-[30%] flex-col items-center justify-end gap-2 py-4 sm:gap-4 sm:pb-16"
+>
+  <button
+    (click)="goToStep.emit(WizardStep.ExistingGeneralGoodsAccountDisclaimer)"
+    class="button-text button-full button-large focus:ring-offset-background"
+  >
+    Voltar
+  </button>
+  <button
+    (click)="goToStep.emit(WizardStep.ExistingGeneralGoodsAccountEmailCheck)"
+    class="button-fill button-full button-large focus:ring-offset-background"
+  >
+    Continuar
+  </button>
+</div>

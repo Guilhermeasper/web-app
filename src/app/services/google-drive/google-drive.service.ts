@@ -14,8 +14,12 @@ export class GoogleDriveService {
     this.cachedToken = token;
   }
 
+  public clearToken() {
+    this.cachedToken = undefined;
+  }
+
   public listAppDataFiles() {
-    this.ensureAvailableCachedToken();
+    this.ensureCachedToken();
 
     const url =
       'https://www.googleapis.com/drive/v3/files?spaces=appDataFolder';
@@ -25,7 +29,7 @@ export class GoogleDriveService {
   }
 
   public downloadFile(fileId: string) {
-    this.ensureAvailableCachedToken();
+    this.ensureCachedToken();
 
     const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
     const headers = this.getAuthorizationHeader();
@@ -36,7 +40,7 @@ export class GoogleDriveService {
   }
 
   public uploadFileToAppData(fileName: string, blob: Blob) {
-    this.ensureAvailableCachedToken();
+    this.ensureCachedToken();
 
     const url =
       'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
@@ -61,7 +65,7 @@ export class GoogleDriveService {
   }
 
   public deleteFile(fileId: string) {
-    this.ensureAvailableCachedToken();
+    this.ensureCachedToken();
 
     const url = `https://www.googleapis.com/drive/v3/files/${fileId}`;
     const headers = this.getAuthorizationHeader();
@@ -75,9 +79,9 @@ export class GoogleDriveService {
     });
   }
 
-  private ensureAvailableCachedToken() {
+  private ensureCachedToken() {
     if (!this.cachedToken) {
-      throw new Error('OperationRequiresCachedToken');
+      throw new Error('OperationRequiresGoogleDriveCachedToken');
     }
   }
 }

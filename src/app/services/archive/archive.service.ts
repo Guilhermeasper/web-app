@@ -96,7 +96,7 @@ export class ArchiveService {
       const deserializedResponse = superjson.deserialize<T>(response);
       return deserializedResponse;
     } catch {
-      throw new Error('RequestFailedError');
+      throw new Error('ArchiveRequestFailedError');
     }
   }
 

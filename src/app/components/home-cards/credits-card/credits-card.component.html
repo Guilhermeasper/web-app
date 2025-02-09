@@ -1,29 +1,11 @@
 <a
   class="bg-card-corner-close flex h-full flex-col justify-between rounded-2xl bg-highlight-b bg-[url('/assets/artworks/shapes-money.svg')] bg-[length:4rem_6rem] p-4 text-highlight-b-contrast shadow-sm transition-all hover:bg-highlight-b-hover hover:shadow-lg focus:outline-none focus:ring focus:ring-highlight-b focus:ring-offset-2 focus:ring-offset-background active:bg-highlight-b-hover sm:rounded-3xl sm:bg-[length:5rem_8rem] sm:p-6"
-  routerLink="/"
+  routerLink="/account/details"
+  draggable="false"
 >
   <h2 class="geometric-title">Créditos</h2>
 
-  <div
-    *ngIf="false"
-    class="my-1 h-8 w-28 max-w-full animate-pulse rounded-xl bg-highlight-b-accent/30 sm:my-2 sm:h-9 sm:w-36"
-  ></div>
-
-  <div>
-    <p class="py-1 text-2xl text-highlight-b-accent sm:py-2 sm:text-3xl">
-      <span *ngIf="false">Ilimitado</span>
-      <span *ngIf="false">Indisponível</span>
-      <span
-        >R$
-        <span class="font-geometric font-bold tabular-nums">40,29</span></span
-      >
-    </p>
-    <!-- TODO: Implement button to show/hide credits -->
-  </div>
-
-  <div
-    *ngIf="false"
-    class="h-3 w-56 max-w-full animate-pulse rounded-xl bg-highlight-b-contrast/30 sm:h-4 sm:w-72"
-  ></div>
-  <p>equivalente a <strong>X almoços</strong> ou <strong>Y jantares</strong></p>
+  <rusbe-balance-viewer
+    [colorScheme]="BALANCE_VIEWER_COLOR_SCHEME"
+  ></rusbe-balance-viewer>
 </a>

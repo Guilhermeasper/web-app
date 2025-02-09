@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import {
   HeaderComponent,
@@ -10,7 +10,7 @@ import { AccountService } from '@rusbe/services/account/account.service';
 
 @Component({
   selector: 'rusbe-account-login-page',
-  imports: [HeaderComponent],
+  imports: [RouterModule, HeaderComponent],
   templateUrl: './login.component.html',
 })
 export class AccountLoginPageComponent {
@@ -29,9 +29,9 @@ export class AccountLoginPageComponent {
   }
 
   signIn() {
-    this.accountService.signIn().then(() => {
-      // TODO: Check if user needs to do wizard, if so, redirect to wizard
-      this.router.navigate(['/account/details']);
+    this.accountService.signIn().then(async () => {
+      // TODO: Redirect to main page if user completed the wizard before
+      this.router.navigate(['/account/wizard']);
     });
   }
 }

@@ -3,18 +3,17 @@
   (click)="goBack()"
   [ngClass]="{
     'hover:bg-accent/10 focus:ring-accent active:bg-accent/30':
-      colorScheme() === BackButtonColorScheme.Page,
+      colorScheme() === ButtonColorScheme.Page,
     'hover:bg-farofa-tint/10 focus:ring-farofa-tint active:bg-farofa-tint/30':
-      colorScheme() === BackButtonColorScheme.ColoredBackground,
+      colorScheme() === ButtonColorScheme.ColoredBackground,
   }"
 >
   <span class="sr-only">Voltar</span>
   <ng-icon
     class="text-2xl sm:text-3xl"
     [ngClass]="{
-      'text-accent': colorScheme() === BackButtonColorScheme.Page,
-      'text-farofa-tint':
-        colorScheme() === BackButtonColorScheme.ColoredBackground,
+      'text-accent': colorScheme() === ButtonColorScheme.Page,
+      'text-farofa-tint': colorScheme() === ButtonColorScheme.ColoredBackground,
     }"
     name="lucideChevronLeft"
     aria-hidden="true"

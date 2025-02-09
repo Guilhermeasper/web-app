@@ -1,10 +1,16 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import {
+  BalanceViewerColorScheme,
+  BalanceViewerComponent,
+} from '@rusbe/components/balance-viewer/balance-viewer.component';
+
 @Component({
   selector: 'rusbe-credits-card',
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule, BalanceViewerComponent],
   templateUrl: './credits-card.component.html',
 })
-export class CreditsCardComponent {}
+export class CreditsCardComponent {
+  BALANCE_VIEWER_COLOR_SCHEME = BalanceViewerColorScheme.Highlight;
+}

@@ -3,13 +3,20 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 import {
   Auth,
+  CustomParameters,
   GoogleAuthProvider,
   UserCredential,
   UserInfo,
   signInWithPopup,
   user,
 } from '@angular/fire/auth';
-import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  deleteDoc,
+  doc,
+  getDoc,
+  setDoc,
+} from '@angular/fire/firestore';
 
 import { environment } from '@rusbe/environments/environment';
 
@@ -23,15 +30,31 @@ export class FirebaseService {
   public readonly currentUser: Signal<UserInfo | null | undefined> = toSignal(
     user(this.auth),
   );
-  public readonly isLoggedIn: Signal<boolean> = computed(() => {
+  public readonly isLoggedIn: Signal<boolean | undefined> = computed(() => {
+    if (this.currentUser() === undefined) {
+      return undefined;
+    }
+
     return Boolean(this.currentUser());
   });
 
-  public async signInWithPopup(): Promise<UserCredential> {
+  public async signInWithPopup(
+    options: { suggestSameUser: boolean } = {
+      suggestSameUser: false,
+    },
+  ): Promise<UserCredential> {
     const provider = new GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/drive.appdata');
-    provider.setCustomParameters({ hd: environment.accountMailDomain });
+    const authCustomParameters: CustomParameters = {
+      hd: environment.accountMailDomain,
+    };
 
+    const currentUser = this.currentUser();
+    if (options.suggestSameUser && currentUser?.email) {
+      authCustomParameters['login_hint'] = currentUser.email;
+    }
+
+    provider.addScope('https://www.googleapis.com/auth/drive.appdata');
+    provider.setCustomParameters(authCustomParameters);
     return await signInWithPopup(this.auth, provider);
   }
 
@@ -60,6 +83,34 @@ export class FirebaseService {
       await setDoc(documentReference, data);
     } catch {
       throw new Error('FirestoreDocumentSetError');
+    }
+  }
+
+  public async updateFirestoreDocument(path: string, data: unknown) {
+    try {
+      const documentReference = doc(this.firestore, path);
+      await setDoc(documentReference, data as Partial<unknown>, {
+        merge: true,
+      });
+    } catch {
+      throw new Error('FirestoreDocumentUpdateError');
+    }
+  }
+
+  public async deleteFirestoreDocument(path: string) {
+    try {
+      const documentReference = doc(this.firestore, path);
+      await deleteDoc(documentReference);
+    } catch {
+      throw new Error('FirestoreDocumentDeleteError');
+    }
+  }
+
+  public async deleteAccount() {
+    try {
+      await this.auth.currentUser?.delete();
+    } catch {
+      throw new Error('FirebaseAccountDeleteError');
     }
   }
 }
