@@ -30,7 +30,8 @@
         <h2 class="grouping-card-title px-responsive">Valor das refeições</h2>
 
         <div
-          class="themed-scrollbar mt-4 flex snap-x snap-mandatory scroll-pl-4 flex-row gap-2 overflow-x-auto px-4 pb-4 sm:mt-6 sm:scroll-pl-6 sm:px-6 sm:pb-6 md:grid md:grid-cols-2 md:gap-4"
+          #pricingProfileCards
+          class="themed-scrollbar mt-4 flex snap-x snap-mandatory scroll-pl-4 flex-row gap-2 overflow-x-auto px-4 pb-4 sm:mt-6 sm:scroll-pl-6 sm:px-6 sm:pb-6 md:grid md:auto-rows-fr md:grid-cols-2 md:gap-4"
         >
           @for (
             pricingProfile of MEAL_PRICING_PROFILES;
@@ -40,15 +41,22 @@
               class="flex min-w-full snap-start snap-always flex-col rounded-xl border-2 border-accent bg-overlay py-4 shadow-sm sm:py-6"
             >
               <h3
-                class="mb-2 px-4 text-base font-bold text-accent sm:mb-4 sm:px-6 sm:text-xl"
+                class="mb-1 px-4 text-base font-bold text-accent sm:mb-2 sm:px-6 sm:text-xl"
               >
                 {{ pricingProfile.title }}
               </h3>
+
               <p class="mb-auto px-4 pb-4 sm:px-6 sm:pb-6">
                 {{ pricingProfile.description }}
               </p>
 
-              <table class="w-full">
+              <table
+                class="w-full"
+                [ngClass]="{
+                  'mb-10 sm:mb-12':
+                    pricingProfile.balanceType !== userBalanceType(),
+                }"
+              >
                 @for (item of pricingProfile.pricing; track item.meal) {
                   <tr class="odd:bg-background">
                     <td class="px-4 py-2 font-bold sm:px-6">
@@ -67,6 +75,14 @@
                   </tr>
                 }
               </table>
+
+              @if (pricingProfile.balanceType === userBalanceType()) {
+                <p
+                  class="transition-appear mx-4 mt-4 w-fit rounded-md bg-accent px-2 py-1 font-geometric text-xs font-bold uppercase text-accent-contrast sm:mx-6 sm:mt-6"
+                >
+                  Seu perfil atual é este
+                </p>
+              }
             </div>
           }
         </div>
