@@ -90,8 +90,8 @@ export class WizardAccountVerificationComponent implements OnInit {
   async completeSetup() {
     const accountStub = this.accountStub()!;
 
+    // TODO: Add a loading spinner
     await this.accountService.completeGeneralGoodsAccountSetup(accountStub);
-    this.goToStep.emit(WizardStep.ChooseGeneralGoodsIntegrationType);
   }
 
   async copyPasswordToClipboard() {
