@@ -160,6 +160,8 @@ export class AccountService {
       email: integrationData.email,
       password,
     });
+
+    await this.markGeneralGoodsIntegrationAsCompleted();
   }
 
   async deleteGeneralGoodsIntegrationData() {
