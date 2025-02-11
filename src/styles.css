@@ -156,23 +156,23 @@
   }
 
   .button-base {
-    @apply flex touch-manipulation flex-row items-center gap-2 rounded-full p-2 font-geometric font-semibold text-accent transition-all focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2;
+    @apply flex touch-manipulation flex-row items-center gap-2 rounded-full p-2 font-geometric font-semibold text-accent transition-all focus:outline-none focus:ring focus:ring-accent focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-60;
   }
 
   .button-outline {
-    @apply button-base border-2 border-accent hover:bg-accent/10 hover:shadow-lg active:bg-accent/30 sm:px-4 sm:py-2;
+    @apply button-base border-2 border-accent active:bg-accent/30 enabled:hover:bg-accent/10 enabled:hover:shadow-lg sm:px-4 sm:py-2;
   }
 
   .button-outline-icon {
-    @apply button-base border-2 border-accent hover:bg-accent/10 hover:shadow-lg active:bg-accent/30;
+    @apply button-base border-2 border-accent active:bg-accent/30 enabled:hover:bg-accent/10 enabled:hover:shadow-lg;
   }
 
   .button-text {
-    @apply button-base px-4 py-2 hover:bg-accent/10 focus:ring-offset-0 active:bg-accent/30;
+    @apply button-base px-4 py-2 focus:ring-offset-0 active:bg-accent/30 enabled:hover:bg-accent/10;
   }
 
   .button-fill {
-    @apply button-base bg-accent px-4 py-2 text-accent-contrast hover:bg-accent-hover hover:shadow-lg active:bg-accent-hover/80;
+    @apply button-base bg-accent px-4 py-2 text-accent-contrast active:bg-accent-hover/80 enabled:hover:bg-accent-hover enabled:hover:shadow-lg;
   }
 
   .button-full {
