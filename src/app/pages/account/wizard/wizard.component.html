@@ -95,12 +95,12 @@
           @case (
             WizardStep.ExistingGeneralGoodsAccountConfigurationInProgress
           ) {
-            <rusbe-wizard-account-configuration-in-progress
-              class="transition-appear"
-              [integrationType]="GeneralGoodsIntegrationType.ExistingAccount"
-            >
-            </rusbe-wizard-account-configuration-in-progress>
+            <rusbe-wizard-in-progress class="transition-appear">
+              Um momento enquanto configuramos sua chave...
+            </rusbe-wizard-in-progress>
           }
+
+          <!-- FIXME: What if the user already have an account, but haven't verified their account? Check this case. -->
 
           @case (WizardStep.NewGeneralGoodsAccountDisclaimer) {
             <rusbe-wizard-account-setup-disclaimer
@@ -122,11 +122,9 @@
           }
 
           @case (WizardStep.NewGeneralGoodsAccountConfigurationInProgress) {
-            <rusbe-wizard-account-configuration-in-progress
-              class="transition-appear"
-              [integrationType]="GeneralGoodsIntegrationType.NewAccount"
-            >
-            </rusbe-wizard-account-configuration-in-progress>
+            <rusbe-wizard-in-progress class="transition-appear">
+              Um momento enquanto configuramos sua conta e chave...
+            </rusbe-wizard-in-progress>
           }
 
           @case (WizardStep.GeneralGoodsAccountConfigurationError) {

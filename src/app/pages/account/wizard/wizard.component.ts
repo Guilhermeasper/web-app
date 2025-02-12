@@ -14,13 +14,13 @@ import {
 } from '@rusbe/components/header/header.component';
 import { SpinnerComponent } from '@rusbe/components/spinner/spinner.component';
 import { WizardAccountConfigurationErrorComponent } from '@rusbe/components/wizard/account-configuration-error/account-configuration-error.component';
-import { WizardAccountConfigurationInProgressComponent } from '@rusbe/components/wizard/account-configuration-in-progress/account-configuration-in-progress.component';
 import { WizardAccountSetupDisclaimerComponent } from '@rusbe/components/wizard/account-setup-disclaimer/account-setup-disclaimer.component';
 import { WizardAccountVerificationComponent } from '@rusbe/components/wizard/account-verification/account-verification.component';
 import { WizardCredentialMismatchWarningComponent } from '@rusbe/components/wizard/credential-mismatch-warning/credential-mismatch-warning.component';
 import { WizardExistingAccountEmailCheckComponent } from '@rusbe/components/wizard/existing-account-email-check/existing-account-email-check.component';
 import { WizardExistingAccountEmailInputComponent } from '@rusbe/components/wizard/existing-account-email-input/existing-account-email-input.component';
 import { WizardFirebaseUserCheckComponent } from '@rusbe/components/wizard/firebase-user-check/firebase-user-check.component';
+import { WizardInProgressComponent } from '@rusbe/components/wizard/in-progress/in-progress.component';
 import { WizardIntegrationTypeChooserComponent } from '@rusbe/components/wizard/integration-type-chooser/integration-type-chooser.component';
 import { WizardNewAccountIdentifierInputComponent } from '@rusbe/components/wizard/new-account-identifier-input/new-account-identifier-input.component';
 import { WizardSetupCompleteComponent } from '@rusbe/components/wizard/setup-complete/setup-complete.component';
@@ -46,7 +46,7 @@ import {
     WizardNewAccountIdentifierInputComponent,
     WizardExistingAccountEmailCheckComponent,
     WizardExistingAccountEmailInputComponent,
-    WizardAccountConfigurationInProgressComponent,
+    WizardInProgressComponent,
     WizardAccountConfigurationErrorComponent,
     WizardAccountVerificationComponent,
     WizardSetupCompleteComponent,
