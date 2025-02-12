@@ -159,6 +159,10 @@ export class GeneralGoodsService {
   }
 
   public async logout() {
+    if (this.bearerTokenSignal() === null) {
+      return;
+    }
+
     const requestUrl = new URL(`logout/`, this.generalGoodsBaseUrl);
     const bearerToken = await this.ensureBearerToken();
     await this.clearBearerToken();
