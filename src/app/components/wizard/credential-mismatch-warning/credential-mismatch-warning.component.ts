@@ -1,12 +1,15 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 
+import { WarningCardComponent } from '@rusbe/components/warning-card/warning-card.component';
 import { WizardStep } from '@rusbe/pages/account/wizard/wizard.component';
 import { AccountService } from '@rusbe/services/account/account.service';
 import { AuthStateService } from '@rusbe/services/auth-state/auth-state.service';
 
+import { WizardInterludeComponent } from '../interlude/interlude.component';
+
 @Component({
   selector: 'rusbe-wizard-credential-mismatch-warning',
-  imports: [],
+  imports: [WarningCardComponent, WizardInterludeComponent],
   templateUrl: './credential-mismatch-warning.component.html',
 })
 export class WizardCredentialMismatchWarningComponent {
@@ -16,10 +19,27 @@ export class WizardCredentialMismatchWarningComponent {
   accountService = inject(AccountService);
   authStateService = inject(AuthStateService);
 
+  IntegrationDataClearingStatus = IntegrationDataClearingStatus;
+
+  clearingStatus = signal<IntegrationDataClearingStatus>(
+    IntegrationDataClearingStatus.Idle,
+  );
+
   async clearIntegrationDataAndContinue() {
-    // TODO: Add a loading spinner
-    await this.accountService.deleteGeneralGoodsIntegrationData();
+    this.clearingStatus.set(IntegrationDataClearingStatus.ClearingData);
+    try {
+      await this.accountService.deleteGeneralGoodsIntegrationData();
+    } catch {
+      this.clearingStatus.set(IntegrationDataClearingStatus.ClearingDataFailed);
+      return;
+    }
+
     await this.authStateService.updateAccountAuthState();
-    this.exitWizard.emit();
   }
+}
+
+enum IntegrationDataClearingStatus {
+  Idle = 'idle',
+  ClearingData = 'clearing-data',
+  ClearingDataFailed = 'clearing-data-failed',
 }

@@ -54,16 +54,20 @@
 <div
   class="flex min-h-[30%] flex-col items-center justify-end gap-2 py-4 sm:gap-4 sm:pb-16"
 >
-  <button
-    (click)="goToStep.emit(WizardStep.ChooseGeneralGoodsIntegrationType)"
-    class="button-text button-full button-large focus:ring-offset-background"
-  >
-    Voltar
-  </button>
-  <button
-    (click)="accept()"
-    class="button-fill button-full button-large focus:ring-offset-background"
-  >
-    Certo, continuar
-  </button>
+  @if (isSavingLegalConsent()) {
+    <rusbe-wizard-interlude>Um momento...</rusbe-wizard-interlude>
+  } @else {
+    <button
+      (click)="goToStep.emit(WizardStep.ChooseGeneralGoodsIntegrationType)"
+      class="button-text button-full button-large focus:ring-offset-background"
+    >
+      Voltar
+    </button>
+    <button
+      (click)="accept()"
+      class="button-fill button-full button-large focus:ring-offset-background"
+    >
+      Certo, continuar
+    </button>
+  }
 </div>

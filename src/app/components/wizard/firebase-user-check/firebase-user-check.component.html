@@ -20,7 +20,16 @@
 <div
   class="flex min-h-[30%] flex-col items-center justify-end gap-2 py-4 sm:gap-4 sm:pb-16"
 >
-  @if (requestSignIn()) {
+  @if (signInStatus() === SignInStatus.SigningIn) {
+    <rusbe-wizard-interlude>Esperando login...</rusbe-wizard-interlude>
+  } @else if (requestSignIn()) {
+    @if (signInStatus() === SignInStatus.SignInFailed) {
+      <rusbe-warning-card class="transition-appear"
+        ><p>
+          Não foi possível fazer login. Por favor, tente novamente.
+        </p></rusbe-warning-card
+      >
+    }
     <button
       (click)="signOut()"
       class="button-text button-full button-large focus:ring-offset-background"

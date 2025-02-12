@@ -4,9 +4,7 @@
       <rusbe-spinner></rusbe-spinner>
     </div>
 
-    <p class="text-balance text-xl sm:text-3xl">
-      Estamos verificando seus dados...
-    </p>
+    <p class="text-balance text-xl sm:text-3xl">Verificando seus dados...</p>
   </div>
 }
 
@@ -58,17 +56,44 @@
   <div
     class="flex min-h-[30%] flex-col items-center justify-end gap-2 py-4 sm:gap-4 sm:pb-16"
   >
-    <button
-      (click)="resendEmail()"
-      class="button-text button-full button-large focus:ring-offset-background"
-    >
-      Reenviar e-mail
-    </button>
-    <button
-      (click)="completeSetup()"
-      class="button-fill button-full button-large focus:ring-offset-background"
-    >
-      Completei este passo
-    </button>
+    @if (verificationStatus() === VerificationStatus.Verifying) {
+      <rusbe-wizard-interlude>Verificando sua conta...</rusbe-wizard-interlude>
+    } @else if (verificationStatus() === VerificationStatus.SendingEmail) {
+      <rusbe-wizard-interlude>Enviando e-mail...</rusbe-wizard-interlude>
+    } @else {
+      @if (verificationStatus() === VerificationStatus.VerificationFailed) {
+        <rusbe-warning-card class="transition-appear"
+          ><p>
+            Não foi possível verificar sua conta. Verifique se você seguiu todos
+            os passos corretamente.
+          </p></rusbe-warning-card
+        >
+      }
+      @if (verificationStatus() === VerificationStatus.EmailSendingFailed) {
+        <rusbe-warning-card class="transition-appear"
+          ><p>
+            Não foi possível enviar o e-mail. Por favor, tente novamente.
+          </p></rusbe-warning-card
+        >
+      }
+      <button
+        (click)="resendEmail()"
+        [disabled]="!resendEmailAvailable()"
+        class="button-text button-full button-large focus:ring-offset-background"
+      >
+        @if (resendEmailAvailable()) {
+          Reenviar e-mail
+        } @else {
+          Reenviar e-mail em
+          {{ emailResendCooldownSecondsRemaining() }}s
+        }
+      </button>
+      <button
+        (click)="completeSetup()"
+        class="button-fill button-full button-large focus:ring-offset-background"
+      >
+        Completei este passo
+      </button>
+    }
   </div>
 }

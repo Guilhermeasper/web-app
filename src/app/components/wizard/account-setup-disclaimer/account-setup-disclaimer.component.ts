@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideChevronDown } from '@ng-icons/lucide';
@@ -9,9 +9,11 @@ import {
   GeneralGoodsIntegrationType,
 } from '@rusbe/services/account/account.service';
 
+import { WizardInterludeComponent } from '../interlude/interlude.component';
+
 @Component({
   selector: 'rusbe-wizard-account-setup-disclaimer',
-  imports: [NgIcon],
+  imports: [NgIcon, WizardInterludeComponent],
   templateUrl: './account-setup-disclaimer.component.html',
   viewProviders: [provideIcons({ lucideChevronDown })],
 })
@@ -23,6 +25,8 @@ export class WizardAccountSetupDisclaimerComponent {
 
   GeneralGoodsIntegrationType = GeneralGoodsIntegrationType;
   WizardStep = WizardStep;
+
+  isSavingLegalConsent = signal<boolean>(false);
 
   faqEntries: FAQEntry[] = [
     {
@@ -55,9 +59,9 @@ export class WizardAccountSetupDisclaimerComponent {
     },
   ];
 
-  accept() {
-    // TODO: Add a loading spinner
-    this.accountService.saveLegalConsent();
+  async accept() {
+    this.isSavingLegalConsent.set(true);
+    await this.accountService.saveLegalConsent();
 
     if (
       this.integrationType() === GeneralGoodsIntegrationType.ExistingAccount

@@ -1,13 +1,20 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { UserAvatarComponent } from '@rusbe/components/user-avatar/user-avatar.component';
+import { WarningCardComponent } from '@rusbe/components/warning-card/warning-card.component';
 import { WizardStep } from '@rusbe/pages/account/wizard/wizard.component';
 import { AccountService } from '@rusbe/services/account/account.service';
 
+import { WizardInterludeComponent } from '../interlude/interlude.component';
+
 @Component({
   selector: 'rusbe-wizard-firebase-user-check',
-  imports: [UserAvatarComponent],
+  imports: [
+    UserAvatarComponent,
+    WarningCardComponent,
+    WizardInterludeComponent,
+  ],
   templateUrl: './firebase-user-check.component.html',
 })
 export class WizardFirebaseUserCheckComponent {
@@ -17,12 +24,20 @@ export class WizardFirebaseUserCheckComponent {
   private accountService = inject(AccountService);
   private router = inject(Router);
 
+  SignInStatus = SignInStatus;
+
   currentUser = this.accountService.currentUser;
+
+  signInStatus = signal<SignInStatus>(SignInStatus.Idle);
 
   async verifyUser() {
     if (this.requestSignIn()) {
-      // TODO: Add a loading spinner
-      await this.accountService.signIn({ suggestSameUser: true });
+      this.signInStatus.set(SignInStatus.SigningIn);
+      try {
+        await this.accountService.signIn({ suggestSameUser: true });
+      } catch {
+        this.signInStatus.set(SignInStatus.SignInFailed);
+      }
     }
   }
 
@@ -32,7 +47,13 @@ export class WizardFirebaseUserCheckComponent {
 
   signOut() {
     this.accountService.signOut().then(() => {
-      this.router.navigate(['/']);
+      this.router.navigate(['/account/login']);
     });
   }
+}
+
+enum SignInStatus {
+  Idle = 'idle',
+  SigningIn = 'signing-in',
+  SignInFailed = 'sign-in-failed',
 }
