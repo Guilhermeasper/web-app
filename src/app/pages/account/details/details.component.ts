@@ -74,7 +74,7 @@ export class AccountDetailsPageComponent {
 
   @ViewChild('confirmDialog') confirmDialogTemplate!: TemplateRef<Element>;
 
-  currentUser = this.accountService.currentUser;
+  currentRusbeUser = this.accountService.currentUser;
   authState = this.authStateService.accountAuthState;
   accountData = this.authStateService.generalGoodsAccountData;
   plainTextPassword = signal<string | undefined>(undefined);
@@ -91,6 +91,12 @@ export class AccountDetailsPageComponent {
 
     // Mask 3 first digits and 2 last digits
     return `•••.${accountData.cpfNumber.slice(3, 6)}.${accountData.cpfNumber.slice(6, 9)}-••`;
+  });
+
+  authUserQueryParam = computed(() => {
+    if (!this.currentRusbeUser()) return '';
+
+    return `?authuser=${this.currentRusbeUser()?.email}`;
   });
 
   async refreshCredentials() {
