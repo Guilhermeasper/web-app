@@ -18,14 +18,14 @@
               aria-hidden="true"
             ></ng-icon>
             <h3 class="w-full font-bold">Tema da interface</h3>
-            <div class="relative w-40 sm:w-48">
+            <div class="relative min-w-fit">
               <div
                 class="absolute inset-0 rounded-lg bg-overlay transition-all group-hover:bg-accent/10"
               ></div>
               <select
                 [ngModel]="preferencesService.userPreferences()?.interfaceTheme"
                 (ngModelChange)="updateInterfaceThemePreference($event)"
-                class="relative w-full rounded-lg border-0 bg-transparent px-4 py-2 text-sm font-bold text-accent transition-all focus:ring focus:ring-accent sm:text-lg"
+                class="relative w-full rounded-lg border-0 bg-transparent px-4 pe-12 ps-4 text-sm font-bold text-accent transition-all focus:ring focus:ring-accent sm:pe-16 sm:text-lg"
                 id="interface-theme-select"
               >
                 @for (option of INTERFACE_THEME_OPTIONS; track option.value) {
