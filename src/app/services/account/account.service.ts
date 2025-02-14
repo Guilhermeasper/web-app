@@ -1,5 +1,7 @@
 import { Injectable, Signal, computed, inject } from '@angular/core';
 
+import { GoogleAuthProvider } from '@angular/fire/auth';
+
 import {
   CryptoService,
   SerializedEncryptedObject,
@@ -45,8 +47,9 @@ export class AccountService {
     },
   ) {
     const userCredential = await this.firebaseService.signInWithPopup(options);
-
-    const token = this.extractTokenFromUserCredential(userCredential);
+    const oauthCredential =
+      GoogleAuthProvider.credentialFromResult(userCredential);
+    const token = oauthCredential?.accessToken;
 
     if (token) {
       this.googleDriveService.cacheToken(token);
@@ -294,18 +297,6 @@ export class AccountService {
   private getGeneralGoodsIntegrationDataDocumentPath(): string {
     const userDocumentPath = this.getUserDocumentPath();
     return `${userDocumentPath}/integrations/general-goods`;
-  }
-
-  private extractTokenFromUserCredential(
-    userCredential: unknown,
-  ): string | undefined {
-    return (
-      userCredential as {
-        _tokenResponse?: {
-          oauthAccessToken: string;
-        };
-      }
-    )?.['_tokenResponse']?.oauthAccessToken;
   }
 
   private ensureCurrentUser(): User {
