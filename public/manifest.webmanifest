@@ -21,6 +21,19 @@
           "type": "image/png"
         }
       ]
+    },
+    {
+      "short_name": "Conta",
+      "name": "Ver sua conta",
+      "description": "Ver detalhes sobre sua conta e créditos no RU",
+      "url": "/account/details?utm_source=homescreen",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcuts/account.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ],
   "icons": [
