@@ -1,7 +1,5 @@
 import { Injectable, Signal, computed, inject } from '@angular/core';
 
-import { GoogleAuthProvider } from '@angular/fire/auth';
-
 import {
   CryptoService,
   SerializedEncryptedObject,
@@ -46,14 +44,7 @@ export class AccountService {
       suggestSameUser: false,
     },
   ) {
-    const userCredential = await this.firebaseService.signInWithPopup(options);
-    const oauthCredential =
-      GoogleAuthProvider.credentialFromResult(userCredential);
-    const token = oauthCredential?.accessToken;
-
-    if (token) {
-      this.googleDriveService.cacheToken(token);
-    }
+    await this.firebaseService.signIn(options);
   }
 
   public async signOut() {

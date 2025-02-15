@@ -4,7 +4,9 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class CryptoService {
-  public generateRandomPassword(passwordLength = 32): string {
+  public generateRandomPassword(
+    passwordLength = DEFAULT_GENERATED_PASSWORD_LENGTH,
+  ): string {
     // Based on the code from Hanno Boeck (0BSD license), available at https://password.hboeck.de/.
 
     if (!Number.isInteger(passwordLength) || passwordLength <= 0) {
@@ -152,3 +154,5 @@ export interface SerializedEncryptedObject {
   data: string;
   iv: string;
 }
+
+export const DEFAULT_GENERATED_PASSWORD_LENGTH = 32;

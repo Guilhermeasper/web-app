@@ -5,6 +5,7 @@ import {
   ViewChild,
   computed,
   inject,
+  resource,
   signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -12,6 +13,7 @@ import { Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideChevronRight,
+  lucideEye,
   lucideEyeOff,
   lucideKeyRound,
   lucideLock,
@@ -24,20 +26,20 @@ import {
 } from '@ng-icons/lucide';
 
 import {
+  BalanceViewerColorScheme,
+  BalanceViewerComponent,
+} from '@rusbe/components/balance-viewer/balance-viewer.component';
+import {
   HeaderComponent,
   HeaderType,
 } from '@rusbe/components/header/header.component';
+import { UserAvatarComponent } from '@rusbe/components/user-avatar/user-avatar.component';
 import { AccountService } from '@rusbe/services/account/account.service';
 import {
   AccountAuthState,
   AuthStateService,
 } from '@rusbe/services/auth-state/auth-state.service';
-
-import {
-  BalanceViewerColorScheme,
-  BalanceViewerComponent,
-} from '../../../components/balance-viewer/balance-viewer.component';
-import { UserAvatarComponent } from '../../../components/user-avatar/user-avatar.component';
+import { DEFAULT_GENERATED_PASSWORD_LENGTH } from '@rusbe/services/crypto/crypto.service';
 
 @Component({
   selector: 'rusbe-account-details-page',
@@ -60,12 +62,16 @@ import { UserAvatarComponent } from '../../../components/user-avatar/user-avatar
       lucideChevronRight,
       lucideUserRoundPen,
       lucideEyeOff,
+      lucideEye,
     }),
   ],
 })
 export class AccountDetailsPageComponent {
   readonly HEADER_TYPE = HeaderType.PageNameWithBackButton;
   readonly BALANCE_VIEWER_COLOR_SCHEME = BalanceViewerColorScheme.Overlay;
+  readonly HIDDEN_PASSWORD_STRING = '•'.repeat(
+    DEFAULT_GENERATED_PASSWORD_LENGTH,
+  );
 
   private accountService = inject(AccountService);
   private authStateService = inject(AuthStateService);
@@ -77,7 +83,25 @@ export class AccountDetailsPageComponent {
   currentRusbeUser = this.accountService.currentUser;
   authState = this.authStateService.accountAuthState;
   accountData = this.authStateService.generalGoodsAccountData;
-  plainTextPassword = signal<string | undefined>(undefined);
+  isPlainTextPasswordVisible = signal<boolean>(false);
+  plainTextPassword = resource({
+    request: () => ({ authState: this.authState() }),
+    // `undefined` means the password is still loading, `null` means it cannot be fetched (e.g. credentials are not available).
+    loader: async ({ request }) => {
+      if (request.authState !== AccountAuthState.LoggedIn) {
+        return undefined;
+      }
+
+      try {
+        const accountCredentials =
+          await this.accountService.fetchGeneralGoodsAccountCredentials();
+
+        return accountCredentials.password;
+      } catch {
+        return null;
+      }
+    },
+  });
 
   AccountAuthState = AccountAuthState;
 
@@ -100,19 +124,16 @@ export class AccountDetailsPageComponent {
   });
 
   async refreshCredentials() {
-    try {
-      await this.accountService.signIn({ suggestSameUser: true });
-      // TODO: Show a skeleton loading for the password
-      const accountCredentials =
-        await this.accountService.fetchGeneralGoodsAccountCredentials();
-      this.plainTextPassword.set(accountCredentials.password);
-    } catch {
-      this.plainTextPassword.set(undefined);
-    }
+    await this.accountService.signIn({ suggestSameUser: true });
+
+    // This resource reload only happens when `signInWithPopup` is being used by Firebase Service.
+    // When `signInWithRedirect` is used instead, the resource will be loaded as soon as the user
+    // is redirected back to the app.
+    this.plainTextPassword.reload();
   }
 
-  hideGeneralGoodsPassword() {
-    this.plainTextPassword.set(undefined);
+  togglePlainTextPasswordVisibility() {
+    this.isPlainTextPasswordVisible.update((value) => !value);
   }
 
   signOut() {

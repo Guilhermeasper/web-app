@@ -7,7 +7,9 @@ import {
   GoogleAuthProvider,
   UserCredential,
   UserInfo,
+  getRedirectResult,
   signInWithPopup,
+  signInWithRedirect,
   user,
 } from '@angular/fire/auth';
 import {
@@ -19,6 +21,7 @@ import {
 } from '@angular/fire/firestore';
 
 import { environment } from '@rusbe/environments/environment';
+import { GoogleDriveService } from '@rusbe/services/google-drive/google-drive.service';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +29,15 @@ import { environment } from '@rusbe/environments/environment';
 export class FirebaseService {
   private auth: Auth = inject(Auth);
   private firestore: Firestore = inject(Firestore);
+  private googleDriveService: GoogleDriveService = inject(GoogleDriveService);
+
+  // `signInWithRedirect` is more reliable than `signInWithPopup`, especially in mobile devices,
+  // but it can only be used when the authentication domain is the same as the app's domain,
+  // and may require additional logic since the page is destroyed and recreated.
+  // In other cases, we use `signInWithPopup` instead.
+  public readonly canUseSignInWithRedirect =
+    environment.production &&
+    window.location.hostname === environment.firebaseConfig.authDomain;
 
   public readonly currentUser: Signal<UserInfo | null | undefined> = toSignal(
     user(this.auth),
@@ -38,11 +50,11 @@ export class FirebaseService {
     return Boolean(this.currentUser());
   });
 
-  public async signInWithPopup(
+  public async signIn(
     options: { suggestSameUser: boolean } = {
       suggestSameUser: false,
     },
-  ): Promise<UserCredential> {
+  ) {
     const provider = new GoogleAuthProvider();
     const authCustomParameters: CustomParameters = {
       hd: environment.accountMailDomain,
@@ -55,7 +67,36 @@ export class FirebaseService {
 
     provider.addScope('https://www.googleapis.com/auth/drive.appdata');
     provider.setCustomParameters(authCustomParameters);
-    return await signInWithPopup(this.auth, provider);
+
+    if (this.canUseSignInWithRedirect) {
+      await signInWithRedirect(this.auth, provider);
+      // We will get the token when the user is redirected back to the app.
+      // This is done in the `handleRedirectResult` method.
+    } else {
+      const userCredential = await signInWithPopup(this.auth, provider);
+      await this.getTokenFromUserCredential(userCredential);
+    }
+  }
+
+  public async handleRedirectResult() {
+    const userCredential = await getRedirectResult(this.auth);
+    if (userCredential != null) {
+      await this.getTokenFromUserCredential(userCredential);
+    }
+  }
+
+  public async getTokenFromUserCredential(userCredential: UserCredential) {
+    const oauthCredential =
+      GoogleAuthProvider.credentialFromResult(userCredential);
+    const token = oauthCredential?.accessToken;
+
+    if (token) {
+      this.googleDriveService.cacheToken(token);
+    }
+  }
+
+  constructor() {
+    this.handleRedirectResult();
   }
 
   public async signOut() {

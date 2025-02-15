@@ -28,10 +28,11 @@ export class AccountLoginPageComponent {
     }
   }
 
-  signIn() {
-    this.accountService.signIn().then(async () => {
-      // TODO: Redirect to main page if user completed the wizard before
-      this.router.navigate(['/account/wizard']);
-    });
+  async signIn() {
+    await this.accountService.signIn();
+
+    // This navigation only happens when `signInWithPopup` is being used by Firebase Service.
+    // When `signInWithRedirect` is used instead, the redirection to the wizard page is handled by a router guard.
+    this.router.navigate(['/account/wizard']);
   }
 }

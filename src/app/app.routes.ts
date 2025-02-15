@@ -6,10 +6,10 @@ import {
 } from '@angular/fire/auth-guard';
 import { canActivate } from '@angular/fire/auth-guard';
 
-const redirectUnauthorizedToLogin = () =>
+const redirectFirebaseUnauthorizedToLogin = () =>
   redirectUnauthorizedTo(['account/login']);
-const redirectLoggedInToAccountDetails = () =>
-  redirectLoggedInTo(['account/details']);
+const redirectFirebaseLoggedInToAccountWizard = () =>
+  redirectLoggedInTo(['account/wizard']);
 
 export const routes: Routes = [
   {
@@ -40,7 +40,7 @@ export const routes: Routes = [
       import('./pages/account/login/login.component').then(
         (m) => m.AccountLoginPageComponent,
       ),
-    ...canActivate(redirectLoggedInToAccountDetails),
+    ...canActivate(redirectFirebaseLoggedInToAccountWizard),
   },
   {
     path: 'account/wizard',
@@ -48,7 +48,7 @@ export const routes: Routes = [
       import('./pages/account/wizard/wizard.component').then(
         (m) => m.AccountWizardPageComponent,
       ),
-    ...canActivate(redirectUnauthorizedToLogin),
+    ...canActivate(redirectFirebaseUnauthorizedToLogin),
   },
   {
     path: 'account/details',
@@ -56,7 +56,7 @@ export const routes: Routes = [
       import('./pages/account/details/details.component').then(
         (m) => m.AccountDetailsPageComponent,
       ),
-    ...canActivate(redirectUnauthorizedToLogin),
+    ...canActivate(redirectFirebaseUnauthorizedToLogin),
   },
   {
     path: 'preferences',
