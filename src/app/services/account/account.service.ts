@@ -1,5 +1,6 @@
 import { Injectable, Signal, computed, inject } from '@angular/core';
 
+import { AccountServiceError } from '@rusbe/services/account/error-handling';
 import {
   CryptoService,
   SerializedEncryptedObject,
@@ -7,6 +8,7 @@ import {
 import { FirebaseService } from '@rusbe/services/firebase/firebase.service';
 import { GeneralGoodsService } from '@rusbe/services/general-goods/general-goods.service';
 import { GoogleDriveService } from '@rusbe/services/google-drive/google-drive.service';
+import { RusbeError, ensureError } from '@rusbe/types/error-handling';
 
 @Injectable({
   providedIn: 'root',
@@ -78,9 +80,15 @@ export class AccountService {
         password: stub.password,
       });
       await this.commitGeneralGoodsIntegrationData(stub);
-    } catch {
-      throw new Error('GeneralGoodsAccountCreationFailed');
-      // TODO: Distinguish between different errors (e.g. account already exists)
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(
+        AccountServiceError.GeneralGoodsAccountCreationFailed,
+        {
+          cause,
+        },
+      );
     }
   }
 
@@ -89,8 +97,15 @@ export class AccountService {
   ) {
     try {
       await this.generalGoodsService.sendVerificationEmail(stub.email);
-    } catch {
-      throw new Error('GeneralGoodsAccountVerificationEmailFailed');
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(
+        AccountServiceError.GeneralGoodsAccountVerificationEmailFailed,
+        {
+          cause,
+        },
+      );
     }
   }
 
@@ -100,9 +115,13 @@ export class AccountService {
     try {
       await this.generalGoodsService.sendPasswordResetEmail(stub.email);
       await this.commitGeneralGoodsIntegrationData(stub);
-    } catch {
-      // TODO: Distinguish between different errors (e.g. account does not exist)
-      throw new Error('GeneralGoodsAccountResetEmailFailed');
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(
+        AccountServiceError.GeneralGoodsAccountResetEmailFailed,
+        { cause },
+      );
     }
   }
 
@@ -113,8 +132,12 @@ export class AccountService {
         password: stub.password,
       });
       await this.markGeneralGoodsIntegrationAsCompleted();
-    } catch {
-      throw new Error('GeneralGoodsAccountLoginFailed');
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(AccountServiceError.GeneralGoodsAccountLoginFailed, {
+        cause,
+      });
     }
   }
 
@@ -180,7 +203,7 @@ export class AccountService {
       fileId ?? (await this.fetchEncryptionKeyFileId());
 
     if (!encrytionKeyFileId) {
-      throw new Error('EncryptionKeyNotFound');
+      throw new RusbeError(AccountServiceError.EncryptionKeyNotFound);
     }
 
     const encryptionKeyBlob =
@@ -262,7 +285,10 @@ export class AccountService {
       !integrationData ||
       !this.integrationDataHasAllFields(integrationData)
     ) {
-      throw new Error('GeneralGoodsIntegrationDataMissing');
+      throw new RusbeError(
+        AccountServiceError.GeneralGoodsIntegrationDataMissing,
+        { context: { integrationData } },
+      );
     }
 
     return integrationData as Required<GeneralGoodsIntegrationData>;
@@ -294,11 +320,13 @@ export class AccountService {
     const user = this.currentUser();
 
     if (!user) {
-      throw new Error('UserNotLoggedIn');
+      throw new RusbeError(AccountServiceError.UserNotLoggedIn);
     }
 
     if (!this.userHasAllFields(user)) {
-      throw new Error('RequiredUserDataMissing');
+      throw new RusbeError(AccountServiceError.RequiredUserDataMissing, {
+        context: { user },
+      });
     }
 
     return user;

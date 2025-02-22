@@ -15,6 +15,7 @@ import {
   ArchiveService,
 } from '@rusbe/services/archive/archive.service';
 import { GeneralGoodsBalanceType } from '@rusbe/services/general-goods/general-goods.service';
+import { KnowledgeServiceError } from '@rusbe/services/knowledge/error-handling';
 import {
   DEFAULT_USER_PREFERENCES,
   PreferencesService,
@@ -22,6 +23,7 @@ import {
 } from '@rusbe/services/preferences/preferences.service';
 import { ArchiveEntry, MealType } from '@rusbe/types/archive';
 import { BrlCurrency } from '@rusbe/types/brl-currency';
+import { RusbeError } from '@rusbe/types/error-handling';
 
 @Injectable({
   providedIn: 'root',
@@ -100,7 +102,9 @@ export class KnowledgeService {
 
     if (!currentOperationStatus) {
       // This should never happen since we set operation status before this
-      throw new Error('CurrentOperationStatusUnavailable');
+      throw new RusbeError(
+        KnowledgeServiceError.CurrentOperationStatusUnavailable,
+      );
     }
 
     if (
@@ -202,7 +206,17 @@ export class KnowledgeService {
     }
 
     // This should never happen unless archive is empty or something went wrong
-    throw new Error('CannotFindMostRelevantArchiveEntryInfo');
+    throw new RusbeError(
+      KnowledgeServiceError.CannotFindMostRelevantArchiveEntryInfo,
+      {
+        context: {
+          startingPointDateString,
+          relevantMeals,
+          backwards,
+          startFromMeal,
+        },
+      },
+    );
   }
 
   private tryFindRelevantMealInArchiveEntry(

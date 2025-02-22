@@ -8,11 +8,13 @@ import { differenceInMilliseconds, parse } from 'date-fns';
 import superjson, { SuperJSONResult } from 'superjson';
 
 import { environment } from '@rusbe/environments/environment';
+import { ArchiveServiceError } from '@rusbe/services/archive/error-handling';
 import {
   ArchiveEntry,
   ArchiveFileEntry,
   ArchiveIndex,
 } from '@rusbe/types/archive';
+import { RusbeError, ensureError } from '@rusbe/types/error-handling';
 
 @Injectable({
   providedIn: 'root',
@@ -95,8 +97,13 @@ export class ArchiveService {
       );
       const deserializedResponse = superjson.deserialize<T>(response);
       return deserializedResponse;
-    } catch {
-      throw new Error('ArchiveRequestFailedError');
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(ArchiveServiceError.RequestFailed, {
+        cause,
+        context: { url },
+      });
     }
   }
 

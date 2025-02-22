@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 
+import { CryptoServiceError } from '@rusbe/services/crypto/error-handling';
+import { RusbeError } from '@rusbe/types/error-handling';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -10,7 +13,9 @@ export class CryptoService {
     // Based on the code from Hanno Boeck (0BSD license), available at https://password.hboeck.de/.
 
     if (!Number.isInteger(passwordLength) || passwordLength <= 0) {
-      throw new Error('PasswordLengthNotValid');
+      throw new RusbeError(CryptoServiceError.PasswordLengthNotValid, {
+        context: { passwordLength },
+      });
     }
     const passwordChars =
       'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@*.';

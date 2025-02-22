@@ -12,10 +12,20 @@ import { jwtDecode } from 'jwt-decode';
 
 import { environment } from '@rusbe/environments/environment';
 import {
+  GeneralGoodsAccountRecoveryError,
+  GeneralGoodsAccountVerificationError,
+  GeneralGoodsLoginError,
+  GeneralGoodsRegistrationError,
+  GeneralGoodsRequestError,
+  GeneralGoodsTokenVerificationError,
+  GeneralGoodsTransactionError,
+} from '@rusbe/services/general-goods/error-handling';
+import {
   LocalStorageService,
   StorageKey,
 } from '@rusbe/services/local-storage/local-storage.service';
 import { BrlCurrency } from '@rusbe/types/brl-currency';
+import { RusbeError, ensureError } from '@rusbe/types/error-handling';
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +61,7 @@ export class GeneralGoodsService {
       url: URL;
       method: 'GET' | 'POST' | 'PUT' | 'DELETE';
       bearerToken?: string;
+      errorHandler?: (cause: HttpErrorResponse) => void;
     },
     body?: unknown,
   ): Promise<T> {
@@ -77,12 +88,49 @@ export class GeneralGoodsService {
       );
       return response;
     } catch (error) {
-      if (error instanceof HttpErrorResponse) {
-        this.handleRequestError(error.error as GeneralGoodsResponseStatus);
+      const cause = ensureError(error);
+
+      if (cause instanceof HttpErrorResponse) {
+        // First, we check if the request wasn't successful due to an internal server error (500),
+        // or if there some other network or CORS error (status 0).
+        if (cause.status === 500 || cause.status === 0) {
+          throw new RusbeError(GeneralGoodsRequestError.ServiceUnavailable, {
+            cause,
+          });
+        }
+
+        // Then, we try to handle specific request errors using the provided error handler, if any.
+        requestDetails.errorHandler?.(cause);
+
+        // Finally, we check some special cases: unauthorized (401) can be returned when a token is invalid or expired,
+        // but also in other cases depending on the request. That's why we check it after the specific error handler.
+        if (requestDetails.bearerToken && cause.status === 401) {
+          throw new RusbeError(GeneralGoodsRequestError.Unauthorized, {
+            cause,
+          });
+        }
+
+        // Also, there's this weird behavior where the API returns this object with a success message when it cannot
+        // process the request due to some internal error.
+        const responseBody = cause.error as GeneralGoodsResponseStatus;
+
+        if (
+          responseBody.status === 'success' &&
+          responseBody.message === 'hi'
+        ) {
+          throw new RusbeError(GeneralGoodsRequestError.ServiceUnavailable, {
+            cause,
+          });
+        }
       }
 
-      // This should never happen.
-      throw new Error('GeneralGoodsRequestFailed');
+      // If we couldn't handle the issue, we throw a generic error.
+      throw new RusbeError(
+        GeneralGoodsRequestError.RequestFailedWithUnknownError,
+        {
+          cause,
+        },
+      );
     }
   }
 
@@ -99,12 +147,28 @@ export class GeneralGoodsService {
       password: accountRegisterData.password,
       password_confirmation: accountRegisterData.password,
     };
+    const errorHandler = (cause: HttpErrorResponse) => {
+      const responseBody = cause.error as GeneralGoodsResponseStatus;
 
-    // TODO: Investigate if/how the account registration fails if the user doesn't have an account at the restaurant itself (i.e., biometric collection to enter)
+      if (responseBody.message?.includes('Cadastro não realizado')) {
+        throw new RusbeError(
+          GeneralGoodsRegistrationError.IdentifierAlreadyRegisteredOrInvalid,
+          { cause },
+        );
+      }
+
+      if (
+        responseBody.message?.includes('O campo email já está sendo utilizado')
+      ) {
+        throw new RusbeError(GeneralGoodsRegistrationError.EmailAlreadyInUse, {
+          cause,
+        });
+      }
+    };
 
     const accountData = await this.performRequest<
       GeneralGoodsAccountDataResponseBody & GeneralGoodsResponseStatus
-    >({ url: requestUrl, method: 'POST' }, requestBody);
+    >({ url: requestUrl, method: 'POST', errorHandler }, requestBody);
 
     await this.saveBearerToken(accountData.authorisation.token);
   }
@@ -112,9 +176,19 @@ export class GeneralGoodsService {
   public async sendPasswordResetEmail(email: string) {
     const requestUrl = new URL(`recovery/`, this.generalGoodsBaseUrl);
     const requestBody = { email };
+    const errorHandler = (cause: HttpErrorResponse) => {
+      const responseBody = cause.error as GeneralGoodsResponseStatus;
+
+      if (responseBody.message?.includes('Credenciais inválidas')) {
+        throw new RusbeError(
+          GeneralGoodsAccountRecoveryError.InvalidCredentialsOrUnverifiedAccount,
+          { cause },
+        );
+      }
+    };
 
     return await this.performRequest(
-      { url: requestUrl, method: 'POST' },
+      { url: requestUrl, method: 'POST', errorHandler },
       requestBody,
     );
   }
@@ -122,9 +196,26 @@ export class GeneralGoodsService {
   public async sendVerificationEmail(email: string) {
     const requestUrl = new URL(`verification/send/`, this.generalGoodsBaseUrl);
     const requestBody = { email };
+    const errorHandler = (cause: HttpErrorResponse) => {
+      const responseBody = cause.error as GeneralGoodsResponseStatus;
+
+      if (responseBody.message?.includes('Email já validado')) {
+        throw new RusbeError(
+          GeneralGoodsAccountVerificationError.AccountAlreadyVerified,
+          { cause },
+        );
+      }
+
+      if (responseBody.message?.includes('Usuário não encontrado')) {
+        throw new RusbeError(
+          GeneralGoodsAccountVerificationError.AccountNotFound,
+          { cause },
+        );
+      }
+    };
 
     return await this.performRequest(
-      { url: requestUrl, method: 'POST' },
+      { url: requestUrl, method: 'POST', errorHandler },
       requestBody,
     );
   }
@@ -132,10 +223,23 @@ export class GeneralGoodsService {
   public async login({ email, password }: { email: string; password: string }) {
     const requestUrl = new URL(`login/`, this.generalGoodsBaseUrl);
     const requestBody = { email, password };
+    const errorHandler = (cause: HttpErrorResponse) => {
+      const responseBody = cause.error as GeneralGoodsResponseStatus;
+
+      if (cause.status === 404) {
+        throw new RusbeError(GeneralGoodsLoginError.AccountNotFound, { cause });
+      }
+
+      if (responseBody.message?.includes('Credenciais inválidas')) {
+        throw new RusbeError(GeneralGoodsLoginError.InvalidCredentials, {
+          cause,
+        });
+      }
+    };
 
     const accountData =
       await this.performRequest<GeneralGoodsAccountDataResponseBody>(
-        { url: requestUrl, method: 'POST' },
+        { url: requestUrl, method: 'POST', errorHandler },
         requestBody,
       );
 
@@ -153,6 +257,9 @@ export class GeneralGoodsService {
         url: requestUrl,
         method: 'POST',
         bearerToken,
+        // We don't do any error handling here because if the token is invalid, the API returns an error
+        // with no useful information, which will be handled by `performRequest` itself. We also implement
+        // some checks to minimize the chances of this happening and do a full login if needed.
       });
 
     await this.saveBearerToken(accountData.authorisation.token);
@@ -196,7 +303,9 @@ export class GeneralGoodsService {
       );
 
     if (responseData.errors) {
-      throw new Error('GeneralGoodsTransactionFailed');
+      throw new RusbeError(GeneralGoodsTransactionError.Failed, {
+        context: { responseErrors: responseData.errors },
+      });
     }
 
     return this.parsePixTransactionData(responseData);
@@ -229,7 +338,9 @@ export class GeneralGoodsService {
     const bearerToken = this.bearerTokenSignal();
 
     if (!bearerToken) {
-      throw new Error('GeneralGoodsTokenNotAvailable');
+      throw new RusbeError(
+        GeneralGoodsTokenVerificationError.TokenNotAvailable,
+      );
     }
 
     // If token is expired, throw an error
@@ -237,7 +348,9 @@ export class GeneralGoodsService {
     const now = Date.now() / 1000;
 
     if (decodedToken.exp < now) {
-      throw new Error('GeneralGoodsTokenExpired');
+      throw new RusbeError(GeneralGoodsTokenVerificationError.TokenExpired, {
+        context: { tokenExpiration: decodedToken.exp },
+      });
     }
 
     // If token expires within the threshold, refresh it
@@ -250,32 +363,6 @@ export class GeneralGoodsService {
     }
 
     return bearerToken;
-  }
-
-  private handleRequestError(response: GeneralGoodsResponseStatus) {
-    if (
-      response.message === 'Credenciais inválidas ou cadastro não confirmado.'
-    ) {
-      // Although this messages implies that the credentials are invalid, when the password is incorrect,
-      // the server usually returns `Unauthorized` instead.
-      throw new Error('GeneralGoodsInvalidCredentialsOrEmailNotConfirmed');
-    }
-
-    if (response.status === 'success' && response.message === 'hi') {
-      throw new Error('GeneralGoodsInternalServerError');
-    }
-
-    if (response.status === 'error') {
-      if (response.message === 'Unauthorized') {
-        throw new Error('GeneralGoodsUnauthorized');
-      } else {
-        throw new Error('GeneralGoodsRequestFailed');
-      }
-    }
-
-    throw new Error('GeneralGoodsRequestFailed');
-
-    // TODO: Narrow down when General Goods service is unavailable
   }
 
   private parseAccountData(

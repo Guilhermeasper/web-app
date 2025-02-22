@@ -1,3 +1,5 @@
+import { RusbeError } from '@rusbe/types/error-handling';
+
 export class BrlCurrency {
   #valueInCents: number;
 
@@ -72,7 +74,9 @@ export class BrlCurrency {
     );
 
     if (isNaN(valueInCents)) {
-      throw new Error('InvalidCurrencyString');
+      throw new RusbeError(BrlCurrencyError.InvalidCurrencyString, {
+        context: { value },
+      });
     }
 
     return new BrlCurrency(valueInCents);
@@ -98,4 +102,8 @@ export class BrlCurrency {
 export interface PurchaseQuantityResult {
   quantity: number;
   remaining: BrlCurrency;
+}
+
+export enum BrlCurrencyError {
+  InvalidCurrencyString = 'brl-currency/invalid-currency-string',
 }

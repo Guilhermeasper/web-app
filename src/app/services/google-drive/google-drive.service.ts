@@ -3,6 +3,9 @@ import { Injectable, inject } from '@angular/core';
 
 import { firstValueFrom } from 'rxjs';
 
+import { GoogleDriveServiceError } from '@rusbe/services/google-drive/error-handling';
+import { RusbeError } from '@rusbe/types/error-handling';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -81,7 +84,9 @@ export class GoogleDriveService {
 
   private ensureCachedToken() {
     if (!this.cachedToken) {
-      throw new Error('OperationRequiresGoogleDriveCachedToken');
+      throw new RusbeError(
+        GoogleDriveServiceError.OperationRequiresCachedToken,
+      );
     }
   }
 }

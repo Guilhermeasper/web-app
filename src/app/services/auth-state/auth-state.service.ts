@@ -12,10 +12,19 @@ import {
 } from 'rxjs';
 
 import { AccountService } from '@rusbe/services/account/account.service';
+import { AccountServiceError } from '@rusbe/services/account/error-handling';
+import { FirebaseServiceError } from '@rusbe/services/firebase/error-handling';
+import {
+  GeneralGoodsLoginError,
+  GeneralGoodsRequestError,
+  GeneralGoodsTokenVerificationError,
+} from '@rusbe/services/general-goods/error-handling';
 import {
   GeneralGoodsAccountData,
   GeneralGoodsService,
 } from '@rusbe/services/general-goods/general-goods.service';
+import { GoogleDriveServiceError } from '@rusbe/services/google-drive/error-handling';
+import { RusbeError } from '@rusbe/types/error-handling';
 
 @Injectable({
   providedIn: 'root',
@@ -105,10 +114,12 @@ export class AuthStateService {
       this.writableAccountAuthState.set(AccountAuthState.LoggedIn);
       this.writableGeneralGoodsAccountData.set(generalGoodsAccountData);
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof RusbeError) {
         if (
-          error.message === 'GeneralGoodsTokenNotAvailable' ||
-          error.message === 'GeneralGoodsTokenExpired'
+          error.message ===
+            GeneralGoodsTokenVerificationError.TokenNotAvailable ||
+          error.message === GeneralGoodsTokenVerificationError.TokenExpired ||
+          error.message === GeneralGoodsRequestError.Unauthorized
         ) {
           if (options.allowRetry) {
             await this.tryFetchGeneralGoodsAuthToken();
@@ -119,9 +130,9 @@ export class AuthStateService {
             this.writableGeneralGoodsAccountData.set(undefined);
           }
         }
-      }
 
-      // FIXME: Token precheck may pass, but request might fail later. Check this case.
+        this.checkGeneralGoodsServiceAvailability(error);
+      }
     }
   }
 
@@ -131,43 +142,48 @@ export class AuthStateService {
       await this.tryFetchGeneralGoodsAccountDataUsingCachedToken({
         allowRetry: false,
       });
-      // FIXME: Check if we're covering all possible errors
-      // TODO: Write a error management method for each of the throwable methods.
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof RusbeError) {
         if (
-          error.message === 'GeneralGoodsIntegrationDataMissing' ||
-          error.message === 'EncryptionKeyNotFound'
+          error.message ===
+            AccountServiceError.GeneralGoodsIntegrationDataMissing ||
+          error.message === AccountServiceError.EncryptionKeyNotFound
         ) {
           this.writableAccountAuthState.set(
             AccountAuthState.PendingGeneralGoodsIntegrationSetup,
           );
           this.writableGeneralGoodsAccountData.set(undefined);
         }
-        if (error.message === 'OperationRequiresGoogleDriveCachedToken') {
+
+        if (
+          error.message === GoogleDriveServiceError.OperationRequiresCachedToken
+        ) {
           this.writableAccountAuthState.set(
             AccountAuthState.CredentialRefreshRequired,
           );
           this.writableGeneralGoodsAccountData.set(undefined);
         }
+
         if (
-          // TODO: Should we include all of these?
-          error.message === 'GeneralGoodsServiceUnavailable' ||
-          error.message === 'GeneralGoodsInternalServerError' ||
-          error.message === 'GeneralGoodsRequestFailed'
+          Object.values(FirebaseServiceError).includes(
+            error.message as FirebaseServiceError,
+          )
         ) {
-          this.writableAccountAuthState.set(
-            AccountAuthState.GeneralGoodsServiceUnavailable,
+          console.error(
+            'Auth State Service: Firebase error while processing state',
+            error,
           );
-          this.writableGeneralGoodsAccountData.set(undefined);
+          // FIXME: Handle Firebase errors
         }
+
         if (
-          error.message ===
-            'GeneralGoodsInvalidCredentialsOrEmailNotConfirmed' ||
-          error.message === 'GeneralGoodsUnauthorized'
+          error.message === GeneralGoodsLoginError.AccountNotFound ||
+          error.message === GeneralGoodsLoginError.InvalidCredentials
         ) {
           await this.inferReasonForGeneralGoodsLoginUnsuccessful();
         }
+
+        this.checkGeneralGoodsServiceAvailability(error);
       }
     }
   }
@@ -188,10 +204,25 @@ export class AuthStateService {
         );
         this.writableGeneralGoodsAccountData.set(undefined);
       }
-    } catch {
+    } catch (error) {
       // This should not happen. Since login was attempted, integration data is expected to exist.
+
+      console.warn(
+        'Auth State Service: Unexpected status when trying to infer reason for unsuccessful General Goods login',
+        error,
+      );
+
       this.writableAccountAuthState.set(
         AccountAuthState.CredentialRefreshRequired,
+      );
+      this.writableGeneralGoodsAccountData.set(undefined);
+    }
+  }
+
+  checkGeneralGoodsServiceAvailability(error: RusbeError) {
+    if (error.message === GeneralGoodsRequestError.ServiceUnavailable) {
+      this.writableAccountAuthState.set(
+        AccountAuthState.GeneralGoodsServiceUnavailable,
       );
       this.writableGeneralGoodsAccountData.set(undefined);
     }

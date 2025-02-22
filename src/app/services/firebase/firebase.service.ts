@@ -21,7 +21,9 @@ import {
 } from '@angular/fire/firestore';
 
 import { environment } from '@rusbe/environments/environment';
+import { FirebaseServiceError } from '@rusbe/services/firebase/error-handling';
 import { GoogleDriveService } from '@rusbe/services/google-drive/google-drive.service';
+import { RusbeError, ensureError } from '@rusbe/types/error-handling';
 
 @Injectable({
   providedIn: 'root',
@@ -111,8 +113,13 @@ export class FirebaseService {
       if (documentSnapshot.exists()) {
         return documentSnapshot.data() as T;
       }
-    } catch {
-      throw new Error('FirestoreDocumentGetError');
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(FirebaseServiceError.FirestoreDocumentGetError, {
+        cause,
+        context: { path },
+      });
     }
 
     return null;
@@ -122,8 +129,13 @@ export class FirebaseService {
     try {
       const documentReference = doc(this.firestore, path);
       await setDoc(documentReference, data);
-    } catch {
-      throw new Error('FirestoreDocumentSetError');
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(FirebaseServiceError.FirestoreDocumentSetError, {
+        cause,
+        context: { path, data },
+      });
     }
   }
 
@@ -133,8 +145,13 @@ export class FirebaseService {
       await setDoc(documentReference, data as Partial<unknown>, {
         merge: true,
       });
-    } catch {
-      throw new Error('FirestoreDocumentUpdateError');
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(FirebaseServiceError.FirestoreDocumentUpdateError, {
+        cause,
+        context: { path, data },
+      });
     }
   }
 
@@ -142,16 +159,26 @@ export class FirebaseService {
     try {
       const documentReference = doc(this.firestore, path);
       await deleteDoc(documentReference);
-    } catch {
-      throw new Error('FirestoreDocumentDeleteError');
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(FirebaseServiceError.FirestoreDocumentDeleteError, {
+        cause,
+        context: { path },
+      });
     }
   }
 
   public async deleteAccount() {
     try {
       await this.auth.currentUser?.delete();
-    } catch {
-      throw new Error('FirebaseAccountDeleteError');
+    } catch (error) {
+      const cause = ensureError(error);
+
+      throw new RusbeError(FirebaseServiceError.AccountDeleteError, {
+        cause,
+        context: { currentUserEmail: this.currentUser()?.email },
+      });
     }
   }
 }

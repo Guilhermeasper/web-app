@@ -5,7 +5,9 @@ import {
   LocalStorageService,
   StorageKey,
 } from '@rusbe/services/local-storage/local-storage.service';
+import { PreferencesServiceError } from '@rusbe/services/preferences/error-handling';
 import { MealType } from '@rusbe/types/archive';
+import { RusbeError } from '@rusbe/types/error-handling';
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +46,9 @@ export class PreferencesService {
     this.writableUserPreferences.update(
       (currentPreferences: UserPreferences | undefined) => {
         if (currentPreferences === undefined) {
-          throw new Error('UserPreferencesNotInitialized');
+          throw new RusbeError(
+            PreferencesServiceError.UserPreferencesNotInitialized,
+          );
         }
 
         return {
@@ -72,7 +76,10 @@ export class PreferencesService {
 
   async setRelevantMealsPreference(relevantMeals: MealType[]) {
     if (relevantMeals.length === 0) {
-      throw new Error('InvalidPreferencesSelection');
+      throw new RusbeError(
+        PreferencesServiceError.InvalidPreferencesSelection,
+        { context: { relevantMeals } },
+      );
     }
 
     await this.setPreference('relevantMeals', relevantMeals);
@@ -99,7 +106,9 @@ export class PreferencesService {
     const userPreferences = this.userPreferences();
 
     if (userPreferences === undefined) {
-      throw new Error('UserPreferencesNotInitialized');
+      throw new RusbeError(
+        PreferencesServiceError.UserPreferencesNotInitialized,
+      );
     }
 
     const literalInterfaceTheme: InterfaceTheme.Light | InterfaceTheme.Dark =
@@ -125,7 +134,9 @@ export class PreferencesService {
         );
       }
     } catch {
-      console.error('Failed to add system theme change event listener');
+      console.warn(
+        'Preferences Service: System theme change listener could not be added.',
+      );
     }
     this.applyLiteralInterfaceTheme(literalInterfaceTheme);
   }
