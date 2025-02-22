@@ -185,8 +185,9 @@ export class AccountService {
     await this.firebaseService.deleteFirestoreDocument(
       this.getGeneralGoodsIntegrationDataDocumentPath(),
     );
-    if (await this.fetchEncryptionKeyFileId()) {
-      await this.googleDriveService.deleteFile(this.ENCRYPTION_KEY_FILE_NAME);
+    const encryptionKeyFileId = await this.fetchEncryptionKeyFileId();
+    if (encryptionKeyFileId) {
+      await this.googleDriveService.deleteFile(encryptionKeyFileId);
     }
   }
 
