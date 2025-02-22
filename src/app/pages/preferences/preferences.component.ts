@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Dialog } from '@angular/cdk/dialog';
-import { Component, TemplateRef, ViewChild, inject } from '@angular/core';
+import { Component, TemplateRef, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { filter, take } from 'rxjs';
@@ -53,7 +53,8 @@ export class PreferencesPageComponent {
     { value: InterfaceTheme.Dark, label: 'Escuro' },
   ];
 
-  @ViewChild('confirmDialog') confirmDialogTemplate!: TemplateRef<Element>;
+  confirmDialogTemplate =
+    viewChild.required<TemplateRef<Element>>('confirmDialog');
   dialogTitle = '';
   dialogText = '';
   confirmAction?: ConfirmAction;
@@ -109,7 +110,7 @@ export class PreferencesPageComponent {
     this.dialogText = 'Esta ação não pode ser desfeita.';
     this.confirmAction = ConfirmAction.ResetUserPreferences;
 
-    this.dialog.open(this.confirmDialogTemplate, {
+    this.dialog.open(this.confirmDialogTemplate(), {
       autoFocus: 'button',
       backdropClass: 'bg-beterraba/60',
     });
@@ -122,7 +123,7 @@ export class PreferencesPageComponent {
       'Esta ação não pode ser desfeita. Após a confirmação, o Rusbé será recarregado.';
     this.confirmAction = ConfirmAction.ClearAllData;
 
-    this.dialog.open(this.confirmDialogTemplate, {
+    this.dialog.open(this.confirmDialogTemplate(), {
       autoFocus: 'button',
       backdropClass: 'bg-beterraba/60',
     });

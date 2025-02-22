@@ -2,11 +2,11 @@ import { Dialog } from '@angular/cdk/dialog';
 import {
   Component,
   TemplateRef,
-  ViewChild,
   computed,
   inject,
   resource,
   signal,
+  viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -78,7 +78,8 @@ export class AccountDetailsPageComponent {
   private router = inject(Router);
   dialog = inject(Dialog);
 
-  @ViewChild('confirmDialog') confirmDialogTemplate!: TemplateRef<Element>;
+  confirmDialogTemplate =
+    viewChild.required<TemplateRef<Element>>('confirmDialog');
 
   currentRusbeUser = this.accountService.currentUser;
   authState = this.authStateService.accountAuthState;
@@ -143,7 +144,7 @@ export class AccountDetailsPageComponent {
   }
 
   promptDeleteAccount() {
-    this.dialog.open(this.confirmDialogTemplate, {
+    this.dialog.open(this.confirmDialogTemplate(), {
       autoFocus: 'button',
       backdropClass: 'bg-beterraba/60',
     });

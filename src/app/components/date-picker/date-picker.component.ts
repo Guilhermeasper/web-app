@@ -2,10 +2,10 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  ViewChild,
   computed,
   inject,
   model,
+  viewChild,
 } from '@angular/core';
 
 import {
@@ -61,7 +61,7 @@ initializeIonicCore();
   ],
 })
 export class DatePickerComponent implements OnInit, OnDestroy {
-  @ViewChild(IonPopover) popover!: IonPopover;
+  popover = viewChild.required(IonPopover);
 
   knowledgeService = inject(KnowledgeService);
   archiveService = inject(ArchiveService);
@@ -157,11 +157,11 @@ export class DatePickerComponent implements OnInit, OnDestroy {
   };
 
   async dismissPickerPopover() {
-    await this.popover.dismiss();
+    await this.popover().dismiss();
   }
 
   async ngOnDestroy() {
-    this.popover.animated = false;
+    this.popover().animated = false;
     await this.dismissPickerPopover();
   }
 

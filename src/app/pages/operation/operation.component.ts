@@ -3,11 +3,11 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  ViewChild,
   computed,
   effect,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -35,8 +35,9 @@ export class OperationPageComponent implements AfterViewInit {
   readonly MEAL_PRICING_PROFILES = MEAL_PRICING_PROFILES;
   readonly RESTAURANT_WORKING_HOURS = RESTAURANT_WORKING_HOURS;
 
-  @ViewChild('pricingProfileCards')
-  pricingProfileCards!: ElementRef<HTMLDivElement>;
+  pricingProfileCards = viewChild.required<ElementRef<HTMLDivElement>>(
+    'pricingProfileCards',
+  );
 
   authStateService = inject(AuthStateService);
 
@@ -80,12 +81,12 @@ export class OperationPageComponent implements AfterViewInit {
       return;
     }
 
-    const targetCard = this.pricingProfileCards.nativeElement.children[
+    const targetCard = this.pricingProfileCards().nativeElement.children[
       cardIndex
     ] as HTMLDivElement;
 
     requestAnimationFrame(() => {
-      this.pricingProfileCards.nativeElement.scrollTo({
+      this.pricingProfileCards().nativeElement.scrollTo({
         left: targetCard.offsetLeft,
         behavior: 'smooth',
       });
