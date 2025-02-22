@@ -100,7 +100,38 @@
     </ul>
   </div>
 
-  <p class="geometric-title my-8 px-4 sm:my-10">
-    rusbé-web-app {{ APP_VERSION }}
-  </p>
+  <div
+    class="geometric-title my-8 flex flex-col items-start gap-1 px-4 sm:my-10 sm:gap-2"
+  >
+    <p>rusbé-web-app {{ APP_VERSION }}</p>
+
+    @switch (serviceWorkerUpdateStatus) {
+      @case (ServiceWorkerUpdateStatus.Initializing) {
+        <p class="flex flex-row items-center gap-1.5 font-normal sm:gap-2">
+          <rusbe-spinner class="h-3 w-3 sm:h-4 sm:w-4"></rusbe-spinner>
+          <span>Verificando atualizações...</span>
+        </p>
+      }
+      @case (ServiceWorkerUpdateStatus.Unavailable) {
+        <p class="font-normal">Serviço de atualização indisponível</p>
+      }
+      @case (ServiceWorkerUpdateStatus.CheckingForUpdate) {
+        <p class="flex flex-row items-center gap-1.5 font-normal sm:gap-2">
+          <rusbe-spinner class="h-3 w-3 sm:h-4 sm:w-4"></rusbe-spinner>
+          <span>Atualizando...</span>
+        </p>
+      }
+      @case (ServiceWorkerUpdateStatus.ErrorWhileChecking) {
+        <p class="font-normal">Erro ao verificar atualizações</p>
+      }
+      @case (ServiceWorkerUpdateStatus.UpdateReady) {
+        <button class="body-link uppercase" (click)="reload()">
+          Reinicie para completar a atualização
+        </button>
+      }
+      @case (ServiceWorkerUpdateStatus.Updated) {
+        <p class="font-normal">Atualizado</p>
+      }
+    }
+  </div>
 </div>
